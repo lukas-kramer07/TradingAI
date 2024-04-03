@@ -42,3 +42,6 @@ df_apple = pd.json_normalize(json_data['historical'])
 
 # Display the DataFrame
 print(df_apple)
+
+# Save data in data folder
+df_apple.to_pickle('data/apple')

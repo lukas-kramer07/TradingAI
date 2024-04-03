@@ -33,3 +33,5 @@ def main():
 
     # Save data in data folder
     df_apple.to_pickle('data/apple')
+if __name__ == '__main__':
+    main()

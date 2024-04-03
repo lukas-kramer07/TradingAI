@@ -5,8 +5,8 @@ from configparser import ConfigParser
 config = ConfigParser()
 config.read('config.cfg')
 
-my_key = config['whatever']['key']
-
+api_key = config['API']['api_key']
+print(api_key)
 # Define the URL of the API endpoint you want to request
 url = 'https://api.example.com/data'
 

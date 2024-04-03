@@ -17,8 +17,7 @@ def main():
     if response.status_code == 200:
         # Extract the JSON data from the response
         data = response.json()
-        # Process the data as needed
-        print(data)
+        
     else:
         # If the request was not successful, print an error message
         print(f"Error: {response.status_code}")
@@ -31,10 +30,9 @@ def main():
 
     # Display the DataFrame
     print(df_apple)
-
+    
     # Save data in data folder
     df_apple.to_pickle('data/apple')
-
 
 if __name__ == '__main__':
     main()

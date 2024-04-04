@@ -25,9 +25,6 @@ def main():
     # Convert JSON data to pandas DataFrame
     df_apple = pd.json_normalize(data['historical'])
 
-    # Set 'date' as index
-    df_apple.set_index('date', inplace=True)
-
     # Display the DataFrame
     print(df_apple)
     

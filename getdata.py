@@ -19,9 +19,8 @@ def getdata(date_end):
     #format dates
     date_end = date_end.strftime('%Y-%m-%d')
     date_start = date_start.strftime('%Y-%m-%d')
-
     # Make a GET request to the API endpoint
-    response = requests.get(url+'?from='+date_start+'&to='+date_end+'?apikey='+api_key)
+    response = requests.get(url+'?from='+date_start+'&to='+date_end+'&apikey='+api_key)
     # Check if the request was successful (status code 200)
     if response.status_code == 200:
         # Extract the JSON data from the response

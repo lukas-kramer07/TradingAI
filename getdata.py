@@ -9,7 +9,7 @@ api_key = config['API']['api_key']
 # Define the URL of the API endpoint you want to request
 url = 'https://financialmodelingprep.com/api/v3/historical-price-full/AAPL'
 
-NUM_DATA = 3 # number of 5-years data stacked in a df 
+NUM_DATA = 5 # number of 5-years data stacked in a df 
 DATA_NAME = 'apple'
 
 def getdata(date_end):
@@ -31,7 +31,7 @@ def getdata(date_end):
         print(f"Error: {response.status_code}")
         
     # Convert JSON data to pandas DataFrame
-    df = pd.json_normalize(data['historical'])
+    df = pd.json_normalize(data['historical']).iloc[::-1]
     return df
 
 def main():
@@ -41,9 +41,13 @@ def main():
         df = getdata(datetime.now().replace(year=curr_year-5*n))
         # Display the DataFrame
         dataframes.append(df)
-        
+    
+    #stack dataframes
+    dataframes.reverse()
+    df = pd.concat(dataframes).reset_index(drop=True)
     # Save data in data folder
-    #df.to_pickle('data/apple')
+    df.to_pickle(f'data/{DATA_NAME}')
+    print(df)
 
 if __name__ == '__main__':
     main()

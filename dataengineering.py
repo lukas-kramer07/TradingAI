@@ -1,5 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import tensorflow as tf
+import numpy as np
 
 FILENAME = 'data/apple'
 
@@ -18,6 +20,17 @@ def plot(df):
 def main():
     df = pd.read_pickle(FILENAME)
     plot(df)
+    print(df.describe().transpose())
+
+    # Split the data
+    column_indices = {name: i for i, name in enumerate(df.columns)}
+
+    n = len(df)
+    train_df = df[0:int(n*0.7)]
+    val_df = df[int(n*0.7):int(n*0.9)]
+    test_df = df[int(n*0.9):]
+
+    num_features = df.shape[1]
 
 if __name__ == '__main__':
     main()

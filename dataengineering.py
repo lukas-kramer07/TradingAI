@@ -34,10 +34,12 @@ def main():
 
     num_features = df.shape[1]
 
-    w2 = WindowGenerator(input_width=6, label_width=1, shift=1,
+    w2 = WindowGenerator(input_width=60, label_width=50, shift=1,
                          train_df=train_df, val_df=val_df, test_df=test_df,
                             label_columns=['open'])
     w2.plot()
+    plt.show()
+    print(w2)
 
 if __name__ == '__main__':
     main()

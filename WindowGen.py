@@ -43,6 +43,8 @@ class WindowGenerator():
         f'Input indices: {self.input_indices}',
         f'Label indices: {self.label_indices}',
         f'Label column name(s): {self.label_columns}'])
+  
+
   def split_window(self, features):
     inputs = features[:, self.input_slice, :]
     labels = features[:, self.labels_slice, :]
@@ -58,7 +60,8 @@ class WindowGenerator():
 
     return inputs, labels
   
-  def plot(self, model=None, plot_col='T (degC)', max_subplots=3):
+
+  def plot(self, model=None, plot_col='open', max_subplots=3):
     inputs, labels = self.example
     plt.figure(figsize=(12, 8))
     plot_col_index = self.column_indices[plot_col]

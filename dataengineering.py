@@ -34,10 +34,9 @@ def main():
 
     num_features = df.shape[1]
 
-    w2 = WindowGenerator(input_width=60, label_width=50, shift=1,
-                         train_df=train_df, val_df=val_df, test_df=test_df,
-                            label_columns=['open'])
-    w2.plot()
+    w2 = WindowGenerator(input_width=100, label_width=100, shift=100,
+                         train_df=train_df, val_df=val_df, test_df=test_df,)
+    w2.plot(plot_col='high')
     plt.show()
     print(w2)
 

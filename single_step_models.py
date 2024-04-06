@@ -53,7 +53,7 @@ def main():
         label_columns=['close'])
 
     # Train the different models
-    print(single_step_window.example[0])
+    
     #Baseline
     baseline = Baseline(label_index=column_indices['close'])
     baseline_history = compile_and_fit(baseline, single_step_window)

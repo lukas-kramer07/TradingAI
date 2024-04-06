@@ -5,10 +5,8 @@ import numpy as np
 
 FILENAME = 'data/apple'
 
-def plot(df):
+def plot(df, date_time):
     plot_cols = ['open', 'change', 'volume']
-    df.pop('label')
-    date_time = pd.to_datetime(df.pop('date'), format='%Y-%m-%d')
     plot_features = df[plot_cols]
     plot_features.index = date_time
     _ = plot_features.plot(subplots=True)
@@ -20,7 +18,9 @@ def plot(df):
 
 def return_data(filename = FILENAME):
     df = pd.read_pickle(filename)
-    #plot(df)
+    df.pop('label')
+    date_time = pd.to_datetime(df.pop('date'), format='%Y-%m-%d')
+    #plot(df, date_time)
     #print(df.describe().transpose())
 
     # Split the data

@@ -11,6 +11,20 @@ from dataengineering import return_data
 
 MAX_EPOCHS = 20
 
+
+## Models
+class Baseline(tf.keras.Model):
+  def __init__(self, label_index=None):
+    super().__init__()
+    self.label_index = label_index
+
+  def call(self, inputs):
+    if self.label_index is None:
+      return inputs
+    result = inputs[:, :, self.label_index]
+    return result[:, :, tf.newaxis]
+  
+  
 def compile_and_fit(model, window, patience=2):
   early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss',
                                                     patience=patience,
@@ -24,6 +38,7 @@ def compile_and_fit(model, window, patience=2):
                       validation_data=window.val,
                       callbacks=[early_stopping])
   return history
+
 
 
 def main():

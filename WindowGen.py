@@ -91,7 +91,7 @@ class WindowGenerator():
             if n == 0:
                 plt.legend()
 
-        plt.xlabel('Time [h]')
+        plt.xlabel('Time [d]')
 
     
     def split_window(self, features):

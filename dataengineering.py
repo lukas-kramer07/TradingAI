@@ -18,7 +18,7 @@ def plot(df):
     _ = plot_features.plot(subplots=True)
     plt.show()
 
-def main(filename = FILENAME):
+def return_data(filename = FILENAME):
     df = pd.read_pickle(filename)
     #plot(df)
     #print(df.describe().transpose())
@@ -35,5 +35,7 @@ def main(filename = FILENAME):
 
     return train_df, val_df, test_df, column_indices, num_features
 
+def main():
+    return_data()
 if __name__ == '__main__':
     main()

@@ -10,7 +10,8 @@ from WindowGen import WindowGenerator
 from dataengineering import return_data
 
 MAX_EPOCHS = 20
-
+VAL_PERFORMANCE = {}
+PERFORMANCE = {}
 
 ## Models
 class Baseline(tf.keras.Model):
@@ -24,7 +25,7 @@ class Baseline(tf.keras.Model):
     result = inputs[:, :, self.label_index]
     return result[:, :, tf.newaxis]
   
-  
+
 def compile_and_fit(model, window, patience=2):
   early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss',
                                                     patience=patience,
@@ -39,7 +40,9 @@ def compile_and_fit(model, window, patience=2):
                       callbacks=[early_stopping])
   return history
 
-
+def test(model, window):
+    VAL_PERFORMANCE[f'{model}'] = model.evaluate(window.val, return_dict=True)
+    PERFORMANCE[f'{model}'] = model.evaluate(window.test, verbose=0, return_dict=True)
 
 def main():
     #get data
@@ -48,6 +51,16 @@ def main():
         train_df=train_df, val_df=val_df, test_df=test_df,
         input_width=1, label_width=1, shift=1,
         label_columns=['close'])
+
+    # Train the different models
+
+    #Baseline
+    baseline = Baseline(label_index=column_indices['T (degC)'])
+
+    baseline.compile(loss=tf.keras.losses.MeanSquaredError(),
+                    metrics=[tf.keras.metrics.MeanAbsoluteError()])
+
+    
 
 
 if __name__ == '__main__':

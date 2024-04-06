@@ -2,7 +2,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import numpy as np
-from WindowGen import WindowGenerator
 
 FILENAME = 'data/apple'
 
@@ -19,10 +18,10 @@ def plot(df):
     _ = plot_features.plot(subplots=True)
     plt.show()
 
-def main():
-    df = pd.read_pickle(FILENAME)
-    plot(df)
-    print(df.describe().transpose())
+def main(filename = FILENAME):
+    df = pd.read_pickle(filename)
+    #plot(df)
+    #print(df.describe().transpose())
 
     # Split the data
     column_indices = {name: i for i, name in enumerate(df.columns)}
@@ -34,11 +33,7 @@ def main():
 
     num_features = df.shape[1]
 
-    w2 = WindowGenerator(input_width=100, label_width=100, shift=100,
-                         train_df=train_df, val_df=val_df, test_df=test_df,)
-    w2.plot(plot_col='high')
-    plt.show()
-    print(w2)
+    return train_df, val_df, test_df, column_indices, num_features
 
 if __name__ == '__main__':
     main()

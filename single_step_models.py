@@ -40,9 +40,9 @@ def compile_and_fit(model, window, patience=2):
                       callbacks=[early_stopping])
   return history
 
-def test(model, window):
-    VAL_PERFORMANCE[f'{model}'] = model.evaluate(window.val, return_dict=True)
-    PERFORMANCE[f'{model}'] = model.evaluate(window.test, verbose=0, return_dict=True)
+def test(model, window, name):
+    VAL_PERFORMANCE[name] = model.evaluate(window.val, return_dict=True)
+    PERFORMANCE[name] = model.evaluate(window.test, verbose=0, return_dict=True)
 
 def main():
     #get data
@@ -53,14 +53,11 @@ def main():
         label_columns=['close'])
 
     # Train the different models
-
+    print(single_step_window.example[0])
     #Baseline
-    baseline = Baseline(label_index=column_indices['T (degC)'])
-
-    baseline.compile(loss=tf.keras.losses.MeanSquaredError(),
-                    metrics=[tf.keras.metrics.MeanAbsoluteError()])
-
-    
+    baseline = Baseline(label_index=column_indices['close'])
+    baseline_history = compile_and_fit(baseline, single_step_window)
+    test(baseline, single_step_window, 'baseline')
 
 
 if __name__ == '__main__':

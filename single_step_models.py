@@ -51,14 +51,19 @@ def main():
         train_df=train_df, val_df=val_df, test_df=test_df,
         input_width=1, label_width=1, shift=1,
         label_columns=['close'])
+    wide_window = WindowGenerator(
+        train_df=train_df, val_df=val_df, test_df=test_df,
+        input_width=20, label_width=20, shift=1,
+        label_columns=['close'])
 
     # Train the different models
-    
+
     #Baseline
     baseline = Baseline(label_index=column_indices['close'])
     baseline_history = compile_and_fit(baseline, single_step_window)
     test(baseline, single_step_window, 'baseline')
-
+    wide_window.plot(baseline, plot_col='close')
 
 if __name__ == '__main__':
     main()
+    plt.show()

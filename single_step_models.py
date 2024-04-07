@@ -65,6 +65,7 @@ def main():
     #wide_window.plot(baseline, plot_col='close')
 
     #Linear
+    print('linear model')
     linear = tf.keras.Sequential([tf.keras.layers.Dense(units=1)])
     linear_history = compile_and_fit(linear, single_step_window)
     test(linear, single_step_window, 'linear')
@@ -74,6 +75,16 @@ def main():
     axis = plt.gca()
     axis.set_xticks(range(len(train_df.columns)))
     _ = axis.set_xticklabels(train_df.columns, rotation=90)
+
+    # Dense Deep
+    print('dense_model')
+    dense = tf.keras.Sequential([
+      tf.keras.layers.Dense(units=64, activation='relu'),
+      tf.keras.layers.Dense(units=64, activation='relu'),
+      tf.keras.layers.Dense(units=1)
+      ])
+    dense_history = compile_and_fit(dense, single_step_window)
+    test(dense, single_step_window, 'dense')
 
 if __name__ == '__main__':
     main()

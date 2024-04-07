@@ -9,7 +9,7 @@ import numpy as np
 from WindowGen import WindowGenerator
 from dataengineering import return_data
 
-MAX_EPOCHS = 20
+MAX_EPOCHS = 60
 VAL_PERFORMANCE = {}
 PERFORMANCE = {}
 
@@ -62,13 +62,18 @@ def main():
     baseline = Baseline(label_index=column_indices['close'])
     baseline_history = compile_and_fit(baseline, single_step_window)
     test(baseline, single_step_window, 'baseline')
-    wide_window.plot(baseline, plot_col='close')
+    #wide_window.plot(baseline, plot_col='close')
 
     #Linear
     linear = tf.keras.Sequential([tf.keras.layers.Dense(units=1)])
     linear_history = compile_and_fit(linear, single_step_window)
     test(linear, single_step_window, 'linear')
-    wide_window.plot(linear, plot_col='close')
+    #wide_window.plot(linear, plot_col='close')
+    plt.bar(x = range(len(train_df.columns)),
+            height=linear.layers[0].kernel[:,0].numpy())
+    axis = plt.gca()
+    axis.set_xticks(range(len(train_df.columns)))
+    _ = axis.set_xticklabels(train_df.columns, rotation=90)
 
 if __name__ == '__main__':
     main()

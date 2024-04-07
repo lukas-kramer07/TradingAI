@@ -24,7 +24,14 @@ class Baseline(tf.keras.Model):
       return inputs
     result = inputs[:, :, self.label_index]
     return result[:, :, tf.newaxis]
-  
+
+class Linear(tf.keras.Model):
+  def __init__(self, label_index=None):
+    super().__init__()
+    self.dense = tf.keras.layers.Dense(units=1)
+
+  def call(self, inputs):
+    return self.dense(inputs)
 
 def compile_and_fit(model, window, patience=2):
   early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss',
@@ -63,6 +70,12 @@ def main():
     baseline_history = compile_and_fit(baseline, single_step_window)
     test(baseline, single_step_window, 'baseline')
     wide_window.plot(baseline, plot_col='close')
+
+    #Linear
+    linear = Linear()
+    linear_history = compile_and_fit(linear, single_step_window)
+    test(linear, single_step_window, 'linear')
+    wide_window.plot(linear, plot_col='close')
 
 if __name__ == '__main__':
     main()

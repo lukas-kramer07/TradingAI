@@ -26,7 +26,7 @@ class Baseline(tf.keras.Model):
     return result[:, :, tf.newaxis]
 
 class Linear(tf.keras.Model):
-  def __init__(self, label_index=None):
+  def __init__(self):
     super().__init__()
     self.dense = tf.keras.layers.Dense(units=1)
 

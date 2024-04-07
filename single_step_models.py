@@ -59,22 +59,16 @@ def main():
     # Train the different models
 
     #Baseline
+    print('Baseline model')
     baseline = Baseline(label_index=column_indices['close'])
     baseline_history = compile_and_fit(baseline, single_step_window)
     test(baseline, single_step_window, 'baseline')
-    #wide_window.plot(baseline, plot_col='close')
 
     #Linear
     print('linear model')
     linear = tf.keras.Sequential([tf.keras.layers.Dense(units=1)])
     linear_history = compile_and_fit(linear, single_step_window)
     test(linear, single_step_window, 'linear')
-    #wide_window.plot(linear, plot_col='close')
-    plt.bar(x = range(len(train_df.columns)),
-            height=linear.layers[0].kernel[:,0].numpy())
-    axis = plt.gca()
-    axis.set_xticks(range(len(train_df.columns)))
-    _ = axis.set_xticklabels(train_df.columns, rotation=90)
 
     # Dense Deep
     print('dense_model')
@@ -83,7 +77,7 @@ def main():
       tf.keras.layers.Dense(units=64, activation='relu'),
       tf.keras.layers.Dense(units=1)
       ])
-    dense_history = compile_and_fit(dense, single_step_window)
+    dense_history = compile_and_fit(dense, single_step_window, patience=15)
     test(dense, single_step_window, 'dense')
 
 if __name__ == '__main__':

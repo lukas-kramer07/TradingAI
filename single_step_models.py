@@ -6,8 +6,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import numpy as np
-from utils.WindowGen import WindowGenerator
-from utils.dataengineering import return_data
+from utils import WindowGenerator
+from utils import return_data
 
 MAX_EPOCHS = 60
 VAL_PERFORMANCE = {}

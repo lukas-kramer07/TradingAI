@@ -93,6 +93,20 @@ def main():
 
     # Train the different multi_step models
 
+    #Multi_Dense
+    print('multi Dense')
+    multi_step_dense = tf.keras.Sequential([
+        # Shape: (time, features) => (time*features)
+        tf.keras.layers.Flatten(),
+        tf.keras.layers.Dense(units=32, activation='relu'),
+        tf.keras.layers.Dense(units=32, activation='relu'),
+        tf.keras.layers.Dense(units=1),
+        # Add back the time dimension.
+        # Shape: (outputs) => (1, outputs)
+        tf.keras.layers.Reshape([1,-1]), #-1 is used for shape infrence
+    ])
+    multi_step_dense_history = compile_and_fit(multi_step_dense, conv_window)
+    test(multi_step_dense, conv_window,'multi_step_dense')
     
 
 if __name__ == '__main__':

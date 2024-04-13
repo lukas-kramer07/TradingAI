@@ -52,12 +52,12 @@ def main():
         train_df=train_df, val_df=val_df, test_df=test_df,
         input_width=1, label_width=1, shift=1,
         label_columns=['close'])
+    single_step_window.plot()
+    plt.suptitle("Given 1 day of inputs, predict 1 day into the future")
     wide_window = WindowGenerator(
         train_df=train_df, val_df=val_df, test_df=test_df,
         input_width=20, label_width=20, shift=1,
         label_columns=['close'])
-    wide_window.plot()
-    plt.suptitle("Given 1 day of inputs, predict 1 day into the future")
     conv_window = WindowGenerator(
         train_df=train_df, val_df=val_df, test_df=test_df,
         input_width=CONV_WIDTH,

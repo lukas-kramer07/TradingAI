@@ -121,7 +121,16 @@ def main():
     conv_history = compile_and_fit(conv_model, conv_window)
     test(conv_model, conv_window, 'conv')
 
-    
+    # LSTM
+    lstm_model = tf.keras.models.Sequential([
+        # Shape [batch, time, features] => [batch, time, lstm_units]
+        tf.keras.layers.LSTM(64, return_sequences=True),
+        tf.keras.layers.LSTM(64, return_sequences=True),
+        # Shape => [batch, time, features]
+        tf.keras.layers.Dense(units=1)
+    ])
+    lstm_history = compile_and_fit(lstm_model, conv_window)
+    test(lstm_model, conv_window, 'lstm')
 
 if __name__ == '__main__':
     main()

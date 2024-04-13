@@ -4,7 +4,7 @@ import tensorflow as tf
 import numpy as np
 import seaborn as sns
 
-FILENAME = 'data/apple'
+FILENAME = 'data/GenElectric'
 
 def plot(df, date_time):
     plot_cols = ['open', 'change', 'volume']
@@ -53,5 +53,6 @@ def return_data(filename = FILENAME):
 
 def main():
     return_data()
+    plt.show()
 if __name__ == '__main__':
     main()

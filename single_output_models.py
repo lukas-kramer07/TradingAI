@@ -13,7 +13,7 @@ MAX_EPOCHS = 60
 CONV_WIDTH = 5
 VAL_PERFORMANCE = {}
 PERFORMANCE = {}
-
+INIT = tf.initializers.zeros()
 ## Models
 class Baseline(tf.keras.Model):
   def __init__(self, label_index=None):
@@ -47,25 +47,27 @@ def test(model, window, name):
 
 def main():
     #get data
-    train_df, val_df, test_df, column_indices, num_features = return_data()
+    train_df, val_df, test_df, column_indices, num_features = return_data(filename='data/GenElectric')
     single_step_window = WindowGenerator(
         train_df=train_df, val_df=val_df, test_df=test_df,
         input_width=1, label_width=1, shift=1,
         label_columns=['close'])
-    single_step_window.plot()
-    plt.suptitle("Given 1 day of inputs, predict 1 day into the future")
+    #single_step_window.plot()
+    #plt.suptitle("Given 1 day of inputs, predict 1 day into the future")
+
     wide_window = WindowGenerator(
         train_df=train_df, val_df=val_df, test_df=test_df,
         input_width=20, label_width=20, shift=1,
         label_columns=['close'])
+    
     conv_window = WindowGenerator(
         train_df=train_df, val_df=val_df, test_df=test_df,
         input_width=CONV_WIDTH,
         label_width=1,
         shift=1,
         label_columns=['close'])
-    conv_window.plot()
-    plt.suptitle("Given 3 days of inputs, predict 1 day into the future.")
+    #conv_window.plot()
+    #plt.suptitle("Given 3 days of inputs, predict 1 day into the future.")
     # Train the different single_step models
 
     #Baseline
@@ -79,6 +81,7 @@ def main():
     linear = tf.keras.Sequential([tf.keras.layers.Dense(units=1)])
     linear_history = compile_and_fit(linear, single_step_window)
     test(linear, single_step_window, 'linear')
+    wide_window.plot(linear)
 
     # Dense Deep
     print('dense_model')
@@ -98,8 +101,8 @@ def main():
     multi_step_dense = tf.keras.Sequential([
         # Shape: (time, features) => (time*features)
         tf.keras.layers.Flatten(),
-        tf.keras.layers.Dense(units=32, activation='relu'),
-        tf.keras.layers.Dense(units=32, activation='relu'),
+        tf.keras.layers.Dense(units=64, activation='relu'),
+        tf.keras.layers.Dense(units=64, activation='relu'),
         tf.keras.layers.Dense(units=1),
         # Add back the time dimension.
         # Shape: (outputs) => (1, outputs)
@@ -107,6 +110,7 @@ def main():
     ])
     multi_step_dense_history = compile_and_fit(multi_step_dense, conv_window)
     test(multi_step_dense, conv_window,'multi_step_dense')
+    conv_window.plot(multi_step_dense)
     
 
 if __name__ == '__main__':

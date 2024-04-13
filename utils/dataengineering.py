@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 import numpy as np
 import seaborn as sns
+import os
 
 FILENAME = 'data/GenElectric'
 
@@ -51,6 +52,11 @@ def return_data(filename = FILENAME):
 
     return train_df, val_df, test_df, column_indices, num_features
 
+def iterate_files(folder_path):
+    for filename in os.listdir(folder_path):
+        if os.path.isfile(os.path.join(folder_path, filename)):
+            yield filename
+       
 def main():
     return_data()
     plt.show()

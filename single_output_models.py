@@ -56,11 +56,16 @@ def main():
         train_df=train_df, val_df=val_df, test_df=test_df,
         input_width=20, label_width=20, shift=1,
         label_columns=['close'])
+    wide_window.plot()
+    plt.suptitle("Given 1 day of inputs, predict 1 day into the future")
     conv_window = WindowGenerator(
+        train_df=train_df, val_df=val_df, test_df=test_df,
         input_width=CONV_WIDTH,
         label_width=1,
         shift=1,
-        label_columns=['T (degC)'])
+        label_columns=['close'])
+    conv_window.plot()
+    plt.suptitle("Given 3 days of inputs, predict 1 day into the future.")
     # Train the different single_step models
 
     #Baseline
@@ -88,7 +93,7 @@ def main():
 
     # Train the different multi_step models
 
-    #
+    
 
 if __name__ == '__main__':
     main()

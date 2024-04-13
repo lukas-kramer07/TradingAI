@@ -10,6 +10,7 @@ from utils import WindowGenerator
 from utils import return_data
 
 MAX_EPOCHS = 60
+CONV_WIDTH = 5
 VAL_PERFORMANCE = {}
 PERFORMANCE = {}
 
@@ -55,8 +56,12 @@ def main():
         train_df=train_df, val_df=val_df, test_df=test_df,
         input_width=20, label_width=20, shift=1,
         label_columns=['close'])
-
-    # Train the different models
+    conv_window = WindowGenerator(
+        input_width=CONV_WIDTH,
+        label_width=1,
+        shift=1,
+        label_columns=['T (degC)'])
+    # Train the different single_step models
 
     #Baseline
     print('Baseline model')
@@ -79,6 +84,11 @@ def main():
       ])
     dense_history = compile_and_fit(dense, single_step_window, patience=15)
     test(dense, single_step_window, 'dense')
+
+
+    # Train the different multi_step models
+
+    #
 
 if __name__ == '__main__':
     main()

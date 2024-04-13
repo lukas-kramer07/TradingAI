@@ -10,7 +10,7 @@ from utils import WindowGenerator
 from utils import return_data
 
 MAX_EPOCHS = 60
-CONV_WIDTH = 5
+CONV_WIDTH = 10
 VAL_PERFORMANCE = {}
 PERFORMANCE = {}
 INIT = tf.initializers.zeros()
@@ -81,7 +81,6 @@ def main():
     linear = tf.keras.Sequential([tf.keras.layers.Dense(units=1)])
     linear_history = compile_and_fit(linear, single_step_window)
     test(linear, single_step_window, 'linear')
-    wide_window.plot(linear)
 
     # Dense Deep
     print('dense_model')
@@ -110,7 +109,18 @@ def main():
     ])
     multi_step_dense_history = compile_and_fit(multi_step_dense, conv_window)
     test(multi_step_dense, conv_window,'multi_step_dense')
-    conv_window.plot(multi_step_dense)
+
+    # Conv Model
+    conv_model = tf.keras.Sequential([
+        tf.keras.layers.Conv1D(filters=32,
+                              kernel_size=(CONV_WIDTH,),
+                              activation='relu'),
+        tf.keras.layers.Dense(units=32, activation='relu'),
+        tf.keras.layers.Dense(units=1),
+    ])
+    conv_history = compile_and_fit(conv_model, conv_window)
+    test(conv_model, conv_window, 'conv')
+
     
 
 if __name__ == '__main__':

@@ -9,6 +9,9 @@ import numpy as np
 from utils import WindowGenerator
 from utils import return_data
 
+import os
+
+
 MAX_EPOCHS = 60
 CONV_WIDTH = 10
 VAL_PERFORMANCE = {}
@@ -27,7 +30,7 @@ class Baseline(tf.keras.Model):
     return result[:, :, tf.newaxis]
 
 
-def compile_and_fit(model, window, patience=5):
+def compile_and_fit(model, window, patience=10):
   early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss',
                                                     patience=patience,
                                                     mode='min')
@@ -45,9 +48,19 @@ def test(model, window, name):
     VAL_PERFORMANCE[name] = model.evaluate(window.val, return_dict=True)
     PERFORMANCE[name] = model.evaluate(window.test, verbose=0, return_dict=True)
 
+def iterate_files(folder_path):
+    for filename in os.listdir(folder_path):
+        if os.path.isfile(os.path.join(folder_path, filename)):
+            yield filename
+
 def main():
-    #get data
-    train_df, val_df, test_df, column_indices, num_features = return_data(filename='data/GenElectric')
+    #get data - concat all data
+    train_df, val_df, test_df = None, None, None
+    for filename in iterate_files('data'):
+      train_df1, val_df1, test_df1, column_indices, num_features = return_data(filename=f'data/{filename}')
+      train_df = pd.concat([train_df, train_df1],axis =0)
+      val_df = pd.concat([val_df, val_df1], axis=0)
+      test_df = pd.concat([test_df, test_df1], axis=0)
     single_step_window = WindowGenerator(
         train_df=train_df, val_df=val_df, test_df=test_df,
         input_width=1, label_width=1, shift=1,
@@ -131,6 +144,20 @@ def main():
     ])
     lstm_history = compile_and_fit(lstm_model, conv_window)
     test(lstm_model, conv_window, 'lstm')
+
+    # Plot
+    x = np.arange(len(PERFORMANCE))
+    width = 0.3
+    metric_name = 'mean_absolute_error'
+    val_mae = [v[metric_name] for v in VAL_PERFORMANCE.values()]
+    test_mae = [v[metric_name] for v in PERFORMANCE.values()]
+
+    plt.ylabel('mean_absolute_error [T (degC), normalized]')
+    plt.bar(x - 0.17, val_mae, width, label='Validation')
+    plt.bar(x + 0.17, test_mae, width, label='Test')
+    plt.xticks(ticks=x, labels=PERFORMANCE.keys(),
+              rotation=45)
+    _ = plt.legend()
 
 if __name__ == '__main__':
     main()

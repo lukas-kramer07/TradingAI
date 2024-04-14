@@ -81,6 +81,10 @@ def main():
         input_width=20, label_width=20, shift=1,
         label_columns=['close'])
     
+    multi_output_wide_window = WindowGenerator(
+        train_df=train_df, val_df=val_df, test_df=test_df,
+        input_width=20, label_width=20, shift=1)
+    
     conv_window = WindowGenerator(
         train_df=train_df, val_df=val_df, test_df=test_df,
         input_width=CONV_WIDTH,
@@ -150,7 +154,7 @@ def main():
         # Shape => [batch, time, features]
         tf.keras.layers.Dense(units=1)
     ])
-    lstm_history = compile_and_fit(lstm_model, conv_window)
+    lstm_history = compile_and_fit(lstm_model, wide_window)
     test(lstm_model, conv_window, 'lstm')
 
     # Multi_Outputs
@@ -162,7 +166,16 @@ def main():
     test(multi_baseline, multi_output_single_step_window, 'multi_baseline')
 
     # Res Net with multiple outputs
-
+    residual_lstm = ResidualWrapper(
+        tf.keras.Sequential([
+        tf.keras.layers.LSTM(32, return_sequences=True),
+        tf.keras.layers.Dense(
+            num_features,
+            # The predicted deltas should start small.
+            # Therefore, initialize the output layer with zeros.
+            kernel_initializer=tf.initializers.zeros())
+    ]))
+    residual_lstm_history = compile_and_fit(residual_lstm, multi_output_single_step_window)
 
     # Plot
     x = np.arange(len(PERFORMANCE))

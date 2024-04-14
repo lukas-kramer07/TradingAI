@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 import numpy as np
 from utils import WindowGenerator
-from utils import return_data
+from utils import concat_data
 
 import os
 
@@ -48,19 +48,11 @@ def test(model, window, name):
     VAL_PERFORMANCE[name] = model.evaluate(window.val, return_dict=True)
     PERFORMANCE[name] = model.evaluate(window.test, verbose=0, return_dict=True)
 
-def iterate_files(folder_path):
-    for filename in os.listdir(folder_path):
-        if os.path.isfile(os.path.join(folder_path, filename)):
-            yield filename
+
 
 def main():
-    #get data - concat all data
-    train_df, val_df, test_df = None, None, None
-    for filename in iterate_files('data'):
-      train_df1, val_df1, test_df1, column_indices, num_features = return_data(filename=f'data/{filename}')
-      train_df = pd.concat([train_df, train_df1],axis =0)
-      val_df = pd.concat([val_df, val_df1], axis=0)
-      test_df = pd.concat([test_df, test_df1], axis=0)
+    #get data
+    train_df, val_df, test_df, column_indices, num_features = concat_data('data')
     single_step_window = WindowGenerator(
         train_df=train_df, val_df=val_df, test_df=test_df,
         input_width=1, label_width=1, shift=1,
@@ -138,7 +130,7 @@ def main():
     lstm_model = tf.keras.models.Sequential([
         # Shape [batch, time, features] => [batch, time, lstm_units]
         tf.keras.layers.LSTM(64, return_sequences=True),
-        tf.keras.layers.LSTM(64, return_sequences=True),
+        #tf.keras.layers.LSTM(64, return_sequences=True),
         # Shape => [batch, time, features]
         tf.keras.layers.Dense(units=1)
     ])

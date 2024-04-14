@@ -166,6 +166,7 @@ def main():
     test(multi_baseline, multi_output_single_step_window, 'multi_baseline')
 
     # Res Net with multiple outputs
+    print('residual_lstm')
     residual_lstm = ResidualWrapper(
         tf.keras.Sequential([
         tf.keras.layers.LSTM(32, return_sequences=True),
@@ -175,7 +176,8 @@ def main():
             # Therefore, initialize the output layer with zeros.
             kernel_initializer=tf.initializers.zeros())
     ]))
-    residual_lstm_history = compile_and_fit(residual_lstm, multi_output_single_step_window)
+    residual_lstm_history = compile_and_fit(residual_lstm, multi_output_wide_window)
+    test(residual_lstm, multi_output_wide_window, 'residual_lstm')
 
     # Plot
     x = np.arange(len(PERFORMANCE))

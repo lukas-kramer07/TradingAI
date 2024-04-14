@@ -60,6 +60,10 @@ def main():
     #single_step_window.plot()
     #plt.suptitle("Given 1 day of inputs, predict 1 day into the future")
 
+    multi_output_single_step_window = WindowGenerator(
+        train_df=train_df, val_df=val_df, test_df=test_df,
+        input_width=1, label_width=1, shift=1)
+    
     wide_window = WindowGenerator(
         train_df=train_df, val_df=val_df, test_df=test_df,
         input_width=20, label_width=20, shift=1,
@@ -136,6 +140,17 @@ def main():
     ])
     lstm_history = compile_and_fit(lstm_model, conv_window)
     test(lstm_model, conv_window, 'lstm')
+
+    # Multi_Outputs
+
+    # baseline
+    print('mulit_output_baseline')
+    multi_baseline = Baseline()
+    multi_baseline_history = compile_and_fit(multi_baseline, multi_output_single_step_window)
+    test(multi_baseline, multi_output_single_step_window, 'multi_baseline')
+    
+    # Res Net with multiple outputs
+
 
     # Plot
     x = np.arange(len(PERFORMANCE))

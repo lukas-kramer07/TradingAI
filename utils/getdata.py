@@ -7,10 +7,11 @@ config = ConfigParser()
 config.read('config.cfg')
 api_key = config['API']['api_key']
 # Define the URL of the API endpoint you want to request
-url = 'https://financialmodelingprep.com/api/v3/historical-price-full/GE'
+DATA_NAME = 'TSM'
+url = f'https://financialmodelingprep.com/api/v3/historical-price-full/{DATA_NAME}'
 
-NUM_DATA = 12 # number of 5-years data stacked in a df 
-DATA_NAME = 'GenElectric'
+NUM_DATA = 6 # number of 5-years data stacked in a df 
+
 
 def getdata(date_end):
 

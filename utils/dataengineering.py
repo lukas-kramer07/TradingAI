@@ -45,28 +45,28 @@ def iterate_files(folder_path):
             yield filename
 def concat_data(folder):
     # concat all data
-    train_df, val_df, test_df, num_features = None, None, None,0
+    train_df, val_df, test_df= None, None, None
     for filename in iterate_files(folder):
-      train_df1, val_df1, test_df1, column_indices, num_features1 = return_data(filename=f'{folder}/{filename}')
+      train_df1, val_df1, test_df1, column_indices, num_features = return_data(filename=f'{folder}/{filename}')
       train_df = pd.concat([train_df, train_df1],axis =0)
       val_df = pd.concat([val_df, val_df1], axis=0)
       test_df = pd.concat([test_df, test_df1], axis=0) 
-      num_features += num_features1
     
     # Standardize
     train_mean = train_df.mean()
     train_std = train_df.std()
-
+    print('mean: ', train_mean)
     train_df = (train_df - train_mean) / train_std
     val_df = (val_df - train_mean) / train_std
     test_df = (test_df - train_mean) / train_std
 
     # plot 
-    df_std = (train_df - train_mean) / train_std
+    df_std = (val_df - train_mean) / train_std
     df_std = df_std.melt(var_name='Column', value_name='Normalized')
     plt.figure(figsize=(12, 6))
     ax = sns.violinplot(x='Column', y='Normalized', data=df_std)
-    _ = ax.set_xticklabels(train_df.keys(), rotation=90)     
+    _ = ax.set_xticklabels(val_df.keys(), rotation=90)     
+    plt.show()
 
     return train_df, val_df, test_df, column_indices, num_features
 def main():

@@ -29,6 +29,18 @@ class Baseline(tf.keras.Model):
     result = inputs[:, :, self.label_index]
     return result[:, :, tf.newaxis]
 
+class ResidualWrapper(tf.keras.Model):
+  def __init__(self, model):
+    super().__init__()
+    self.model = model
+
+  def call(self, inputs, *args, **kwargs):
+    delta = self.model(inputs, *args, **kwargs)
+
+    # The prediction for each time step is the input
+    # from the previous time step plus the delta
+    # calculated by the model.
+    return inputs + delta
 
 def compile_and_fit(model, window, patience=10):
   early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss',
@@ -148,7 +160,7 @@ def main():
     multi_baseline = Baseline()
     multi_baseline_history = compile_and_fit(multi_baseline, multi_output_single_step_window)
     test(multi_baseline, multi_output_single_step_window, 'multi_baseline')
-    
+
     # Res Net with multiple outputs
 
 

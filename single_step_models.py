@@ -136,6 +136,7 @@ def main():
     test(multi_step_dense, conv_window,'multi_step_dense')
 
     # Conv Model
+    print('conv_model')
     conv_model = tf.keras.Sequential([
         tf.keras.layers.Conv1D(filters=32,
                               kernel_size=(CONV_WIDTH,),
@@ -147,6 +148,7 @@ def main():
     test(conv_model, conv_window, 'conv')
 
     # LSTM
+    print('lstm')
     lstm_model = tf.keras.models.Sequential([
         # Shape [batch, time, features] => [batch, time, lstm_units]
         tf.keras.layers.LSTM(64, return_sequences=True),

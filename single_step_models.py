@@ -17,6 +17,7 @@ MAX_EPOCHS = 60
 CONV_WIDTH = 10
 VAL_PERFORMANCE = {}
 PERFORMANCE = {}
+HISTORY = {}
 INIT = tf.initializers.zeros()
 ## Models
 class Baseline(tf.keras.Model):
@@ -43,7 +44,7 @@ class ResidualWrapper(tf.keras.Model):
     # calculated by the model.
     return inputs + delta
 
-def compile_and_fit(model, window, patience=5):
+def compile_and_fit(model, window, patience):
   early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss',
                                                     patience=patience,
                                                     mode='min')
@@ -60,6 +61,14 @@ def compile_and_fit(model, window, patience=5):
 def test(model, window, name):
     VAL_PERFORMANCE[name] = model.evaluate(window.val, return_dict=True)
     PERFORMANCE[name] = model.evaluate(window.test, verbose=0, return_dict=True)
+
+def train_and_test(model, window, model_name, patience=5):
+  if model_name not in iterate_files('Training/Models') or RETRAIN:
+    HISTORY[model_name] = compile_and_fit(model, window, patience)
+    model.save(f'Training/Models/{model_name}')
+  else:
+     model = tf.keras.models.load_model(f'Training/Models/{model_name}')
+  test(model,window,model_name)
 
 def plot(val_performance=VAL_PERFORMANCE, performance=PERFORMANCE, plotname = 'NONE'):
     # Plot models' performances
@@ -82,7 +91,6 @@ def plot(val_performance=VAL_PERFORMANCE, performance=PERFORMANCE, plotname = 'N
 def main():
     #get data
     train_df, val_df, test_df, column_indices, num_features = concat_data('data')
-    models = iterate_files('Training/Models')
     # define windows
     single_step_window = WindowGenerator(
         train_df=train_df, val_df=val_df, test_df=test_df,

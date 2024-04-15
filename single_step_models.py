@@ -75,6 +75,7 @@ def plot(val_performance=VAL_PERFORMANCE, performance=PERFORMANCE, plotname = 'N
     plt.xticks(ticks=x, labels=performance.keys(),
               rotation=45)
     _ = plt.legend()
+    plt.savefig(f'Training/plots/{plotname}')
 
 
 def main():
@@ -174,8 +175,8 @@ def main():
     lstm_history = compile_and_fit(lstm_model, wide_window)
     test(lstm_model, conv_window, 'lstm')
 
-    plot(VAL_PERFORMANCE, PERFORMANCE)
-
+    plot(VAL_PERFORMANCE, PERFORMANCE, 'single_step_single_output_models')
+    VAL_PERFORMANCE,PERFORMANCE = {},{}
 
     # Train the different multi_Output models
 
@@ -199,6 +200,8 @@ def main():
     ]))
     residual_lstm_history = compile_and_fit(residual_lstm, multi_output_wide_window)
     test(residual_lstm, multi_output_wide_window, 'residual_lstm')
+
+    plot(VAL_PERFORMANCE, PERFORMANCE, 'single_step_multi_output_models')
 
 if __name__ == '__main__':
     main()

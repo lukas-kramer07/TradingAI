@@ -69,13 +69,14 @@ def plot(val_performance=VAL_PERFORMANCE, performance=PERFORMANCE, plotname = 'N
     val_mae = [v[metric_name] for v in val_performance.values()]
     test_mae = [v[metric_name] for v in performance.values()]
 
-    plt.ylabel('mean_absolute_error [T (degC), normalized]')
+    plt.ylabel('mean_absolute_error [close normalized]')
     plt.bar(x - 0.17, val_mae, width, label='Validation')
     plt.bar(x + 0.17, test_mae, width, label='Test')
     plt.xticks(ticks=x, labels=performance.keys(),
               rotation=45)
     _ = plt.legend()
     plt.savefig(f'Training/plots/{plotname}')
+    plt.close()
 
 
 def main():

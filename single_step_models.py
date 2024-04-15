@@ -186,7 +186,17 @@ def main():
     multi_baseline_history = compile_and_fit(multi_baseline, multi_output_single_step_window)
     test(multi_baseline, multi_output_single_step_window, 'multi_baseline')
 
-
+    # Dense
+    print('multi_output_Dense')
+    multi_output_dense = tf.keras.Sequential([
+       tf.keras.layers.Flatten(),
+       tf.keras.layers.Dense(64, activation='relu'),
+       tf.keras.layers.Dense(64, activation='relu'),
+       tf.keras.layers.Dense(num_features),
+       tf.keras.layers.Reshape([1,-1])
+    ])
+    multi_output_dense_history = compile_and_fit(multi_output_dense, multi_output_single_step_window)
+    test(multi_output_dense, multi_output_single_step_window, 'multi_dense')
     # Res Net with multiple outputs
     print('residual_lstm')
     residual_lstm = ResidualWrapper(

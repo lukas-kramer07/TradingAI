@@ -43,7 +43,7 @@ class ResidualWrapper(tf.keras.Model):
     # calculated by the model.
     return inputs + delta
 
-def compile_and_fit(model, window, patience=10):
+def compile_and_fit(model, window, patience=5):
   early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss',
                                                     patience=patience,
                                                     mode='min')
@@ -173,10 +173,11 @@ def main():
         tf.keras.layers.Dense(units=1)
     ])
     lstm_history = compile_and_fit(lstm_model, wide_window)
-    test(lstm_model, conv_window, 'lstm')
+    test(lstm_model, wide_window, 'lstm')
 
-    plot(VAL_PERFORMANCE, PERFORMANCE, 'single_step_single_output_models')
-    VAL_PERFORMANCE,PERFORMANCE = {},{}
+    plot(val_performance=VAL_PERFORMANCE, performance=PERFORMANCE, plotname='single_step_single_output_models')
+    VAL_PERFORMANCE.clear()
+    PERFORMANCE.clear()
 
     # Train the different multi_Output models
 

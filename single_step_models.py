@@ -1,6 +1,7 @@
 ## A number of single step models, prediciting one day into the future based on the last day of data / the last days of data
 ## They predict the closing_value of the day
 
+# TODO: Add Model saving and importing
 #imports
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -60,17 +61,31 @@ def test(model, window, name):
     VAL_PERFORMANCE[name] = model.evaluate(window.val, return_dict=True)
     PERFORMANCE[name] = model.evaluate(window.test, verbose=0, return_dict=True)
 
+def plot(val_performance=VAL_PERFORMANCE, performance=PERFORMANCE, plotname = 'NONE'):
+    # Plot models' performances
+    x = np.arange(len(performance))
+    width = 0.3
+    metric_name = 'mean_absolute_error'
+    val_mae = [v[metric_name] for v in val_performance.values()]
+    test_mae = [v[metric_name] for v in performance.values()]
+
+    plt.ylabel('mean_absolute_error [T (degC), normalized]')
+    plt.bar(x - 0.17, val_mae, width, label='Validation')
+    plt.bar(x + 0.17, test_mae, width, label='Test')
+    plt.xticks(ticks=x, labels=performance.keys(),
+              rotation=45)
+    _ = plt.legend()
 
 
 def main():
     #get data
     train_df, val_df, test_df, column_indices, num_features = concat_data('data')
+
+    # define windows
     single_step_window = WindowGenerator(
         train_df=train_df, val_df=val_df, test_df=test_df,
         input_width=1, label_width=1, shift=1,
         label_columns=['close'])
-    #single_step_window.plot()
-    #plt.suptitle("Given 1 day of inputs, predict 1 day into the future")
 
     multi_output_single_step_window = WindowGenerator(
         train_df=train_df, val_df=val_df, test_df=test_df,
@@ -91,9 +106,9 @@ def main():
         label_width=1,
         shift=1,
         label_columns=['close'])
-    #conv_window.plot()
-    #plt.suptitle("Given 3 days of inputs, predict 1 day into the future.")
-    # Train the different single_step models
+
+
+    # Train the different single_input models
 
     #Baseline
     print('Baseline model')
@@ -118,7 +133,7 @@ def main():
     test(dense, single_step_window, 'dense')
 
 
-    # Train the different multi_step models
+    # Train the different multi_input models
 
     #Multi_Dense
     print('multi Dense')
@@ -159,13 +174,17 @@ def main():
     lstm_history = compile_and_fit(lstm_model, wide_window)
     test(lstm_model, conv_window, 'lstm')
 
-    # Multi_Outputs
+    plot(VAL_PERFORMANCE, PERFORMANCE)
+
+
+    # Train the different multi_Output models
 
     # baseline
     print('mulit_output_baseline')
     multi_baseline = Baseline()
     multi_baseline_history = compile_and_fit(multi_baseline, multi_output_single_step_window)
     test(multi_baseline, multi_output_single_step_window, 'multi_baseline')
+
 
     # Res Net with multiple outputs
     print('residual_lstm')
@@ -180,20 +199,6 @@ def main():
     ]))
     residual_lstm_history = compile_and_fit(residual_lstm, multi_output_wide_window)
     test(residual_lstm, multi_output_wide_window, 'residual_lstm')
-
-    # Plot
-    x = np.arange(len(PERFORMANCE))
-    width = 0.3
-    metric_name = 'mean_absolute_error'
-    val_mae = [v[metric_name] for v in VAL_PERFORMANCE.values()]
-    test_mae = [v[metric_name] for v in PERFORMANCE.values()]
-
-    plt.ylabel('mean_absolute_error [T (degC), normalized]')
-    plt.bar(x - 0.17, val_mae, width, label='Validation')
-    plt.bar(x + 0.17, test_mae, width, label='Test')
-    plt.xticks(ticks=x, labels=PERFORMANCE.keys(),
-              rotation=45)
-    _ = plt.legend()
 
 if __name__ == '__main__':
     main()

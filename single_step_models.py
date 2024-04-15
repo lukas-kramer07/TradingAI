@@ -1,7 +1,6 @@
 ## A number of single step models, prediciting one day into the future based on the last day of data / the last days of data
 ## They predict the closing_value of the day
 
-# TODO: Add Model saving and importing
 #imports
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -122,12 +121,12 @@ def main():
     #Baseline
     print('Baseline model')
     baseline = Baseline(label_index=column_indices['close'])
-    train_and_test(baseline, single_step_window, 'baseline_model')
+    train_and_test(baseline, single_step_window, 'baseline')
 
     #Linear
     print('linear model')
     linear = tf.keras.Sequential([tf.keras.layers.Dense(units=1)])
-    train_and_test(linear, single_step_window, 'linear_model')
+    train_and_test(linear, single_step_window, 'linear')
 
 
     # Dense Deep
@@ -137,8 +136,7 @@ def main():
       tf.keras.layers.Dense(units=64, activation='relu'),
       tf.keras.layers.Dense(units=1)
       ])
-    dense_history = compile_and_fit(dense, single_step_window, patience=15)
-    test(dense, single_step_window, 'dense')
+    train_and_test(dense, single_step_window, 'dense')
 
     # Train the different multi_input models
 
@@ -154,8 +152,7 @@ def main():
         # Shape: (outputs) => (1, outputs)
         tf.keras.layers.Reshape([1,-1]), #-1 is used for shape infrence
     ])
-    multi_step_dense_history = compile_and_fit(multi_step_dense, conv_window)
-    test(multi_step_dense, conv_window,'multi_step_dense')
+    train_and_test(multi_step_dense, conv_window,'multi_step_dense')
 
     # Conv Model
     print('conv_model')
@@ -166,8 +163,7 @@ def main():
         tf.keras.layers.Dense(units=32, activation='relu'),
         tf.keras.layers.Dense(units=1),
     ])
-    conv_history = compile_and_fit(conv_model, conv_window)
-    test(conv_model, conv_window, 'conv')
+    train_and_test(conv_model, conv_window, 'conv')
 
     # LSTM
     print('lstm')
@@ -178,8 +174,7 @@ def main():
         # Shape => [batch, time, features]
         tf.keras.layers.Dense(units=1)
     ])
-    lstm_history = compile_and_fit(lstm_model, wide_window)
-    test(lstm_model, wide_window, 'lstm')
+    train_and_test(lstm_model, wide_window, 'lstm')
 
     plot(val_performance=VAL_PERFORMANCE, performance=PERFORMANCE, plotname='single_step_single_output_models')
     VAL_PERFORMANCE.clear()
@@ -190,8 +185,7 @@ def main():
     # baseline
     print('mulit_output_baseline')
     multi_baseline = Baseline()
-    multi_baseline_history = compile_and_fit(multi_baseline, multi_output_single_step_window)
-    test(multi_baseline, multi_output_single_step_window, 'multi_baseline')
+    train_and_test(multi_baseline, multi_output_single_step_window, 'multi_baseline')
 
     # Dense
     print('multi_output_Dense')
@@ -202,8 +196,8 @@ def main():
        tf.keras.layers.Dense(num_features),
        tf.keras.layers.Reshape([1,-1])
     ])
-    multi_output_dense_history = compile_and_fit(multi_output_dense, multi_output_single_step_window)
-    test(multi_output_dense, multi_output_single_step_window, 'multi_dense')
+    train_and_test(multi_output_dense, multi_output_single_step_window, 'multi_dense')
+
     # Res Net with multiple outputs
     print('residual_lstm')
     residual_lstm = ResidualWrapper(
@@ -215,8 +209,7 @@ def main():
             # Therefore, initialize the output layer with zeros.
             kernel_initializer=tf.initializers.zeros())
     ]))
-    residual_lstm_history = compile_and_fit(residual_lstm, multi_output_wide_window)
-    test(residual_lstm, multi_output_wide_window, 'residual_lstm')
+    train_and_test(residual_lstm, multi_output_wide_window, 'residual_lstm')
 
     plot(VAL_PERFORMANCE, PERFORMANCE, 'single_step_multi_output_models')
 

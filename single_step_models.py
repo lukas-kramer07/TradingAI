@@ -121,18 +121,15 @@ def main():
     # Train the different single_input models
 
     #Baseline
-    baseline_name='Baseline model'
+    print('Baseline model')
     baseline = Baseline(label_index=column_indices['close'])
-    baseline_history = compile_and_fit(baseline, single_step_window)
-    test(baseline, single_step_window, baseline_name)
-    baseline.save(f'Traning/Models/{baseline_name}')
+    train_and_test(baseline, single_step_window, 'baseline_model')
 
     #Linear
-    linear_name='linear model'
+    print('linear model')
     linear = tf.keras.Sequential([tf.keras.layers.Dense(units=1)])
-    linear_history = compile_and_fit(linear, single_step_window)
-    test(linear, single_step_window, linear_name)
-    linear.save(f'Traning/Models/{linear_name}')
+    train_and_test(linear, single_step_window, 'linear_model')
+
 
     # Dense Deep
     print('dense_model')

@@ -10,7 +10,7 @@ from utils import WindowGenerator
 from utils import concat_data
 import os
 
-RETRAIN = False
+RETRAIN = True
 MAX_EPOCHS = 60
 CONV_WIDTH = 10
 VAL_PERFORMANCE = {}
@@ -196,7 +196,7 @@ def main():
        tf.keras.layers.Dense(num_features),
        tf.keras.layers.Reshape([1,-1])
     ])
-    train_and_test(multi_output_dense, multi_output_single_step_window, 'multi_dense')
+    train_and_test(multi_output_dense, multi_output_wide_window, 'multi_dense')
 
     # Res Net with multiple outputs
     print('residual_lstm')

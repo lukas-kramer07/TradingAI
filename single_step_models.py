@@ -9,10 +9,10 @@ import tensorflow as tf
 import numpy as np
 from utils import WindowGenerator
 from utils import concat_data
-
+from utils.dataengineering import iterate_files
 import os
 
-
+RETRAIN = False
 MAX_EPOCHS = 60
 CONV_WIDTH = 10
 VAL_PERFORMANCE = {}
@@ -82,7 +82,7 @@ def plot(val_performance=VAL_PERFORMANCE, performance=PERFORMANCE, plotname = 'N
 def main():
     #get data
     train_df, val_df, test_df, column_indices, num_features = concat_data('data')
-
+    models = iterate_files('Training/Models')
     # define windows
     single_step_window = WindowGenerator(
         train_df=train_df, val_df=val_df, test_df=test_df,
@@ -113,16 +113,18 @@ def main():
     # Train the different single_input models
 
     #Baseline
-    print('Baseline model')
+    baseline_name='Baseline model'
     baseline = Baseline(label_index=column_indices['close'])
     baseline_history = compile_and_fit(baseline, single_step_window)
-    test(baseline, single_step_window, 'baseline')
+    test(baseline, single_step_window, baseline_name)
+    baseline.save(f'Traning/Models/{baseline_name}')
 
     #Linear
-    print('linear model')
+    linear_name='linear model'
     linear = tf.keras.Sequential([tf.keras.layers.Dense(units=1)])
     linear_history = compile_and_fit(linear, single_step_window)
-    test(linear, single_step_window, 'linear')
+    test(linear, single_step_window, linear_name)
+    linear.save(f'Traning/Models/{linear_name}')
 
     # Dense Deep
     print('dense_model')
@@ -133,7 +135,6 @@ def main():
       ])
     dense_history = compile_and_fit(dense, single_step_window, patience=15)
     test(dense, single_step_window, 'dense')
-
 
     # Train the different multi_input models
 

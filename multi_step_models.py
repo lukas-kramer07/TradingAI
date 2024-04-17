@@ -30,3 +30,19 @@ def train_and_test(model, window, model_name, patience=5):
   else:
      model = tf.keras.models.load_model(f'Training/Models/{model_name}')
   test(model,window,model_name)
+
+def main():
+   #get data
+   train_df, val_df, test_df, column_indices, num_features = concat_data('data')
+   # define windows
+   OUT_STEPS = 24
+   multi_window = WindowGenerator(train_df=train_df, val_df = val_df, test_df=test_df,
+                                 input_width=24,
+                                 label_width=OUT_STEPS,
+                                 shift=OUT_STEPS)
+   multi_window.plot()
+
+
+if __name__ == '__main__':
+   main()
+   plt.show()

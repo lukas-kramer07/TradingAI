@@ -10,13 +10,14 @@ from utils import WindowGenerator
 from utils import concat_data, compile_and_fit, plot
 import os
 
-RETRAIN = True
+RETRAIN = False
 MAX_EPOCHS = 60
 CONV_WIDTH = 10
 VAL_PERFORMANCE = {}
 PERFORMANCE = {}
 HISTORY = {}
 INIT = tf.initializers.zeros()
+
 ## Models
 class Baseline(tf.keras.Model):
   def __init__(self, label_index=None):
@@ -90,7 +91,10 @@ def main():
     print('Baseline model')
     baseline = Baseline(label_index=column_indices['close'])
     train_and_test(baseline, single_step_window, 'baseline')
-
+    wide_window.plot(baseline)
+    print('Input shape:', wide_window.example[0].shape)
+    print('Output shape:', baseline(wide_window.example[0]).shape)
+    plt.show()
     #Linear
     print('linear model')
     linear = tf.keras.Sequential([tf.keras.layers.Dense(units=1)])

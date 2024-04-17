@@ -12,7 +12,7 @@ from utils import WindowGenerator
 from utils import concat_data, compile_and_fit, plot
 import os
 
-RETRAIN = True
+RETRAIN = False
 MAX_EPOCHS = 60
 VAL_PERFORMANCE = {}
 PERFORMANCE = {}
@@ -72,9 +72,9 @@ def main():
    # train the models (single output)
 
    # Baseline 1
-   """print('baselineLastStep')
+   print('baselineLastStep')
    last_baseline = LastStepBaseline(label_index=column_indices['close'])
-   train_and_test(last_baseline, multi_window, 'lastBaseline')"""
+   train_and_test(last_baseline, multi_window, 'lastBaseline')
    
    # Baseline 2
    print('baselineRepeat')
@@ -94,7 +94,7 @@ def main():
       tf.keras.layers.Reshape([OUT_STEPS, 1])
    ])
    train_and_test(multi_linear_model, multi_window, 'multi_linear')
-
+   
    plot(VAL_PERFORMANCE, PERFORMANCE, 'multi_step_performances')
 if __name__ == '__main__':
    main()

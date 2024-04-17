@@ -1,4 +1,4 @@
-## A number of single step models, prediciting one day into the future based on the last day of data / the last days of data
+## A number of multi step models, prediciting one day into the future based on the last day of data / the last days of data
 ## They predict the closing_value of the day
 
 #imports
@@ -20,13 +20,21 @@ OUT_STEPS = 50
 
 # Models
 class LastStepBaseline(tf.keras.Model):
-   def call(inputs):
+   def __init__(self, label_index=None):
+      super().__init__()
+      self.label_index = label_index
+   def call(self,inputs):
+      if self.label_index:
+         return tf.tile(inputs[:, -1:, self.label_index], [1, OUT_STEPS, tf.newaxis])
       return tf.tile(inputs[:, -1:, :], [1, OUT_STEPS, 1])
 
 class RepeatBaseline(tf.keras.Model):
    def call(inputs):
       return inputs
 
+"""class DeltaBaseline(tf.keras.Model):
+   def call(inputs):
+      delta = inputs[:, 0:, :] - inputs[:, -1:, :]""" # TODO
 
 
 def test(model, window, name):
@@ -51,9 +59,10 @@ def main():
                                  shift=OUT_STEPS)
    multi_window.plot()
 
-   # train the models
+   # train the models (single output)
 
    # Baseline 1
+   lastbaseline = LastStepBaseline()
 
 
 if __name__ == '__main__':

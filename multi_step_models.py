@@ -80,8 +80,22 @@ def main():
    print('baselineRepeat')
    repeat_baseline = RepeatBaseline(label_index=column_indices['close'])
    train_and_test(repeat_baseline, multi_window, 'repeatBaseline')
-   multi_window.plot(repeat_baseline)
 
+   # Multilinear
+   print('multilinear')
+   multi_linear_model = tf.keras.Sequential([
+      # Take the last time-step.
+      # Shape [batch, time, features] => [batch, 1, features]
+      tf.keras.layers.Lambda(lambda x: x[:, -1:, :]),
+      # Shape => [batch, 1, out_steps*features]
+      tf.keras.layers.Dense(OUT_STEPS*1,
+                           kernel_initializer=tf.initializers.zeros()),
+      # Shape => [batch, out_steps, features]
+      tf.keras.layers.Reshape([OUT_STEPS, 1])
+   ])
+   train_and_test(multi_linear_model, multi_window, 'multi_linear')
+
+   plot(VAL_PERFORMANCE, PERFORMANCE, 'multi_step_performances')
 if __name__ == '__main__':
    main()
    plt.show()

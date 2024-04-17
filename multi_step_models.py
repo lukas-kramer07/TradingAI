@@ -2,6 +2,8 @@
 ## They predict the closing_value of the day
 
 #imports
+from cProfile import label
+from operator import mul
 import pandas as pd
 import matplotlib.pyplot as plt
 import tensorflow as tf
@@ -25,10 +27,11 @@ class LastStepBaseline(tf.keras.Model):
       self.label_index = label_index
    def call(self,inputs):
       if self.label_index:
-         return tf.tile(inputs[:, -1:, self.label_index], [1, OUT_STEPS, tf.newaxis])
+         res = inputs[:, -1:, self.label_index]
+         return tf.tile(res[:, :, tf.newaxis], [1, OUT_STEPS, 1])
       return tf.tile(inputs[:, -1:, :], [1, OUT_STEPS, 1])
 
-class RepeatBaseline(tf.keras.Model):
+class RepeatBaseline(tf.keras.Model): #TODO
    def call(inputs):
       return inputs
 
@@ -56,13 +59,16 @@ def main():
    multi_window = WindowGenerator(train_df=train_df, val_df = val_df, test_df=test_df,
                                  input_width=50,
                                  label_width=OUT_STEPS,
-                                 shift=OUT_STEPS)
-   multi_window.plot()
+                                 shift=OUT_STEPS, label_columns=['close'])
 
    # train the models (single output)
 
    # Baseline 1
-   lastbaseline = LastStepBaseline()
+   lastbaseline = LastStepBaseline(label_index=column_indices['close'])
+   train_and_test(lastbaseline, multi_window, 'lastBaseline')
+   print('Input shape:', multi_window.example[0].shape)
+   print('Output shape:', lastbaseline(multi_window.example[0]).shape)
+   multi_window.plot(lastbaseline)
 
 
 if __name__ == '__main__':

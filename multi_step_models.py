@@ -23,6 +23,10 @@ class LastStepBaseline(tf.keras.Model):
    def call(inputs):
       return tf.tile(inputs[:, -1:, :], [1, OUT_STEPS, 1])
 
+class RepeatBaseline(tf.keras.Model):
+   def call(inputs):
+      return inputs
+
 
 
 def test(model, window, name):

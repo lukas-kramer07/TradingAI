@@ -4,6 +4,7 @@
 #imports
 from cProfile import label
 from operator import mul
+from pickle import TRUE
 import pandas as pd
 import matplotlib.pyplot as plt
 import tensorflow as tf
@@ -12,7 +13,7 @@ from utils import WindowGenerator
 from utils import concat_data, compile_and_fit, plot
 import os
 
-RETRAIN = False
+RETRAIN = TRUE
 MAX_EPOCHS = 60
 VAL_PERFORMANCE = {}
 PERFORMANCE = {}
@@ -52,7 +53,7 @@ def test(model, window, name):
     VAL_PERFORMANCE[name] = model.evaluate(window.val, return_dict=True)
     PERFORMANCE[name] = model.evaluate(window.test, verbose=0, return_dict=True)
 
-def train_and_test(model, window, model_name, patience=3):
+def train_and_test(model, window, model_name, patience=3 ,retrain = RETRAIN):
   if model_name not in os.listdir('Training/Models') or RETRAIN:
     HISTORY[model_name] = compile_and_fit(model, window, patience)
     model.save(f'Training/Models/{model_name}')
@@ -88,14 +89,16 @@ def main():
       # Shape [batch, time, features] => [batch, 1, features]
       tf.keras.layers.Lambda(lambda x: x[:, -1:, :]),
       # Shape => [batch, 1, out_steps*features]
-      tf.keras.layers.Dense(OUT_STEPS*1,
-                           kernel_initializer=tf.initializers.zeros()),
+      tf.keras.layers.Dense(OUT_STEPS*1,),#kernel_initializer=tf.initializers.zeros()),
       # Shape => [batch, out_steps, features]
       tf.keras.layers.Reshape([OUT_STEPS, 1])
    ])
    train_and_test(multi_linear_model, multi_window, 'multi_linear')
-   
+   multi_window.plot(multi_linear_model)
+   plt.show()
    plot(VAL_PERFORMANCE, PERFORMANCE, 'multi_step_performances')
+
+
 if __name__ == '__main__':
    main()
    plt.show()

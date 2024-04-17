@@ -31,8 +31,16 @@ class LastStepBaseline(tf.keras.Model):
          return tf.tile(res[:, :, tf.newaxis], [1, OUT_STEPS, 1])
       return tf.tile(inputs[:, -1:, :], [1, OUT_STEPS, 1])
 
-class RepeatBaseline(tf.keras.Model): #TODO
-   def call(inputs):
+class RepeatBaseline(tf.keras.Model):
+   def __init__(self, label_index=None):
+      super().__init__()
+      self.label_index = label_index
+   def call(self,inputs):
+      
+      delta = inputs[:, -1, :] - inputs[:, 0,:]
+      inputs+=delta[:, tf.newaxis, :]
+      if self.label_index:
+         return inputs[:,:,self.label_index][:,:,tf.newaxis]
       return inputs
 
 """class DeltaBaseline(tf.keras.Model):
@@ -44,7 +52,7 @@ def test(model, window, name):
     VAL_PERFORMANCE[name] = model.evaluate(window.val, return_dict=True)
     PERFORMANCE[name] = model.evaluate(window.test, verbose=0, return_dict=True)
 
-def train_and_test(model, window, model_name, patience=5):
+def train_and_test(model, window, model_name, patience=3):
   if model_name not in os.listdir('Training/Models') or RETRAIN:
     HISTORY[model_name] = compile_and_fit(model, window, patience)
     model.save(f'Training/Models/{model_name}')
@@ -64,12 +72,15 @@ def main():
    # train the models (single output)
 
    # Baseline 1
-   lastbaseline = LastStepBaseline(label_index=column_indices['close'])
-   train_and_test(lastbaseline, multi_window, 'lastBaseline')
-   print('Input shape:', multi_window.example[0].shape)
-   print('Output shape:', lastbaseline(multi_window.example[0]).shape)
-   multi_window.plot(lastbaseline)
-
+   """print('baselineLastStep')
+   last_baseline = LastStepBaseline(label_index=column_indices['close'])
+   train_and_test(last_baseline, multi_window, 'lastBaseline')"""
+   
+   # Baseline 2
+   print('baselineRepeat')
+   repeat_baseline = RepeatBaseline(label_index=column_indices['close'])
+   train_and_test(repeat_baseline, multi_window, 'repeatBaseline')
+   multi_window.plot(repeat_baseline)
 
 if __name__ == '__main__':
    main()

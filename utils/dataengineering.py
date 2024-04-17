@@ -60,13 +60,13 @@ def concat_data(folder):
     val_df = (val_df - train_mean) / train_std
     test_df = (test_df - train_mean) / train_std
 
-    # plot 
+    """# plot 
     df_std = (val_df - train_mean) / train_std
     df_std = df_std.melt(var_name='Column', value_name='Normalized')
     plt.figure(figsize=(12, 6))
     ax = sns.violinplot(x='Column', y='Normalized', data=df_std)
     _ = ax.set_xticklabels(val_df.keys(), rotation=90)     
-    plt.show()
+    plt.show()"""
 
     return train_df, val_df, test_df, column_indices, num_features
 def main():

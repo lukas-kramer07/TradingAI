@@ -12,11 +12,17 @@ import os
 
 RETRAIN = True
 MAX_EPOCHS = 60
-CONV_WIDTH = 10
 VAL_PERFORMANCE = {}
 PERFORMANCE = {}
 HISTORY = {}
 INIT = tf.initializers.zeros()
+OUT_STEPS = 50
+
+# Models
+class LastStepBaseline(tf.keras.Model):
+   def call(inputs):
+      return tf.tile(inputs[:, -1:, :], [1, OUT_STEPS, 1])
+
 
 
 def test(model, window, name):
@@ -35,12 +41,15 @@ def main():
    #get data
    train_df, val_df, test_df, column_indices, num_features = concat_data('data')
    # define windows
-   OUT_STEPS = 24
    multi_window = WindowGenerator(train_df=train_df, val_df = val_df, test_df=test_df,
-                                 input_width=24,
+                                 input_width=50,
                                  label_width=OUT_STEPS,
                                  shift=OUT_STEPS)
    multi_window.plot()
+
+   # train the models
+
+   # Baseline 1
 
 
 if __name__ == '__main__':

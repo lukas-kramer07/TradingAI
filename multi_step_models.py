@@ -97,11 +97,9 @@ def main():
    # MultiDense
    print('multi dense')
    multi_dense_model = tf.keras.Sequential([
-      #tf.keras.layers.Lambda(lambda x : x[:, -1:, :]),
-      tf.keras.layers.Flatten(),
+      tf.keras.layers.Lambda(lambda x : x[:, -1:, :]),
       tf.keras.layers.Dense(1024, activation = 'relu'),
-      tf.keras.layers.Dense(512, activation = 'relu'),
-      tf.keras.layers.Dense(OUT_STEPS),
+      tf.keras.layers.Dense(OUT_STEPS),#,kernel_initializer=tf.initializers.zeros()),
       tf.keras.layers.Reshape([OUT_STEPS,1])
    ])
    print(multi_dense_model(multi_window.example[0]).shape)

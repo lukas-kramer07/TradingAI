@@ -54,7 +54,7 @@ def test(model, window, name):
     PERFORMANCE[name] = model.evaluate(window.test, verbose=0, return_dict=True)
 
 def train_and_test(model, window, model_name, patience=3 ,retrain = RETRAIN):
-  if model_name not in os.listdir('Training/Models') or RETRAIN:
+  if model_name not in os.listdir('Training/Models') or retrain:
     HISTORY[model_name] = compile_and_fit(model, window, patience)
     model.save(f'Training/Models/{model_name}')
   else:
@@ -99,10 +99,12 @@ def main():
    multi_dense_model = tf.keras.Sequential([
       tf.keras.layers.Lambda(lambda x : x[:, -1:, :]),
       tf.keras.layers.Dense(64, activation = 'relu'),
+      tf.keras.layers.Dense(64, activation = 'relu'),
       tf.keras.layers.Dense(OUT_STEPS),
       tf.keras.layers.Reshape([OUT_STEPS,1])
    ])
-   train_and_test(multi_dense_model, multi_window, 'multi_dense')
+   print(multi_dense_model(multi_window.example[0]).shape)
+   train_and_test(multi_dense_model, multi_window, 'multi_dense', retrain=True)
    multi_window.plot(multi_dense_model)
    plt.show()
 

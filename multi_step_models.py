@@ -13,7 +13,7 @@ from utils import WindowGenerator
 from utils import concat_data, compile_and_fit, plot
 import os
 
-RETRAIN = TRUE
+RETRAIN = True
 MAX_EPOCHS = 60
 VAL_PERFORMANCE = {}
 PERFORMANCE = {}
@@ -50,6 +50,7 @@ class RepeatBaseline(tf.keras.Model):
 
 
 def test(model, window, name):
+    print(model(window.example[0]).shape)
     VAL_PERFORMANCE[name] = model.evaluate(window.val, return_dict=True)
     PERFORMANCE[name] = model.evaluate(window.test, verbose=0, return_dict=True)
 
@@ -66,12 +67,11 @@ def main():
    train_df, val_df, test_df, column_indices, num_features = concat_data('data')
    # define windows
    multi_window = WindowGenerator(train_df=train_df, val_df = val_df, test_df=test_df,
-                                 input_width=int(OUT_STEPS*1.5),
+                                 input_width=OUT_STEPS,
                                  label_width=OUT_STEPS,
                                  shift=OUT_STEPS, label_columns=['close'])
 
    # train the models (single output)
-
    # Baseline 1
    print('baselineLastStep')
    last_baseline = LastStepBaseline(label_index=column_indices['close'])
@@ -89,23 +89,24 @@ def main():
       # Shape [batch, time, features] => [batch, 1, features]
       tf.keras.layers.Lambda(lambda x: x[:, -1:, :]),
       # Shape => [batch, 1, out_steps*features]
-      tf.keras.layers.Dense(OUT_STEPS*1,),#kernel_initializer=tf.initializers.zeros()),
+      tf.keras.layers.Dense(OUT_STEPS,),#kernel_initializer=tf.initializers.zeros()),
       # Shape => [batch, out_steps, features]
       tf.keras.layers.Reshape([OUT_STEPS, 1])
    ])
-   train_and_test(multi_linear_model, multi_window, 'multi_linear')
-   multi_window.plot(multi_linear_model)
-   plt.show()
+   train_and_test(multi_linear_model, multi_window, 'multi_linear') 
 
    # MultiDense
    print('multi dense')
    multi_dense_model = tf.keras.Sequential([
-      tf.keras.layers.flatten(),
+      tf.keras.layers.Lambda(lambda x : x[:, -1:, :]),
       tf.keras.layers.Dense(64, activation = 'relu'),
-      tf.keras.layers.Dense(64, activation = 'relus'),
       tf.keras.layers.Dense(OUT_STEPS),
-      tf.keras.layers.Reshape([OUT_STEPS, 1])
+      tf.keras.layers.Reshape([OUT_STEPS,1])
    ])
+   train_and_test(multi_dense_model, multi_window, 'multi_dense')
+   multi_window.plot(multi_dense_model)
+   plt.show()
+
    plot(VAL_PERFORMANCE, PERFORMANCE, 'multi_step_performances')
 
 

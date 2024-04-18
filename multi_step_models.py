@@ -14,13 +14,13 @@ from utils import WindowGenerator
 from utils import concat_data, compile_and_fit, plot
 import os
 
-RETRAIN = False
+RETRAIN = True
 MAX_EPOCHS = 60
 VAL_PERFORMANCE = {}
 PERFORMANCE = {}
 HISTORY = {}
 INIT = tf.initializers.zeros()
-OUT_STEPS = 50
+OUT_STEPS = 250
 
 # Models
 class LastStepBaseline(tf.keras.Model):
@@ -116,12 +116,11 @@ def main():
       # Shape => [batch, 1, conv_units]
       tf.keras.layers.Conv1D(256, activation='relu', kernel_size=(CONV_WIDTH)),
       # Shape => [batch, 1,  out_steps*features]
-      tf.keras.layers.Dense(OUT_STEPS*num_features,
-                           kernel_initializer=tf.initializers.zeros()),
+      tf.keras.layers.Dense(OUT_STEPS),#kernel_initializer=tf.initializers.zeros()),
       # Shape => [batch, out_steps, features]
-      tf.keras.layers.Reshape([OUT_STEPS, num_features])
+      tf.keras.layers.Reshape([OUT_STEPS, 1])
    ])
-   train_and_test(multi_conv_model, multi_window, 'multi_conv', patience=10)
+   train_and_test(multi_conv_model, multi_window, 'multi_conv', patience=10, retrain=True)
    multi_window.plot(multi_conv_model)
    plt.show()
    plot(VAL_PERFORMANCE, PERFORMANCE, 'multi_step_performances')

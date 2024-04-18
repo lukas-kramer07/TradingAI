@@ -13,7 +13,7 @@ from utils import WindowGenerator
 from utils import concat_data, compile_and_fit, plot
 import os
 
-RETRAIN = True
+RETRAIN = False
 MAX_EPOCHS = 60
 VAL_PERFORMANCE = {}
 PERFORMANCE = {}
@@ -50,7 +50,6 @@ class RepeatBaseline(tf.keras.Model):
 
 
 def test(model, window, name):
-    print(model(window.example[0]).shape)
     VAL_PERFORMANCE[name] = model.evaluate(window.val, return_dict=True)
     PERFORMANCE[name] = model.evaluate(window.test, verbose=0, return_dict=True)
 

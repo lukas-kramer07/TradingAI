@@ -9,6 +9,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import numpy as np
+from single_step_models import CONV_WIDTH
 from utils import WindowGenerator
 from utils import concat_data, compile_and_fit, plot
 import os
@@ -106,6 +107,22 @@ def main():
    train_and_test(multi_dense_model, multi_window, 'multi_dense', retrain=True, patience=10)
    multi_window.plot(multi_dense_model)
    plt.show()
+
+   # Conv Model
+   print('conv_model')
+   CONV_WIDTH = OUT_STEPS
+   multi_conv_model = tf.keras.Sequential([
+      # Shape [batch, time, features] => [batch, CONV_WIDTH, features]
+      tf.keras.layers.Lambda(lambda x: x[:, -CONV_WIDTH:, :]),
+      # Shape => [batch, 1, conv_units]
+      tf.keras.layers.Conv1D(256, activation='relu', kernel_size=(CONV_WIDTH)),
+      # Shape => [batch, 1,  out_steps*features]
+      tf.keras.layers.Dense(OUT_STEPS*num_features,
+                           kernel_initializer=tf.initializers.zeros()),
+      # Shape => [batch, out_steps, features]
+      tf.keras.layers.Reshape([OUT_STEPS, num_features])
+   ])
+   
 
    plot(VAL_PERFORMANCE, PERFORMANCE, 'multi_step_performances')
 

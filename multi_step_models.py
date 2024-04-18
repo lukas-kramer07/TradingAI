@@ -104,13 +104,12 @@ def main():
       tf.keras.layers.Reshape([OUT_STEPS,1])
    ])
    print(multi_dense_model(multi_window.example[0]).shape)
-   train_and_test(multi_dense_model, multi_window, 'multi_dense', retrain=True, patience=10)
-   multi_window.plot(multi_dense_model)
-   plt.show()
+   train_and_test(multi_dense_model, multi_window, 'multi_dense')
+   
 
    # Conv Model
    print('conv_model')
-   CONV_WIDTH = OUT_STEPS
+   CONV_WIDTH = OUT_STEPS//2
    multi_conv_model = tf.keras.Sequential([
       # Shape [batch, time, features] => [batch, CONV_WIDTH, features]
       tf.keras.layers.Lambda(lambda x: x[:, -CONV_WIDTH:, :]),
@@ -122,8 +121,9 @@ def main():
       # Shape => [batch, out_steps, features]
       tf.keras.layers.Reshape([OUT_STEPS, num_features])
    ])
-   
-
+   train_and_test(multi_conv_model, multi_window, 'multi_conv', patience=10)
+   multi_window.plot(multi_conv_model)
+   plt.show()
    plot(VAL_PERFORMANCE, PERFORMANCE, 'multi_step_performances')
 
 

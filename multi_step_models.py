@@ -66,7 +66,7 @@ def main():
    train_df, val_df, test_df, column_indices, num_features = concat_data('data')
    # define windows
    multi_window = WindowGenerator(train_df=train_df, val_df = val_df, test_df=test_df,
-                                 input_width=50,
+                                 input_width=int(OUT_STEPS*1.5),
                                  label_width=OUT_STEPS,
                                  shift=OUT_STEPS, label_columns=['close'])
 
@@ -96,6 +96,16 @@ def main():
    train_and_test(multi_linear_model, multi_window, 'multi_linear')
    multi_window.plot(multi_linear_model)
    plt.show()
+
+   # MultiDense
+   print('multi dense')
+   multi_dense_model = tf.keras.Sequential([
+      tf.keras.layers.flatten(),
+      tf.keras.layers.Dense(64, activation = 'relu'),
+      tf.keras.layers.Dense(64, activation = 'relus'),
+      tf.keras.layers.Dense(OUT_STEPS),
+      tf.keras.layers.Reshape([OUT_STEPS, 1])
+   ])
    plot(VAL_PERFORMANCE, PERFORMANCE, 'multi_step_performances')
 
 

@@ -10,7 +10,7 @@ api_key = config['API']['api_key']
 DATA_NAME = 'TSM'
 url = f'https://financialmodelingprep.com/api/v3/historical-price-full/{DATA_NAME}'
 
-NUM_DATA = 6 # number of 5-years data stacked in a df 
+NUM_DATA = 2 # number of 5-years data stacked in a df 
 
 
 def getdata(date_end):

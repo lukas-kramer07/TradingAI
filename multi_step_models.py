@@ -20,7 +20,7 @@ VAL_PERFORMANCE = {}
 PERFORMANCE = {}
 HISTORY = {}
 INIT = tf.initializers.zeros()
-OUT_STEPS = 50
+OUT_STEPS = 300
 
 # Models
 class LastStepBaseline(tf.keras.Model):

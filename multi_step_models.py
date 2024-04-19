@@ -14,7 +14,7 @@ from utils import WindowGenerator
 from utils import concat_data, compile_and_fit, plot
 import os
 
-RETRAIN = False
+RETRAIN = True
 MAX_EPOCHS = 60
 VAL_PERFORMANCE = {}
 PERFORMANCE = {}
@@ -129,8 +129,7 @@ def main():
       # Adding more `lstm_units` just overfits more quickly.
       tf.keras.layers.LSTM(32, return_sequences=False),
       # Shape => [batch, out_steps*features].
-      tf.keras.layers.Dense(OUT_STEPS*num_features,
-                           kernel_initializer=tf.initializers.zeros()),
+      tf.keras.layers.Dense(OUT_STEPS*num_features),
       # Shape => [batch, out_steps, features].
       tf.keras.layers.Reshape([OUT_STEPS, num_features])
    ])

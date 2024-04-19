@@ -52,13 +52,13 @@ def concat_data(folder):
       val_df = pd.concat([val_df, val_df1], axis=0)
       test_df = pd.concat([test_df, test_df1], axis=0) 
     
-    # Standardize
+    """# Standardize
     train_mean = train_df.mean()
     train_std = train_df.std()
     print('mean: ', train_mean)
     train_df = (train_df - train_mean) / train_std
     val_df = (val_df - train_mean) / train_std
-    test_df = (test_df - train_mean) / train_std
+    test_df = (test_df - train_mean) / train_std"""
 
     """# plot 
     df_std = (val_df - train_mean) / train_std

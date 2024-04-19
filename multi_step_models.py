@@ -20,7 +20,7 @@ VAL_PERFORMANCE = {}
 PERFORMANCE = {}
 HISTORY = {}
 INIT = tf.initializers.zeros()
-OUT_STEPS = 250
+OUT_STEPS = 50
 
 # Models
 class LastStepBaseline(tf.keras.Model):
@@ -121,7 +121,21 @@ def main():
       tf.keras.layers.Reshape([OUT_STEPS, 1])
    ])
    train_and_test(multi_conv_model, multi_window, 'multi_conv', patience=10, retrain=True)
-   multi_window.plot(multi_conv_model)
+
+   # lstm Model
+   print('lstm Model')
+   multi_lstm_model = tf.keras.Sequential([
+      # Shape [batch, time, features] => [batch, lstm_units].
+      # Adding more `lstm_units` just overfits more quickly.
+      tf.keras.layers.LSTM(32, return_sequences=False),
+      # Shape => [batch, out_steps*features].
+      tf.keras.layers.Dense(OUT_STEPS*num_features,
+                           kernel_initializer=tf.initializers.zeros()),
+      # Shape => [batch, out_steps, features].
+      tf.keras.layers.Reshape([OUT_STEPS, num_features])
+   ])
+   train_and_test(multi_lstm_model, multi_window, 'multi_lstm')
+   multi_window.plot(multi_lstm_model)
    plt.show()
    plot(VAL_PERFORMANCE, PERFORMANCE, 'multi_step_performances')
 

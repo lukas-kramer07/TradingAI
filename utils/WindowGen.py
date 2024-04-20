@@ -34,11 +34,23 @@ class WindowGenerator():
     def __init__(self, input_width, label_width, shift,
                 train_df, val_df, test_df,
                 label_columns=None):
+        """initialises the window
+
+        Args:
+            input_width (int): width of input window
+            label_width (int): width of label window
+            shift (int): shift between labels and inputs
+            train_df (list, pandas dataframe): train dataset or list of train datasets
+            val_df (list, pandas dataframe): validation dataset or list of val datasets
+            test_df (list, pandas dataframe): test dataset or list of test datasets
+            label_columns (str, optional): label of the window. Defaults to all labels.
+        """
         # Store the raw data.
         self.train_df = train_df
         self.val_df = val_df
         self.test_df = test_df
-
+        if isinstance(train_df, list): # account for lists of datasets
+            train_df = train_df[1]
         # Work out the label column indices.
         self.label_columns = label_columns
         if label_columns is not None:
@@ -110,6 +122,8 @@ class WindowGenerator():
         return inputs, labels
     
     def make_dataset(self, data):
+        if isinstance(data, list):
+            return np.concatenate([self.make_dataset(d) for d in data], axis = 0)
         data = np.array(data, dtype=np.float32)
         ds = tf.keras.utils.timeseries_dataset_from_array(
             data=data,

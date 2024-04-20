@@ -123,7 +123,6 @@ class WindowGenerator():
     
     def make_dataset(self, data):
         if isinstance(data, list):
-            print(self.make_dataset(data[0]))
             ds_list = [self.make_dataset(d) for d in data]
             combined_ds= ds_list[0]
             for ds in ds_list[1:]: 

@@ -11,7 +11,7 @@ from utils import WindowGenerator
 from utils import concat_data, compile_and_fit, plot
 import os
 
-RETRAIN = False
+RETRAIN = True
 MAX_EPOCHS = 60
 VAL_PERFORMANCE = {}
 PERFORMANCE = {}

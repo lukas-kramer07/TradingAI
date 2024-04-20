@@ -17,7 +17,6 @@ def plot(df, date_time):
     plot_features.index = date_time[:20]
     _ = plot_features.plot(subplots=True)
     plt.show()
-
 def return_data(filename = FILENAME):
     df = pd.read_pickle(filename)
     df.pop('label')
@@ -45,20 +44,19 @@ def iterate_files(folder_path):
             yield filename
 def concat_data(folder):
     # concat all data
-    train_df, val_df, test_df= None, None, None
+    train_df, val_df, test_df= [],[],[]
     for filename in iterate_files(folder):
       train_df1, val_df1, test_df1, column_indices, num_features = return_data(filename=f'{folder}/{filename}')
-      train_df = pd.concat([train_df, train_df1],axis =0)
-      val_df = pd.concat([val_df, val_df1], axis=0)
-      test_df = pd.concat([test_df, test_df1], axis=0) 
+      train_df.append(train_df1)
+      val_df.append(train_df1)
+      test_df.append(train_df1)
     
-    # Standardize
+    '''# Standardize
     train_mean = train_df.mean()
     train_std = train_df.std()
-    print('mean: ', train_mean)
     train_df = (train_df - train_mean) / train_std
     val_df = (val_df - train_mean) / train_std
-    test_df = (test_df - train_mean) / train_std
+    test_df = (test_df - train_mean) / train_std'''
 
     """# plot 
     df_std = (val_df - train_mean) / train_std

@@ -2,9 +2,6 @@
 ## They predict the closing_value of the day
 
 #imports
-from cProfile import label
-from operator import mul
-from pickle import TRUE
 import pandas as pd
 import matplotlib.pyplot as plt
 import tensorflow as tf
@@ -20,7 +17,7 @@ VAL_PERFORMANCE = {}
 PERFORMANCE = {}
 HISTORY = {}
 INIT = tf.initializers.zeros()
-OUT_STEPS = 500
+OUT_STEPS = 100
 
 # Models
 class LastStepBaseline(tf.keras.Model):
@@ -127,17 +124,17 @@ def main():
    multi_lstm_model = tf.keras.Sequential([
       # Shape [batch, time, features] => [batch, lstm_units].
       # Adding more `lstm_units` just overfits more quickly.
-      tf.keras.layers.LSTM(64, return_sequences=False),
+      tf.keras.layers.LSTM(32, return_sequences=False),
       # Shape => [batch, out_steps*features].
       tf.keras.layers.Dense(OUT_STEPS*num_features),
       # Shape => [batch, out_steps, features].
       tf.keras.layers.Reshape([OUT_STEPS, num_features])
    ])
-   train_and_test(multi_lstm_model, multi_window, 'multi_lstm', retrain = True)
+   train_and_test(multi_lstm_model, multi_window, 'multi_lstm')
    multi_window.plot(multi_lstm_model)
    plt.show()
    plot(VAL_PERFORMANCE, PERFORMANCE, 'multi_step_performances')
-
+   multi_window.plot(max_subplots=30, plot_col='change')
 
 if __name__ == '__main__':
    main()

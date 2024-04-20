@@ -30,8 +30,8 @@ def return_data(filename = FILENAME):
 
     n = len(df)
     train_df = df[0:int(n*0.8)]
-    val_df = df[int(n*0.8):int(n*0.9)]
-    test_df = df[int(n*0.9):]
+    val_df = df[int(n*0.8):]
+    test_df = val_df
 
     num_features = df.shape[1]
 

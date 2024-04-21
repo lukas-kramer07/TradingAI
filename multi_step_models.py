@@ -12,7 +12,6 @@ from utils import concat_data, compile_and_fit, plot
 import os
 
 RETRAIN = True
-MAX_EPOCHS = 60
 VAL_PERFORMANCE = {}
 PERFORMANCE = {}
 HISTORY = {}

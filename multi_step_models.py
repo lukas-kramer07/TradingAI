@@ -133,7 +133,6 @@ def main():
    multi_window.plot(multi_lstm_model)
    plt.show()
    plot(VAL_PERFORMANCE, PERFORMANCE, 'multi_step_performances')
-   multi_window.plot(max_subplots=30, plot_col='change')
 
 if __name__ == '__main__':
    main()

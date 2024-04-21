@@ -46,17 +46,21 @@ def concat_data(folder):
     # concat all data
     train_df, val_df, test_df= [],[],[]
     for filename in iterate_files(folder):
-      train_df1, val_df1, test_df1, column_indices, num_features = return_data(filename=f'{folder}/{filename}')
-      train_df.append(train_df1)
-      val_df.append(train_df1)
-      test_df.append(train_df1)
+        train_df1, val_df1, test_df1, column_indices, num_features = return_data(filename=f'{folder}/{filename}')
+
+        # standardize
+        train_mean = train_df1.mean()
+        train_std = train_df1.std()
+        train_df1 = (train_df1 - train_mean) / train_std
+        val_df1 = (val_df1 - train_mean) / train_std
+        test_df1 = (test_df1 - train_mean) / train_std
+        
+        train_df.append(train_df1)
+        val_df.append(train_df1)
+        test_df.append(train_df1)
     
-    '''# Standardize
-    train_mean = train_df.mean()
-    train_std = train_df.std()
-    train_df = (train_df - train_mean) / train_std
-    val_df = (val_df - train_mean) / train_std
-    test_df = (test_df - train_mean) / train_std'''
+
+
 
     """# plot 
     df_std = (val_df - train_mean) / train_std

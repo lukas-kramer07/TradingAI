@@ -120,13 +120,15 @@ class WindowGenerator():
         labels.set_shape([None, self.label_width, None])
 
         return inputs, labels
-    
+    def normalize(self, ds):
+        print(tf.nn.moments(ds))
     def make_dataset(self, data):
         if isinstance(data, list):
             ds_list = [self.make_dataset(d) for d in data]
             combined_ds= ds_list[0]
             for ds in ds_list[1:]: 
                 combined_ds = combined_ds.concatenate(ds)
+            self.normalize(combined_ds)
             return combined_ds
         else:
             data = np.array(data, dtype=np.float32)
@@ -139,5 +141,5 @@ class WindowGenerator():
                 batch_size=32,)
 
             ds = ds.map(self.split_window)
-
+        
         return ds

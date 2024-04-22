@@ -44,14 +44,24 @@ def iterate_files(folder_path):
             yield filename
 def concat_data(folder):
     # concat all data
-    train_df, val_df, test_df= [],[],[]
+    standard, train_df, val_df, test_df= None,[],[],[]
     for filename in iterate_files(folder):
         train_df1, val_df1, test_df1, column_indices, num_features = return_data(filename=f'{folder}/{filename}')
-        
+        standard = pd.concat([standard, train_df1])
         train_df.append(train_df1)
         val_df.append(train_df1)
         test_df.append(train_df1)
+    
+    #standardize
+    mean = standard.mean()
+    std = standard.std()
 
+    for df in train_df: 
+        df = (df - mean)/std
+    for df in val_df:
+        df = (df - mean)/std
+    for df in test_df:
+        df = (df-mean)/std
         
     """# plot 
     df_std = (val_df - train_mean) / train_std

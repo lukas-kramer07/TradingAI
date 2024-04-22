@@ -16,7 +16,7 @@ VAL_PERFORMANCE = {}
 PERFORMANCE = {}
 HISTORY = {}
 INIT = tf.initializers.zeros()
-OUT_STEPS = 100
+OUT_STEPS = 300
 
 # Models
 class LastStepBaseline(tf.keras.Model):
@@ -130,7 +130,7 @@ def main():
       tf.keras.layers.Reshape([OUT_STEPS, num_features])
    ])
    train_and_test(multi_lstm_model, multi_window, 'multi_lstm')
-   multi_window.plot(multi_lstm_model)
+   multi_window.plot(multi_lstm_model, max_subplots=15)
    plt.show()
    plot(VAL_PERFORMANCE, PERFORMANCE, 'multi_step_performances')
 

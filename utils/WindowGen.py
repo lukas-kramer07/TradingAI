@@ -120,8 +120,6 @@ class WindowGenerator():
         labels.set_shape([None, self.label_width, None])
 
         return inputs, labels
-    def normalize(self, ds):
-        print(tf.nn.moments(ds))
     def make_dataset(self, data):
         if isinstance(data, list):
             ds_list = [self.make_dataset(d) for d in data]

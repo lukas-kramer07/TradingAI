@@ -126,7 +126,6 @@ class WindowGenerator():
             combined_ds= ds_list[0]
             for ds in ds_list[1:]: 
                 combined_ds = combined_ds.concatenate(ds)
-            self.normalize(combined_ds)
             return combined_ds
         else:
             data = np.array(data, dtype=np.float32)

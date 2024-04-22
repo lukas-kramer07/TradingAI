@@ -51,8 +51,8 @@ def concat_data(folder):
         train_df1, val_df1, test_df1, column_indices, num_features = return_data(filename=f'{folder}/{filename}')
         standard = pd.concat([standard, train_df1])
         train_df.append(train_df1)
-        val_df.append(train_df1)
-        test_df.append(train_df1)
+        val_df.append(val_df1)
+        test_df.append(test_df1)
     
     #standardize
     mean = standard.mean()

@@ -11,6 +11,7 @@ from utils import concat_data, compile_and_fit, plot
 import os
 
 RETRAIN = False
+SHIFT = 1
 MAX_EPOCHS = 60
 CONV_WIDTH = 10
 VAL_PERFORMANCE = {}
@@ -47,8 +48,8 @@ def test(model, window, name):
     VAL_PERFORMANCE[name] = model.evaluate(window.val, return_dict=True)
     PERFORMANCE[name] = model.evaluate(window.test, verbose=0, return_dict=True)
 
-def train_and_test(model, window, model_name, patience=5):
-  if model_name not in os.listdir('Training/Models') or RETRAIN:
+def train_and_test(model, window, model_name, patience=5, retrain = RETRAIN):
+  if model_name not in os.listdir('Training/Models') or retrain:
     HISTORY[model_name] = compile_and_fit(model, window, patience)
     model.save(f'Training/Models/{model_name}')
   else:
@@ -61,27 +62,27 @@ def main():
     # define windows
     single_step_window = WindowGenerator(
         train_df=train_df, val_df=val_df, test_df=test_df,
-        input_width=1, label_width=1, shift=1,
+        input_width=1, label_width=1, shift=SHIFT,
         label_columns=['close'])
 
     multi_output_single_step_window = WindowGenerator(
         train_df=train_df, val_df=val_df, test_df=test_df,
-        input_width=1, label_width=1, shift=1)
+        input_width=1, label_width=1, shift=SHIFT)
     
     wide_window = WindowGenerator(
         train_df=train_df, val_df=val_df, test_df=test_df,
-        input_width=20, label_width=20, shift=1,
+        input_width=20, label_width=20, shift=SHIFT,
         label_columns=['close'])
     
     multi_output_wide_window = WindowGenerator(
         train_df=train_df, val_df=val_df, test_df=test_df,
-        input_width=20, label_width=20, shift=1)
+        input_width=20, label_width=20, shift=SHIFT)
     
     conv_window = WindowGenerator(
         train_df=train_df, val_df=val_df, test_df=test_df,
         input_width=CONV_WIDTH,
         label_width=1,
-        shift=1,
+        shift=SHIFT,
         label_columns=['close'])
 
 
@@ -91,7 +92,6 @@ def main():
     print('Baseline model')
     baseline = Baseline(label_index=column_indices['close'])
     train_and_test(baseline, single_step_window, 'baseline')
-    wide_window.plot(baseline)
     print('Input shape:', wide_window.example[0].shape)
     print('Output shape:', baseline(wide_window.example[0]).shape)
     plt.show()
@@ -181,7 +181,7 @@ def main():
             # Therefore, initialize the output layer with zeros.
             kernel_initializer=tf.initializers.zeros())
     ]))
-    train_and_test(residual_lstm, multi_output_wide_window, 'residual_lstm')
+    train_and_test(residual_lstm, multi_output_wide_window, 'residual_lstm', retrain=True)
 
     plot(VAL_PERFORMANCE, PERFORMANCE, 'single_step_multi_output_models')
 

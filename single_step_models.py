@@ -10,8 +10,8 @@ from utils import WindowGenerator
 from utils import concat_data, compile_and_fit, plot
 import os
 
-RETRAIN = False
-SHIFT = 1
+RETRAIN = True
+SHIFT = 50
 MAX_EPOCHS = 60
 CONV_WIDTH = 10
 VAL_PERFORMANCE = {}

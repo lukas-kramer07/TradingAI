@@ -168,7 +168,7 @@ def main():
        tf.keras.layers.Dense(num_features),
        tf.keras.layers.Reshape([1,-1])
     ])
-    train_and_test(multi_output_dense, multi_output_wide_window, 'multi_dense')
+    train_and_test(multi_output_dense, multi_output_wide_window, 'single_multi_output_dense')
 
     # Res Net with multiple outputs
     print('residual_lstm')

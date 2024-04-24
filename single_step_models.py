@@ -11,7 +11,7 @@ from utils import concat_data, compile_and_fit, plot
 import os
 
 RETRAIN = True
-SHIFT = 100
+SHIFT = 150
 MAX_EPOCHS = 60
 CONV_WIDTH = 10
 VAL_PERFORMANCE = {}
@@ -147,6 +147,19 @@ def main():
         tf.keras.layers.Dense(units=1)
     ])
     train_and_test(lstm_model, wide_window, 'lstm')
+
+    # res Net with single_output
+    print('residual_lstm')
+    residual_lstm_single = ResidualWrapper(
+        tf.keras.Sequential([
+        tf.keras.layers.LSTM(32, return_sequences=True),
+        tf.keras.layers.Dense(
+            1,
+            # The predicted deltas should start small.
+            # Therefore, initialize the output layer with zeros.
+            kernel_initializer=tf.initializers.zeros())
+    ]))
+    train_and_test(residual_lstm_single, wide_window, 'residual_lstm_single', retrain=True)
 
     plot(val_performance=VAL_PERFORMANCE, performance=PERFORMANCE, plotname='single_step_single_output_models')
     VAL_PERFORMANCE.clear()

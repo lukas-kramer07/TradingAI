@@ -32,9 +32,10 @@ class Baseline(tf.keras.Model):
     return result[:, :, tf.newaxis]
 
 class ResidualWrapper(tf.keras.Model):
-  def __init__(self, model):
+  def __init__(self, model, label_index=None):
     super().__init__()
     self.model = model
+    self.label_index = label_index
 
   def call(self, inputs, *args, **kwargs):
     delta = self.model(inputs, *args, **kwargs)
@@ -42,6 +43,8 @@ class ResidualWrapper(tf.keras.Model):
     # The prediction for each time step is the input
     # from the previous time step plus the delta
     # calculated by the model.
+    if self.label_index: 
+      return inputs[self.label_index] + delta
     return inputs + delta
 
 def test(model, window, name):

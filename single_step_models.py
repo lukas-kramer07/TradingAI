@@ -44,7 +44,7 @@ class ResidualWrapper(tf.keras.Model):
     # from the previous time step plus the delta
     # calculated by the model.
     if self.label_index: 
-      return inputs[self.label_index] + delta
+      return inputs[:, :, self.label_index][:,:,tf.newaxis] + delta
     return inputs + delta
 
 def test(model, window, name):
@@ -161,7 +161,7 @@ def main():
             # The predicted deltas should start small.
             # Therefore, initialize the output layer with zeros.
             kernel_initializer=tf.initializers.zeros())
-    ]))
+    ]), label_index=column_indices['close'])
     train_and_test(residual_lstm_single, wide_window, 'residual_lstm_single', retrain=True)
 
     plot(val_performance=VAL_PERFORMANCE, performance=PERFORMANCE, plotname='single_step_single_output_models')

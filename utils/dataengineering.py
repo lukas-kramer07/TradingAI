@@ -47,7 +47,7 @@ def standardize(df, mean, std):
     return (df-mean)/std
 def concat_data(folder, standard = STANDARDOVERSINGLEDATA):
     if standard:
-        train_df, val_df, test_df= None,[],[],[]
+        train_df, val_df, test_df= [],[],[]
         for filename in iterate_files(folder):
             train_df1, val_df1, test_df1, column_indices, num_features = return_data(filename=f'{folder}/{filename}')
             mean = train_df1.mean()

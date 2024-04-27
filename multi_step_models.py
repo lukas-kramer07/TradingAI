@@ -16,7 +16,7 @@ VAL_PERFORMANCE = {}
 PERFORMANCE = {}
 HISTORY = {}
 INIT = tf.initializers.zeros()
-OUT_STEPS = 200
+OUT_STEPS = 150
 
 # Models
 class LastStepBaseline(tf.keras.Model):
@@ -60,7 +60,7 @@ def train_and_test(model, window, model_name, patience=3 ,retrain = RETRAIN):
 
 def main():
    #get data
-   train_df, val_df, test_df, column_indices, num_features = concat_data('data')
+   train_df, val_df, test_df, column_indices, num_features = concat_data('data', standard=True)
    # define windows
    multi_window = WindowGenerator(train_df=train_df, val_df = val_df, test_df=test_df,
                                  input_width=OUT_STEPS,
@@ -132,7 +132,7 @@ def main():
    train_and_test(multi_lstm_model, multi_window, 'multi_lstm')
    multi_window.plot(multi_lstm_model, max_subplots=15)
    plt.show()
-   plot(VAL_PERFORMANCE, PERFORMANCE, 'multi_step_performances')
+   plot(VAL_PERFORMANCE, PERFORMANCE, 'single_standard_multi_step_performances')
 
 if __name__ == '__main__':
    main()

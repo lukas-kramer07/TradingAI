@@ -61,7 +61,7 @@ def train_and_test(model, window, model_name, patience=5, retrain = RETRAIN):
 
 def main():
     #get data
-    train_df, val_df, test_df, column_indices, num_features = concat_data('data', standard=True)
+    train_df, val_df, test_df, column_indices, num_features = concat_data('data', standard=False)
     # define windows
     single_step_window = WindowGenerator(
         train_df=train_df, val_df=val_df, test_df=test_df,
@@ -199,7 +199,7 @@ def main():
     ]))
     train_and_test(residual_lstm, multi_output_wide_window, 'residual_lstm', retrain=True)
 
-    plot(VAL_PERFORMANCE, PERFORMANCE, 'single_standard_single_step_multi_output_models')
+    plot(VAL_PERFORMANCE, PERFORMANCE, 'all_standard_single_step_multi_output_models')
 
 if __name__ == '__main__':
     main()

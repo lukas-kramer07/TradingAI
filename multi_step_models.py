@@ -132,7 +132,7 @@ def main():
    train_and_test(multi_lstm_model, multi_window, 'multi_lstm')
    multi_window.plot(multi_lstm_model, max_subplots=15)
    plt.show()
-   plot(VAL_PERFORMANCE, PERFORMANCE, 'single_standard_multi_step_performances')
+   plot(VAL_PERFORMANCE, PERFORMANCE, 'all_standard_multi_step_performances')
 
 if __name__ == '__main__':
    main()

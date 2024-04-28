@@ -125,11 +125,25 @@ def main():
       # Adding more `lstm_units` just overfits more quickly.
       tf.keras.layers.LSTM(32, return_sequences=False),
       # Shape => [batch, out_steps*features].
-      tf.keras.layers.Dense(OUT_STEPS*num_features),
+      tf.keras.layers.Dense(OUT_STEPS),
       # Shape => [batch, out_steps, features].
-      tf.keras.layers.Reshape([OUT_STEPS, num_features])
+      tf.keras.layers.Reshape([OUT_STEPS, 1])
    ])
    train_and_test(multi_lstm_model, multi_window, 'multi_lstm')
+
+   # res Net lstm
+   print('residual_lstm')
+   residual_lstm_single = ResidualWrapper(
+        tf.keras.Sequential([
+        tf.keras.layers.LSTM(32, return_sequences=True),
+        tf.keras.layers.Dense(
+            OUT_STEPS,
+            # The predicted deltas should start small.
+            # Therefore, initialize the output layer with zeros.
+            kernel_initializer=tf.initializers.zeros())
+    ]), label_index=column_indices['close'])
+   train_and_test(residual_lstm_single, multi_window, 'residual_lstm_single', retrain=True)
+   
    multi_window.plot(multi_lstm_model, max_subplots=15)
    plt.show()
    plot(VAL_PERFORMANCE, PERFORMANCE, 'all_standard_multi_step_performances')

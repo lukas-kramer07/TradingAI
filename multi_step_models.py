@@ -133,7 +133,7 @@ def main():
 
    # res Net lstm
    print('residual_lstm')
-   residual_lstm_single = ResidualWrapper(
+   residual_lstm_multi = ResidualWrapper(
         tf.keras.Sequential([
         tf.keras.layers.LSTM(32, return_sequences=True),
         tf.keras.layers.Dense(
@@ -142,9 +142,9 @@ def main():
             # Therefore, initialize the output layer with zeros.
             kernel_initializer=tf.initializers.zeros())
     ]), label_index=column_indices['close'])
-   train_and_test(residual_lstm_single, multi_window, 'residual_lstm_single', retrain=True)
+   train_and_test(residual_lstm_multi, multi_window, 'residual_lstm_multi', retrain=True)
    
-   multi_window.plot(multi_lstm_model, max_subplots=15)
+   multi_window.plot(residual_lstm_multi, max_subplots=15)
    plt.show()
    plot(VAL_PERFORMANCE, PERFORMANCE, 'all_standard_multi_step_performances')
 

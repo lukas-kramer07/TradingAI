@@ -135,12 +135,12 @@ def main():
    print('residual_lstm')
    residual_lstm_multi = ResidualWrapper(
         tf.keras.Sequential([
-        #tf.keras.layers.LSTM(1, return_sequences=True),
+        tf.keras.layers.LSTM(64, return_sequences=True),
         tf.keras.layers.Dense(
             OUT_STEPS,
             kernel_initializer=tf.initializers.zeros())
     ]), label_index=column_indices['close'])
-   train_and_test(residual_lstm_multi, multi_window, 'residual_lstm_multi', retrain=True)
+   train_and_test(residual_lstm_multi, multi_window, 'residual_lstm_multi')
    
    multi_window.plot(residual_lstm_multi, max_subplots=15)
    plt.show()

@@ -53,7 +53,7 @@ class FeedBack(tf.keras.Model):
       self.lstm_cell = tf.keras.layers.LSTMCell(units)
       # Also wrap the LSTMCell in an RNN to simplify the `warmup` method.
       self.lstm_rnn = tf.keras.layers.RNN(self.lstm_cell, return_state=True)
-      self.dense = tf.keras.layers.Dense(1)
+      self.dense = tf.keras.layers.Dense(11)
    def warmup(self, inputs):
       # inputs.shape => (batch, time, features)
       # x.shape => (batch, lstm_units)
@@ -196,7 +196,7 @@ def main():
    plt.show()
    plot(VAL_PERFORMANCE, PERFORMANCE, 'all_standard_multi_step_performances')
 
-   
+
 if __name__ == '__main__':
    main()
    plt.show()

@@ -186,10 +186,17 @@ def main():
     ]), label_index=column_indices['close'])
    train_and_test(residual_lstm_multi, multi_window, 'residual_lstm_multi')
    
-   multi_window.plot(residual_lstm_multi, max_subplots=15)
+   
+   # autoregreassive model
+   feedback_model = FeedBack(units=32, out_steps=OUT_STEPS)
+   train_and_test(feedback_model, multi_window, 'autoregressive')
+   multi_window.plot(feedback_model, max_subplots=15)
+
+
    plt.show()
    plot(VAL_PERFORMANCE, PERFORMANCE, 'all_standard_multi_step_performances')
 
+   
 if __name__ == '__main__':
    main()
    plt.show()

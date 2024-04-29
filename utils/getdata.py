@@ -7,7 +7,7 @@ config = ConfigParser()
 config.read('config.cfg')
 api_key = config['API']['api_key']
 # Define the URL of the API endpoint you want to request
-DATA_NAMES = ['AAPL', 'JNJ', 'V', 'KO', 'XOM', 'WMT', 'GOOGL', 'PFE', 'JPM', 'PG', 'AMZN', 'CVX', 'COST', 'FB', 'T', 'GE','IBM', 'NOK', 'KODK', 'MYSQ']
+DATA_NAMES = ['AAPL', 'JNJ', 'V', 'KO', 'XOM', 'WMT', 'GOOGL', 'PFE', 'JPM', 'PG', 'AMZN', 'CVX', 'COST', 'T', 'GE','IBM', 'NOK']
 url = f'https://financialmodelingprep.com/api/v3/historical-price-full/'
 
 NUM_DATA = 4 # number of 5-years data stacked in a df 

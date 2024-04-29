@@ -46,15 +46,22 @@ class RepeatBaseline(tf.keras.Model):
       delta = inputs[:, 0:, :] - inputs[:, -1:, :]""" # TODO: create Baseline
 
 class FeedBack(tf.keras.Model):
-  def __init__(self, units, out_steps):
-    super().__init__()
-    self.out_steps = out_steps
-    self.units = units
-    self.lstm_cell = tf.keras.layers.LSTMCell(units)
-    # Also wrap the LSTMCell in an RNN to simplify the `warmup` method.
-    self.lstm_rnn = tf.keras.layers.RNN(self.lstm_cell, return_state=True)
-    self.dense = tf.keras.layers.Dense(1)
-    
+   def __init__(self, units, out_steps):
+      super().__init__()
+      self.out_steps = out_steps
+      self.units = units
+      self.lstm_cell = tf.keras.layers.LSTMCell(units)
+      # Also wrap the LSTMCell in an RNN to simplify the `warmup` method.
+      self.lstm_rnn = tf.keras.layers.RNN(self.lstm_cell, return_state=True)
+      self.dense = tf.keras.layers.Dense(1)
+   def warmup(self, inputs):
+      # inputs.shape => (batch, time, features)
+      # x.shape => (batch, lstm_units)
+      x, *state = self.lstm_rnn(inputs)
+
+      # predictions.shape => (batch, features)
+      prediction = self.dense(x)
+      return prediction, state
 
 
 def test(model, window, name):

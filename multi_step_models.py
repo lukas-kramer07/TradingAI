@@ -115,12 +115,12 @@ def main():
    # Baseline 1
    print('baselineLastStep')
    last_baseline = LastStepBaseline(label_index=column_indices['close'])
-   train_and_test(last_baseline, multi_window, 'lastBaseline')
+   train_and_test(last_baseline, multi_window, 'multi/lastBaseline')
    
    # Baseline 2
    print('baselineRepeat')
    repeat_baseline = RepeatBaseline(label_index=column_indices['close'])
-   train_and_test(repeat_baseline, multi_window, 'repeatBaseline')
+   train_and_test(repeat_baseline, multi_window, 'multi/repeatBaseline')
 
    # Multilinear
    print('multilinear')
@@ -133,7 +133,7 @@ def main():
       # Shape => [batch, out_steps, features]
       tf.keras.layers.Reshape([OUT_STEPS, 1])
    ])
-   train_and_test(multi_linear_model, multi_window, 'multi_linear') 
+   train_and_test(multi_linear_model, multi_window, 'multi/multi_linear') 
 
    # MultiDense
    print('multi dense')
@@ -144,7 +144,7 @@ def main():
       tf.keras.layers.Reshape([OUT_STEPS,1])
    ])
    print(multi_dense_model(multi_window.example[0]).shape)
-   train_and_test(multi_dense_model, multi_window, 'multi_dense')
+   train_and_test(multi_dense_model, multi_window, 'multi/multi_dense')
    
 
    # Conv Model
@@ -160,7 +160,7 @@ def main():
       # Shape => [batch, out_steps, features]
       tf.keras.layers.Reshape([OUT_STEPS, 1])
    ])
-   train_and_test(multi_conv_model, multi_window, 'multi_conv', patience=10)
+   train_and_test(multi_conv_model, multi_window, 'multi/multi_conv', patience=10)
 
    # lstm Model
    print('lstm Model')
@@ -173,7 +173,7 @@ def main():
       # Shape => [batch, out_steps, features].
       tf.keras.layers.Reshape([OUT_STEPS, 1])
    ])
-   train_and_test(multi_lstm_model, multi_window, 'multi_lstm')
+   train_and_test(multi_lstm_model, multi_window, 'multi/multi_lstm')
 
    # res Net lstm
    print('residual_lstm')
@@ -184,7 +184,7 @@ def main():
             OUT_STEPS,
             kernel_initializer=tf.initializers.zeros())
     ]), label_index=column_indices['close'])
-   train_and_test(residual_lstm_multi, multi_window, 'residual_lstm_multi')
+   train_and_test(residual_lstm_multi, multi_window, 'multi/residual_lstm_multi')
    
    
    # autoregreassive model

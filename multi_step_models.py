@@ -11,12 +11,12 @@ from utils import WindowGenerator
 from utils import concat_data, compile_and_fit, plot
 import os
 
-RETRAIN = True
+RETRAIN = False
 VAL_PERFORMANCE = {}
 PERFORMANCE = {}
 HISTORY = {}
 INIT = tf.initializers.zeros()
-OUT_STEPS = 150
+OUT_STEPS = 200
 
 # Models
 class LastStepBaseline(tf.keras.Model):
@@ -189,7 +189,7 @@ def main():
    
    # autoregreassive model
    feedback_model = FeedBack(units=32, out_steps=OUT_STEPS)
-   train_and_test(feedback_model, multi_window, 'autoregressive')
+   train_and_test(feedback_model, multi_window, 'autoregressive', retrain=True)
    multi_window.plot(feedback_model, max_subplots=15)
 
 

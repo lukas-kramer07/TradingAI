@@ -94,14 +94,14 @@ def main():
     #Baseline
     print('Baseline model')
     baseline = Baseline(label_index=column_indices['close'])
-    train_and_test(baseline, single_step_window, 'baseline')
+    train_and_test(baseline, single_step_window, 'single/baseline')
     print('Input shape:', wide_window.example[0].shape)
     print('Output shape:', baseline(wide_window.example[0]).shape)
     plt.show()
     #Linear
     print('linear model')
     linear = tf.keras.Sequential([tf.keras.layers.Dense(units=1)])
-    train_and_test(linear, single_step_window, 'linear')
+    train_and_test(linear, single_step_window, 'single/linear')
 
 
     # Dense Deep
@@ -111,7 +111,7 @@ def main():
       tf.keras.layers.Dense(units=64, activation='relu'),
       tf.keras.layers.Dense(units=1)
       ])
-    train_and_test(dense, single_step_window, 'dense')
+    train_and_test(dense, single_step_window, 'single/dense')
 
     # Train the different multi_input models
 
@@ -127,7 +127,7 @@ def main():
         # Shape: (outputs) => (1, outputs)
         tf.keras.layers.Reshape([1,-1]), #-1 is used for shape infrence
     ])
-    train_and_test(multi_step_dense, conv_window,'multi_step_dense')
+    train_and_test(multi_step_dense, conv_window,'single/multi_step_dense')
 
     # Conv Model
     print('conv_model')
@@ -138,7 +138,7 @@ def main():
         tf.keras.layers.Dense(units=32, activation='relu'),
         tf.keras.layers.Dense(units=1),
     ])
-    train_and_test(conv_model, conv_window, 'conv')
+    train_and_test(conv_model, conv_window, 'single/conv')
 
     # LSTM
     print('lstm')
@@ -149,7 +149,7 @@ def main():
         # Shape => [batch, time, features]
         tf.keras.layers.Dense(units=1)
     ])
-    train_and_test(lstm_model, wide_window, 'lstm')
+    train_and_test(lstm_model, wide_window, 'single/lstm')
 
     # res Net with single_output
     print('residual_lstm')
@@ -162,7 +162,7 @@ def main():
             # Therefore, initialize the output layer with zeros.
             kernel_initializer=tf.initializers.zeros())
     ]), label_index=column_indices['close'])
-    train_and_test(residual_lstm_single, wide_window, 'residual_lstm_single', retrain=True)
+    train_and_test(residual_lstm_single, wide_window, 'single/residual_lstm_single', retrain=True)
 
     plot(val_performance=VAL_PERFORMANCE, performance=PERFORMANCE, plotname='single_step_single_output_models')
     VAL_PERFORMANCE.clear()
@@ -173,7 +173,7 @@ def main():
     # baseline
     print('mulit_output_baseline')
     multi_baseline = Baseline()
-    train_and_test(multi_baseline, multi_output_single_step_window, 'multi_baseline')
+    train_and_test(multi_baseline, multi_output_single_step_window, 'single/multi_baseline')
 
     # Dense
     print('multi_output_Dense')
@@ -184,7 +184,7 @@ def main():
        tf.keras.layers.Dense(num_features),
        tf.keras.layers.Reshape([1,-1])
     ])
-    train_and_test(multi_output_dense, multi_output_wide_window, 'single_multi_output_dense')
+    train_and_test(multi_output_dense, multi_output_wide_window, 'single/single_multi_output_dense')
 
     # Res Net with multiple outputs
     print('residual_lstm')
@@ -197,7 +197,7 @@ def main():
             # Therefore, initialize the output layer with zeros.
             kernel_initializer=tf.initializers.zeros())
     ]))
-    train_and_test(residual_lstm, multi_output_wide_window, 'residual_lstm', retrain=True)
+    train_and_test(residual_lstm, multi_output_wide_window, 'single/residual_lstm', retrain=True)
 
     plot(VAL_PERFORMANCE, PERFORMANCE, 'all_standard_single_step_multi_output_models')
 

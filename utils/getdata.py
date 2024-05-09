@@ -60,6 +60,7 @@ headers = {
     "APCA-API-SECRET-KEY": "CWBpLu9t485amAEWYt8JSFao2KAR0kLBPvNeaM7Q"
 }
 
-response = requests.get(url, headers=headers)
-df = pd.json_normalize(response)
+response = requests.get(url, headers=headers).json()
+df = pd.DataFrame(response['bars']['AAPL'])
 print(df)
+print(response['next_page_token'])

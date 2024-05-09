@@ -52,7 +52,7 @@ def main():
 if __name__ == '__main__':
     main()"""
 
-url = "https://data.alpaca.markets/v2/stocks/bars?symbols=AAPL&timeframe=1Hour&start=2020-01-01T00%3A00%3A00Z&end=2022-01-01T00%3A00%3A00Z&limit=10000&adjustment=raw&feed=sip&sort=asc"
+url = "https://data.alpaca.markets/v2/stocks/bars?symbols=AAPL&timeframe=1Hour&start=2020-01-01T00%3A00%3A00Z&end=2020-08-08T00%3A00%3A00Z&limit=10000&adjustment=raw&feed=sip&sort=asc"
 
 headers = {
     "accept": "application/json",
@@ -62,5 +62,11 @@ headers = {
 
 response = requests.get(url, headers=headers).json()
 df = pd.DataFrame(response['bars']['AAPL'])
+while response['next_page_token']:
+    url+=f'&page_token={response['next_page_token']}'
+    print(response['bars']['AAPL'][0])
+    response = requests.get(url, headers=headers).json()
+    print(response)
+    df1 = pd.DataFrame(response['bars']['AAPL'])
+    df = pd.concat([df, df1])
 print(df)
-print(response['next_page_token'])

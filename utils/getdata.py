@@ -6,13 +6,11 @@ from datetime import datetime
 config = ConfigParser()
 config.read('config.cfg')
 api_key = config['API']['api_key']
-# Define the URL of the API endpoint you want to request
-DATA_NAMES = ['AAPL', 'JNJ', 'V', 'KO', 'XOM', 'WMT', 'GOOGL', 'PFE', 'JPM', 'PG', 'AMZN', 'CVX', 'COST', 'T', 'GE','IBM', 'NOK']
-url = f'https://financialmodelingprep.com/api/v3/historical-price-full/'
-
-NUM_DATA = 4 # number of 5-years data stacked in a df 
+secret_api_key = config['API']['secret_api_key']
+url = config['API']['base_url']
 
 
+"""
 def getdata(date_end, data_name):
 
     date_start = date_end.replace(year=date_end.year-5, day=date_end.day+1) # data range is 5 years-1 day
@@ -52,4 +50,16 @@ def main():
         print(df)
 
 if __name__ == '__main__':
-    main()
+    main()"""
+
+url = "https://data.alpaca.markets/v2/stocks/bars?symbols=AAPL&timeframe=1Hour&start=2020-01-01T00%3A00%3A00Z&end=2022-01-01T00%3A00%3A00Z&limit=10000&adjustment=raw&feed=sip&sort=asc"
+
+headers = {
+    "accept": "application/json",
+    "APCA-API-KEY-ID": "PKKCGDFQEWT19TPVRLRD",
+    "APCA-API-SECRET-KEY": "CWBpLu9t485amAEWYt8JSFao2KAR0kLBPvNeaM7Q"
+}
+
+response = requests.get(url, headers=headers)
+df = pd.json_normalize(response)
+print(df)

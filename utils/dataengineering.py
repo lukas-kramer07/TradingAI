@@ -9,7 +9,7 @@ STANDARDOVERSINGLEDATA = True
 FILENAME = 'data/GenElectric'
 
 def plot(df, date_time):
-    plot_cols = ['open', 'change', 'volume']
+    plot_cols = ['o', 'c', 'v']
     plot_features = df[plot_cols]
     plot_features.index = date_time
     _ = plot_features.plot(subplots=True)
@@ -20,8 +20,7 @@ def plot(df, date_time):
     plt.show()
 def return_data(filename = FILENAME):
     df = pd.read_pickle(filename)
-    df.pop('label')
-    date_time = pd.to_datetime(df.pop('date'), format='%Y-%m-%d')
+    date_time = pd.to_datetime(df.pop('t'), format='%Y-%m-%d')
     #plot(df, date_time)
     #print(df.describe().transpose())
 

@@ -66,7 +66,7 @@ def main():
     single_step_window = WindowGenerator(
         train_df=train_df, val_df=val_df, test_df=test_df,
         input_width=1, label_width=1, shift=SHIFT,
-        label_columns=['close'])
+        label_columns=['c'])
 
     multi_output_single_step_window = WindowGenerator(
         train_df=train_df, val_df=val_df, test_df=test_df,
@@ -75,7 +75,7 @@ def main():
     wide_window = WindowGenerator(
         train_df=train_df, val_df=val_df, test_df=test_df,
         input_width=20, label_width=20, shift=SHIFT,
-        label_columns=['close'])
+        label_columns=['c'])
     
     multi_output_wide_window = WindowGenerator(
         train_df=train_df, val_df=val_df, test_df=test_df,
@@ -86,14 +86,14 @@ def main():
         input_width=CONV_WIDTH,
         label_width=1,
         shift=SHIFT,
-        label_columns=['close'])
+        label_columns=['c'])
 
 
     # Train the different single_input models
 
     #Baseline
     print('Baseline model')
-    baseline = Baseline(label_index=column_indices['close'])
+    baseline = Baseline(label_index=column_indices['c'])
     train_and_test(baseline, single_step_window, 'single/baseline')
     print('Input shape:', wide_window.example[0].shape)
     print('Output shape:', baseline(wide_window.example[0]).shape)
@@ -161,7 +161,7 @@ def main():
             # The predicted deltas should start small.
             # Therefore, initialize the output layer with zeros.
             kernel_initializer=tf.initializers.zeros())
-    ]), label_index=column_indices['close'])
+    ]), label_index=column_indices['c'])
     train_and_test(residual_lstm_single, wide_window, 'single/residual_lstm_single', retrain=True)
 
     plot(val_performance=VAL_PERFORMANCE, performance=PERFORMANCE, plotname='single_step_single_output_models')

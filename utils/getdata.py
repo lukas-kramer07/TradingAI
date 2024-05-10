@@ -52,7 +52,7 @@ def main():
 if __name__ == '__main__':
     main()"""
 
-url = f"https://data.alpaca.markets/v2/stocks/bars?symbols={data_name}&timeframe=5Min&start=2020-01-01T00%3A00%3A00Z&end=2023-08-08T00%3A00%3A00Z&limit=10000&adjustment=raw&feed=sip&sort=asc"
+url = f"https://data.alpaca.markets/v2/stocks/bars?symbols={data_name}&timeframe=1H&start=2020-01-01T00%3A00%3A00Z&end=2023-08-08T00%3A00%3A00Z&limit=10000&adjustment=raw&feed=sip&sort=asc"
 
 headers = {
     "accept": "application/json",
@@ -64,12 +64,11 @@ response = requests.get(url, headers=headers).json()
 df = pd.DataFrame(response['bars']['AAPL'])
 page_token = response["next_page_token"]
 while page_token:
-    url=f"https://data.alpaca.markets/v2/stocks/bars?symbols={data_name}&timeframe=5Min&start=2020-01-01T00%3A00%3A00Z&end=2023-08-08T00%3A00%3A00Z&limit=10000&adjustment=raw&feed=sip&page_token={page_token}&sort=asc"
+    url=f"https://data.alpaca.markets/v2/stocks/bars?symbols={data_name}&timeframe=1H&start=2020-01-01T00%3A00%3A00Z&end=2023-08-08T00%3A00%3A00Z&limit=10000&adjustment=raw&feed=sip&page_token={page_token}&sort=asc"
     response = requests.get(url, headers=headers).json()
     df1 = pd.DataFrame(response['bars']['AAPL'])
     df = pd.concat([df, df1])
     page_token = response["next_page_token"]
-    print(page_token)
 print(df)
 
 #Save data in folder

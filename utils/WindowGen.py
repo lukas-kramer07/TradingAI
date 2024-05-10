@@ -73,7 +73,7 @@ class WindowGenerator():
         self.labels_slice = slice(self.label_start, None)
         self.label_indices = np.arange(self.total_window_size)[self.labels_slice]      
 
-    def plot(self, model=None, plot_col='close', max_subplots=3):
+    def plot(self, model=None, plot_col='c', max_subplots=3):
         inputs, labels = self.example
         plt.figure(figsize=(12, 8))
         plot_col_index = self.column_indices[plot_col]

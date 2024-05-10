@@ -50,7 +50,7 @@ class WindowGenerator():
         self.val_df = val_df
         self.test_df = test_df
         if isinstance(train_df, list): # account for lists of datasets
-            train_df = train_df[1]
+            train_df = train_df[0]
         # Work out the label column indices.
         self.label_columns = label_columns
         if label_columns is not None:

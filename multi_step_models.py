@@ -109,17 +109,17 @@ def main():
    multi_window = WindowGenerator(train_df=train_df, val_df = val_df, test_df=test_df,
                                  input_width=OUT_STEPS,
                                  label_width=OUT_STEPS,
-                                 shift=OUT_STEPS, label_columns=['close'])
+                                 shift=OUT_STEPS, label_columns=['c'])
 
    # train the models (single output)
    # Baseline 1
    print('baselineLastStep')
-   last_baseline = LastStepBaseline(label_index=column_indices['close'])
+   last_baseline = LastStepBaseline(label_index=column_indices['c'])
    train_and_test(last_baseline, multi_window, 'multi/lastBaseline')
    
    # Baseline 2
    print('baselineRepeat')
-   repeat_baseline = RepeatBaseline(label_index=column_indices['close'])
+   repeat_baseline = RepeatBaseline(label_index=column_indices['c'])
    train_and_test(repeat_baseline, multi_window, 'multi/repeatBaseline')
 
    # Multilinear
@@ -183,7 +183,7 @@ def main():
         tf.keras.layers.Dense(
             OUT_STEPS,
             kernel_initializer=tf.initializers.zeros())
-    ]), label_index=column_indices['close'])
+    ]), label_index=column_indices['c'])
    train_and_test(residual_lstm_multi, multi_window, 'multi/residual_lstm_multi')
    
    

@@ -51,28 +51,30 @@ def main():
 
 if __name__ == '__main__':
     main()"""
+def main():
+    url = f"https://data.alpaca.markets/v2/stocks/bars?symbols={data_name}&timeframe=1H&start=2018-01-01T00%3A00%3A00Z&end=2023-08-08T00%3A00%3A00Z&limit=10000&adjustment=raw&feed=sip&sort=asc"
 
-url = f"https://data.alpaca.markets/v2/stocks/bars?symbols={data_name}&timeframe=1H&start=2018-01-01T00%3A00%3A00Z&end=2023-08-08T00%3A00%3A00Z&limit=10000&adjustment=raw&feed=sip&sort=asc"
+    headers = {
+        "accept": "application/json",
+        "APCA-API-KEY-ID": "PKKCGDFQEWT19TPVRLRD",
+        "APCA-API-SECRET-KEY": "CWBpLu9t485amAEWYt8JSFao2KAR0kLBPvNeaM7Q"
+    }
 
-headers = {
-    "accept": "application/json",
-    "APCA-API-KEY-ID": "PKKCGDFQEWT19TPVRLRD",
-    "APCA-API-SECRET-KEY": "CWBpLu9t485amAEWYt8JSFao2KAR0kLBPvNeaM7Q"
-}
-
-response = requests.get(url, headers=headers).json()
-df = pd.DataFrame(response['bars']['AAPL'])
-page_token = response["next_page_token"]
-progress = 0
-while page_token:
-    progress +=1
-    print(progress)
-    url=f"https://data.alpaca.markets/v2/stocks/bars?symbols={data_name}&timeframe=1H&start=2018-01-01T00%3A00%3A00Z&end=2023-08-08T00%3A00%3A00Z&limit=10000&adjustment=raw&feed=sip&page_token={page_token}&sort=asc"
     response = requests.get(url, headers=headers).json()
-    df1 = pd.DataFrame(response['bars']['AAPL'])
-    df = pd.concat([df, df1])
+    df = pd.DataFrame(response['bars']['AAPL'])
     page_token = response["next_page_token"]
-print(df)
+    progress = 0
+    while page_token:
+        progress +=1
+        print(f"progress:{progress}")
+        url=f"https://data.alpaca.markets/v2/stocks/bars?symbols={data_name}&timeframe=1H&start=2018-01-01T00%3A00%3A00Z&end=2023-08-08T00%3A00%3A00Z&limit=10000&adjustment=raw&feed=sip&page_token={page_token}&sort=asc"
+        response = requests.get(url, headers=headers).json()
+        df1 = pd.DataFrame(response['bars']['AAPL'])
+        df = pd.concat([df, df1])
+        page_token = response["next_page_token"]
+    print(df)
 
-#Save data in folder
-df.to_pickle(f'data/{data_name}')
+    #Save data in folder
+    df.to_pickle(f'data/{data_name}')
+if __name__=='__main__':
+    main()

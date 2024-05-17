@@ -175,7 +175,7 @@ def main():
    ])
    train_and_test(multi_lstm_model, multi_window, 'multi/multi_lstm')
 
-   # res Net lstm
+   """# res Net lstm
    print('residual_lstm')
    residual_lstm_multi = ResidualWrapper(
         tf.keras.Sequential([
@@ -184,13 +184,13 @@ def main():
             OUT_STEPS,
             kernel_initializer=tf.initializers.zeros())
     ]), label_index=column_indices['c'])
-   train_and_test(residual_lstm_multi, multi_window, 'multi/residual_lstm_multi')
+   train_and_test(residual_lstm_multi, multi_window, 'multi/residual_lstm_multi')"""
    
    
-   # autoregreassive model
+   """# autoregreassive model
    feedback_model = FeedBack(units=32, out_steps=OUT_STEPS)
    train_and_test(feedback_model, multi_window, 'autoregressive', retrain=True)
-   multi_window.plot(feedback_model, max_subplots=15)
+   multi_window.plot(feedback_model, max_subplots=15)"""
 
 
    plt.show()

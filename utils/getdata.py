@@ -51,8 +51,8 @@ def main():
 
 if __name__ == '__main__':
     main()"""
-def main():
-    url = f"https://data.alpaca.markets/v2/stocks/bars?symbols={data_name}&timeframe=1H&start=2018-01-01T00%3A00%3A00Z&end=2023-08-08T00%3A00%3A00Z&limit=10000&adjustment=raw&feed=sip&sort=asc"
+def main(start='2018-01-01T00', end='2023-08-08T00'):
+    url = f"https://data.alpaca.markets/v2/stocks/bars?symbols={data_name}&timeframe=1H&start={start}%3A00%3A00Z&end={end}%3A00%3A00Z&limit=10000&adjustment=raw&feed=sip&sort=asc"
 
     headers = {
         "accept": "application/json",
@@ -67,7 +67,7 @@ def main():
     while page_token:
         progress +=1
         print(f"progress:{progress}")
-        url=f"https://data.alpaca.markets/v2/stocks/bars?symbols={data_name}&timeframe=1H&start=2018-01-01T00%3A00%3A00Z&end=2023-08-08T00%3A00%3A00Z&limit=10000&adjustment=raw&feed=sip&page_token={page_token}&sort=asc"
+        url=f"https://data.alpaca.markets/v2/stocks/bars?symbols={data_name}&timeframe=1H&start={start}%3A00%3A00Z&end={end}%3A00%3A00Z&limit=10000&adjustment=raw&feed=sip&page_token={page_token}&sort=asc"
         response = requests.get(url, headers=headers).json()
         df1 = pd.DataFrame(response['bars']['AAPL'])
         df = pd.concat([df, df1])

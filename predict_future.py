@@ -2,6 +2,7 @@
 from utils import getdata
 from datetime import datetime, timedelta
 import pandas as pd
+from utils import standardize
 
 def main(len = 356):
     end = datetime.now()
@@ -10,7 +11,12 @@ def main(len = 356):
     start = start.strftime('%Y-%m-%dT00')
     symbol = input('Symbol to predict: ')
     data = getdata(start, end, data_name=symbol).tail(len)
-    print(data)
+    date_time = pd.to_datetime(data.pop('t'), format='%Y-%m-%dT%H:%M:%SZ')
+    mean = data.mean()
+    std = data.std()
+    standard_data = standardize(data,mean,std)
+
+    
 
 if __name__ == '__main__':
     main()

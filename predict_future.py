@@ -19,6 +19,7 @@ def main(len = 356):
 
     tensor = tf.convert_to_tensor(data.values)
     
-    
+    model = tf.keras.models.load_model('Training/Models/multi/multi_lstm')
+    prediction = model.predict(tensor)
 if __name__ == '__main__':
     main()

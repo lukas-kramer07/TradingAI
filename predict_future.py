@@ -17,9 +17,10 @@ def main(len = 356):
     std = data.std()
     standard_data = standardize(data,mean,std)
 
-    tensor = tf.convert_to_tensor(data.values)
+    tensor = tf.expand_dims(tf.convert_to_tensor(data.values), 0)
     
     model = tf.keras.models.load_model('Training/Models/multi/multi_lstm')
     prediction = model.predict(tensor)
+    print(prediction)
 if __name__ == '__main__':
     main()

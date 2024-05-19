@@ -3,6 +3,7 @@ from utils import getdata
 from datetime import datetime, timedelta
 import pandas as pd
 from utils import standardize
+import tensorflow as tf
 
 def main(len = 356):
     end = datetime.now()
@@ -16,7 +17,8 @@ def main(len = 356):
     std = data.std()
     standard_data = standardize(data,mean,std)
 
+    tensor = tf.convert_to_tensor(data.values)
     
-
+    
 if __name__ == '__main__':
     main()

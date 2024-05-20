@@ -24,10 +24,8 @@ class LastStepBaseline(tf.keras.Model):
       super().__init__()
       self.label_index = label_index
    def call(self,inputs):
-      if self.label_index:
-         res = inputs[:, -1:, self.label_index]
-         return tf.tile(res[:, :, tf.newaxis], [1, OUT_STEPS, 1])
-      return tf.tile(inputs[:, -1:, :], [1, OUT_STEPS, 1])
+      res = inputs[:, -1:, self.label_index]
+      return tf.tile(res[:, :, tf.newaxis], [1, OUT_STEPS, 1])
 
 class RepeatBaseline(tf.keras.Model):
    def __init__(self, label_index=None):
@@ -174,7 +172,8 @@ def main():
       tf.keras.layers.Reshape([OUT_STEPS, 1])
    ])
    train_and_test(multi_lstm_model, multi_window, 'multi/multi_lstm')
-
+   multi_window.plot(multi_lstm_model)
+   multi_window.plot(last_baseline)
    """# res Net lstm
    print('residual_lstm')
    residual_lstm_multi = ResidualWrapper(

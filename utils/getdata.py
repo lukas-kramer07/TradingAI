@@ -9,7 +9,7 @@ api_key = config['API']['api_key']
 secret_api_key = config['API']['secret_api_key']
 url = config['API']['base_url']
 
-data_name = 'AAPL'
+data_name = 'MSFT'
 """
 def getdata(date_end, data_name):
 
@@ -66,7 +66,7 @@ def getdata(start='2018-01-01T00', end='2023-08-08T00', data_name=data_name):
     progress = 0
     while page_token:
         progress +=1
-        print(f"progress:{progress}")
+        print(f"progress:{progress}/77")
         url=f"https://data.alpaca.markets/v2/stocks/bars?symbols={data_name}&timeframe=1H&start={start}%3A00%3A00Z&end={end}%3A00%3A00Z&limit=10000&adjustment=raw&feed=sip&page_token={page_token}&sort=asc"
         response = requests.get(url, headers=headers).json()
         df1 = pd.DataFrame(response['bars'][data_name])

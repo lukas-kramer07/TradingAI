@@ -137,6 +137,7 @@ def main():
    print('multi dense')
    multi_dense_model = tf.keras.Sequential([
       tf.keras.layers.Lambda(lambda x : x[:, -1:, :]),
+      tf.keras.layers.Dense(2048, activation = 'relu'),
       tf.keras.layers.Dense(1024, activation = 'relu'),
       tf.keras.layers.Dense(OUT_STEPS),#,kernel_initializer=tf.initializers.zeros()),
       tf.keras.layers.Reshape([OUT_STEPS,1])
@@ -153,11 +154,13 @@ def main():
       tf.keras.layers.Lambda(lambda x: x[:, -CONV_WIDTH:, :]),
       # Shape => [batch, 1, conv_units]
       tf.keras.layers.Conv1D(256, activation='relu', kernel_size=(CONV_WIDTH)),
+      #tf.keras.layers.Conv1D(256, activation='relu', kernel_size=(CONV_WIDTH)),
       # Shape => [batch, 1,  out_steps*features]
-      tf.keras.layers.Dense(OUT_STEPS),#kernel_initializer=tf.initializers.zeros()),
+      #tf.keras.layers.Dense(OUT_STEPS),#kernel_initializer=tf.initializers.zeros()),
       # Shape => [batch, out_steps, features]
-      tf.keras.layers.Reshape([OUT_STEPS, 1])
+      #tf.keras.layers.Reshape([OUT_STEPS, 1])
    ])
+   print(multi_conv_model.predict(multi_window.example[0]).shape)
    train_and_test(multi_conv_model, multi_window, 'multi/multi_conv', patience=10)
 
    # lstm Model
@@ -165,7 +168,8 @@ def main():
    multi_lstm_model = tf.keras.Sequential([
       # Shape [batch, time, features] => [batch, lstm_units].
       # Adding more `lstm_units` just overfits more quickly.
-      tf.keras.layers.LSTM(32, return_sequences=False),
+      tf.keras.layers.LSTM(128, return_sequences=True),
+      tf.keras.layers.LSTM(64, return_sequences=False),
       # Shape => [batch, out_steps*features].
       tf.keras.layers.Dense(OUT_STEPS),
       # Shape => [batch, out_steps, features].

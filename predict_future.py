@@ -19,7 +19,7 @@ def main(len = 1000):
 
     tensor = tf.expand_dims(tf.convert_to_tensor(data.values), 0)
     
-    model = tf.keras.models.load_model('Training/Models/multi/multi_linear')
+    model = tf.keras.models.load_model('Training/Models/multi/multi_dense')
     prediction = model.predict(tensor)
     print(prediction.shape)
     #plot

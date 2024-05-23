@@ -5,7 +5,7 @@ import pandas as pd
 from utils import standardize
 import tensorflow as tf
 import matplotlib.pyplot as plt
-def main(len = 356):
+def main(len = 1000):
     end = datetime.now()
     start = end - timedelta(hours=len*5)
     end = end.strftime('%Y-%m-%dT00')
@@ -19,18 +19,19 @@ def main(len = 356):
 
     tensor = tf.expand_dims(tf.convert_to_tensor(data.values), 0)
     
-    model = tf.keras.models.load_model('Training/Models/multi/multi_lstm')
+    model = tf.keras.models.load_model('Training/Models/multi/multi_linear')
     prediction = model.predict(tensor)
-    
+    print(prediction.shape)
     #plot
     # Inverse the normalization
-    original_values = (prediction * std0) + mean0
-
+    original_scale_pred = prediction.flatten()#((prediction * std0) + mean0).flatten()
+    original_scale_input = tf.convert_to_tensor(data['c'].values)#tf.convert_to_tensor(((data['c']*std0)+mean0).values)
+    full_pred = tf.concat([original_scale_input, original_scale_pred],0)
     # Convert the tensor to a 1D array for plotting (if necessary)
-    original_values_flattened = original_values.flatten()
+    pred_flattened = full_pred
 
     # Plotting the values
-    plt.plot(original_values_flattened)
+    plt.plot(pred_flattened)
     plt.title(f"Plot of {symbol}'s predicted stock")
     plt.xlabel("future days")
     plt.ylabel("Value")

@@ -11,7 +11,7 @@ from utils import concat_data, compile_and_fit, plot
 import os
 
 RETRAIN = True
-SHIFT = 200
+SHIFT = 500
 MAX_EPOCHS = 60
 CONV_WIDTH = 10
 VAL_PERFORMANCE = {}

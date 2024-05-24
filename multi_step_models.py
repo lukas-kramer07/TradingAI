@@ -197,7 +197,7 @@ def main():
 
 
    plt.show()
-   plot(VAL_PERFORMANCE, PERFORMANCE, 'all_standard_multi_step_performances')
+   plot(VAL_PERFORMANCE, PERFORMANCE, 'multi_step_performances')
 
 
 if __name__ == '__main__':

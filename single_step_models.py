@@ -199,7 +199,7 @@ def main():
     ]))
     train_and_test(residual_lstm, multi_output_wide_window, 'single/residual_lstm', retrain=True)
 
-    plot(VAL_PERFORMANCE, PERFORMANCE, 'all_standard_single_step_multi_output_models')
+    plot(VAL_PERFORMANCE, PERFORMANCE, 'single_step_multi_output_models')
 
 if __name__ == '__main__':
     main()

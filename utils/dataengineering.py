@@ -43,7 +43,8 @@ def iterate_files(folder_path):
         if os.path.isfile(os.path.join(folder_path, filename)):
             yield filename
 def standardize(df, mean, std):
-    return (df-mean)/std
+    return df
+    #return (df-mean)/std
 def concat_data(folder, standard = STANDARDOVERSINGLEDATA):
     if standard:
         train_df, val_df, test_df= [],[],[]

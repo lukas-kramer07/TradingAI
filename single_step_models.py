@@ -152,7 +152,7 @@ def main():
     train_and_test(lstm_model, wide_window, 'single/lstm')
 
     # res Net with single_output
-    print('residual_lstm')
+    """print('residual_lstm')
     residual_lstm_single = ResidualWrapper(
         tf.keras.Sequential([
         tf.keras.layers.LSTM(32, return_sequences=True),
@@ -162,7 +162,7 @@ def main():
             # Therefore, initialize the output layer with zeros.
             kernel_initializer=tf.initializers.zeros())
     ]), label_index=column_indices['c'])
-    train_and_test(residual_lstm_single, wide_window, 'single/residual_lstm_single', retrain=True)
+    train_and_test(residual_lstm_single, wide_window, 'single/residual_lstm_single', retrain=True)"""
 
     plot(val_performance=VAL_PERFORMANCE, performance=PERFORMANCE, plotname='single_step_single_output_models')
     VAL_PERFORMANCE.clear()
@@ -187,7 +187,7 @@ def main():
     train_and_test(multi_output_dense, multi_output_wide_window, 'single/single_multi_output_dense')
 
     # Res Net with multiple outputs
-    print('residual_lstm')
+    """print('residual_lstm')
     residual_lstm = ResidualWrapper(
         tf.keras.Sequential([
         tf.keras.layers.LSTM(32, return_sequences=True),
@@ -197,7 +197,7 @@ def main():
             # Therefore, initialize the output layer with zeros.
             kernel_initializer=tf.initializers.zeros())
     ]))
-    train_and_test(residual_lstm, multi_output_wide_window, 'single/residual_lstm', retrain=True)
+    train_and_test(residual_lstm, multi_output_wide_window, 'single/residual_lstm', retrain=True)"""
 
     plot(VAL_PERFORMANCE, PERFORMANCE, 'single_step_multi_output_models')
 

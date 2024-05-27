@@ -42,7 +42,9 @@ def iterate_files(folder_path):
     for filename in os.listdir(folder_path):
         if os.path.isfile(os.path.join(folder_path, filename)):
             yield filename
-def standardize(df, mean, std):
+def standardize(df, mean, std, max = None):
+    if max:
+        return df/max
     return df
     #return (df-mean)/std
 def concat_data(folder, standard = STANDARDOVERSINGLEDATA):
@@ -66,11 +68,12 @@ def concat_data(folder, standard = STANDARDOVERSINGLEDATA):
             test_df.append(test_df1)
         
         #standardize over whole dataset
+        max = standard.max()
         mean = standard.mean()
         std = standard.std()
-        train_df = [standardize(df, mean,std) for df in train_df]
-        val_df = [standardize(df, mean,std) for df in val_df]
-        test_df = [standardize(df, mean,std) for df in test_df]
+        train_df = [standardize(df, mean,std, max) for df in train_df]
+        val_df = [standardize(df, mean,std, max) for df in val_df]
+        test_df = [standardize(df, mean,std, max) for df in test_df]
         """# plot 
         df_std = (val_df - train_mean) / train_std
         df_std = df_std.melt(var_name='Column', value_name='Normalized')

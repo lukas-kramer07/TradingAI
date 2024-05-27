@@ -102,7 +102,7 @@ def train_and_test(model, window, model_name, patience=3 ,retrain = RETRAIN):
 
 def main():
    #get data
-   train_df, val_df, test_df, column_indices, num_features = concat_data('data', standard=True)
+   train_df, val_df, test_df, column_indices, num_features = concat_data('data', standard=False)
    # define windows
    multi_window = WindowGenerator(train_df=train_df, val_df = val_df, test_df=test_df,
                                  input_width=OUT_STEPS,

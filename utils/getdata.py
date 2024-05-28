@@ -61,11 +61,8 @@ all_stocks = (
     utilities_stocks
 )
 
-def main():
-    for data_name in all_stocks:
-        df = getdata(data_name)
-        df.to_pickle(f'data/{data_name}')
-def getdata(start='2018-01-01T00', end='2024-05-18T00', data_name='AAPL'):
+
+def getdata(start='2018-01-01T00', end='2024-05-05T00', data_name='AAPL'):
     url = f"https://data.alpaca.markets/v2/stocks/bars?symbols={data_name}&timeframe=1H&start={start}%3A00%3A00Z&end={end}%3A00%3A00Z&limit=10000&adjustment=raw&feed=sip&sort=asc"
 
     headers = {
@@ -87,6 +84,11 @@ def getdata(start='2018-01-01T00', end='2024-05-18T00', data_name='AAPL'):
         df = pd.concat([df, df1])
         page_token = response["next_page_token"]
     return df
-    
+
+def main():
+    for data_name in all_stocks:
+        print(data_name)
+        df = getdata(data_name=data_name)
+        df.to_pickle(f'data/{data_name}') 
 if __name__=='__main__':
     main()

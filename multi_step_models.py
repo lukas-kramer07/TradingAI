@@ -11,7 +11,7 @@ from utils import WindowGenerator
 from utils import concat_data, compile_and_fit, plot
 import os
 
-RETRAIN = True
+RETRAIN = False
 VAL_PERFORMANCE = {}
 PERFORMANCE = {}
 HISTORY = {}
@@ -93,11 +93,11 @@ def test(model, window, name):
     PERFORMANCE[name] = model.evaluate(window.test, verbose=0, return_dict=True)
 
 def train_and_test(model, window, model_name, patience=3 ,retrain = RETRAIN):
-  if model_name not in os.listdir('Training/Models') or retrain:
+  if model_name not in os.listdir('Training/Models/multi') or retrain:
     HISTORY[model_name] = compile_and_fit(model, window, patience)
-    model.save(f'Training/Models/{model_name}')
+    model.save(f'Training/Models/multi/{model_name}')
   else:
-     model = tf.keras.models.load_model(f'Training/Models/{model_name}')
+     model = tf.keras.models.load_model(f'Training/Models/multi/{model_name}')
   test(model,window,model_name)
 
 def main():
@@ -113,12 +113,12 @@ def main():
    # Baseline 1
    print('baselineLastStep')
    last_baseline = LastStepBaseline(label_index=column_indices['c'])
-   train_and_test(last_baseline, multi_window, 'multi/lastBaseline')
+   train_and_test(last_baseline, multi_window, 'lastBaseline')
    
    # Baseline 2
    print('baselineRepeat')
    repeat_baseline = RepeatBaseline(label_index=column_indices['c'])
-   train_and_test(repeat_baseline, multi_window, 'multi/repeatBaseline')
+   train_and_test(repeat_baseline, multi_window, 'repeatBaseline')
 
    # Multilinear
    print('multilinear')
@@ -131,7 +131,7 @@ def main():
       # Shape => [batch, out_steps, features]
       tf.keras.layers.Reshape([OUT_STEPS, 1])
    ])
-   train_and_test(multi_linear_model, multi_window, 'multi/multi_linear') 
+   train_and_test(multi_linear_model, multi_window, 'multi_linear') 
 
    # MultiDense
    print('multi dense')
@@ -143,7 +143,7 @@ def main():
       tf.keras.layers.Reshape([OUT_STEPS,1])
    ])
    print(multi_dense_model(multi_window.example[0]).shape)
-   train_and_test(multi_dense_model, multi_window, 'multi/multi_dense')
+   train_and_test(multi_dense_model, multi_window, 'multi_dense')
    
 
    # Conv Model
@@ -153,15 +153,16 @@ def main():
       # Shape [batch, time, features] => [batch, CONV_WIDTH, features]
       tf.keras.layers.Lambda(lambda x: x[:, -CONV_WIDTH:, :]),
       # Shape => [batch, 1, conv_units]
-      tf.keras.layers.Conv1D(256, activation='relu', kernel_size=(CONV_WIDTH)),
-      #tf.keras.layers.Conv1D(256, activation='relu', kernel_size=(CONV_WIDTH)),
+      tf.keras.layers.Conv1D(512, activation='relu', kernel_size=(CONV_WIDTH)),
+      tf.keras.layers.Reshape([512, 1]),
+      tf.keras.layers.Conv1D(256, activation='relu', kernel_size=(512)),
       # Shape => [batch, 1,  out_steps*features]
-      #tf.keras.layers.Dense(OUT_STEPS),#kernel_initializer=tf.initializers.zeros()),
+      tf.keras.layers.Dense(OUT_STEPS),#kernel_initializer=tf.initializers.zeros()),
       # Shape => [batch, out_steps, features]
-      #tf.keras.layers.Reshape([OUT_STEPS, 1])
+      tf.keras.layers.Reshape([OUT_STEPS, 1])
    ])
    print(multi_conv_model.predict(multi_window.example[0]).shape)
-   train_and_test(multi_conv_model, multi_window, 'multi/multi_conv', patience=10)
+   train_and_test(multi_conv_model, multi_window, 'multi_conv', patience=10, retrain=True)
 
    # lstm Model
    print('lstm Model')
@@ -175,10 +176,10 @@ def main():
       # Shape => [batch, out_steps, features].
       tf.keras.layers.Reshape([OUT_STEPS, 1])
    ])
-   train_and_test(multi_lstm_model, multi_window, 'multi/multi_lstm')
-   multi_window.plot(multi_lstm_model)
+   train_and_test(multi_lstm_model, multi_window, 'multi_lstm')
+   multi_window.plot(multi_conv_model)
    multi_window.plot(last_baseline)
-   """# res Net lstm
+   # res Net lstm
    print('residual_lstm')
    residual_lstm_multi = ResidualWrapper(
         tf.keras.Sequential([
@@ -186,9 +187,9 @@ def main():
         tf.keras.layers.Dense(
             OUT_STEPS,
             kernel_initializer=tf.initializers.zeros())
-    ]), label_index=column_indices['c'])
-   train_and_test(residual_lstm_multi, multi_window, 'multi/residual_lstm_multi')"""
-   
+    ]), label_index=0)
+   train_and_test(residual_lstm_multi, multi_window, 'residual_lstm_multi', retrain=True)
+   multi_window.plot(residual_lstm_multi)
    
    """# autoregreassive model
    feedback_model = FeedBack(units=32, out_steps=OUT_STEPS)

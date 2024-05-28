@@ -9,10 +9,60 @@ api_key = config['API']['api_key']
 secret_api_key = config['API']['secret_api_key']
 url = config['API']['base_url']
 
-data_names = ['MSFT']
+# Technology
+technology_stocks = [
+    "AAPL",  # Apple
+    "MSFT",  # Microsoft
+    "GOOGL", # Alphabet
+    "AMZN",  # Amazon
+    "NVDA"   # NVIDIA
+]
+
+# Healthcare
+healthcare_stocks = [
+    "JNJ",   # Johnson & Johnson
+    "PFE",   # Pfizer
+    "MRNA"   # Moderna
+]
+
+# Finance
+finance_stocks = [
+    "JPM",   # JPMorgan Chase
+    "GS",    # Goldman Sachs
+    "BAC"    # Bank of America
+]
+
+# Consumer Goods
+consumer_goods_stocks = [
+    "PG",    # Procter & Gamble
+    "KO",    # Coca-Cola
+    "WMT"    # Walmart
+]
+
+# Energy
+energy_stocks = [
+    "XOM",   # ExxonMobil
+    "CVX"    # Chevron
+]
+
+# Utilities
+utilities_stocks = [
+    "NEE",   # NextEra Energy
+    "DUK"    # Duke Energy
+]
+
+# Combined list of all stocks
+all_stocks = (
+    technology_stocks +
+    healthcare_stocks +
+    finance_stocks +
+    consumer_goods_stocks +
+    energy_stocks +
+    utilities_stocks
+)
 
 def main():
-    for data_name in data_names:
+    for data_name in all_stocks:
         df = getdata(data_name)
         df.to_pickle(f'data/{data_name}')
 def getdata(start='2018-01-01T00', end='2024-05-18T00', data_name='AAPL'):

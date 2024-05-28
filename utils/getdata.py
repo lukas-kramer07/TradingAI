@@ -74,10 +74,7 @@ def getdata(start='2018-01-01T00', end='2024-05-05T00', data_name='AAPL'):
     response = requests.get(url, headers=headers).json()
     df = pd.DataFrame(response['bars'][data_name])
     page_token = response["next_page_token"]
-    progress = 0
     while page_token:
-        progress +=1
-        print(f"progress:{progress}/77")
         url=f"https://data.alpaca.markets/v2/stocks/bars?symbols={data_name}&timeframe=1H&start={start}%3A00%3A00Z&end={end}%3A00%3A00Z&limit=10000&adjustment=raw&feed=sip&page_token={page_token}&sort=asc"
         response = requests.get(url, headers=headers).json()
         df1 = pd.DataFrame(response['bars'][data_name])
@@ -86,8 +83,10 @@ def getdata(start='2018-01-01T00', end='2024-05-05T00', data_name='AAPL'):
     return df
 
 def main():
+    progress = 0
     for data_name in all_stocks:
-        print(data_name)
+        progress+=1
+        print(f'{data_name}; progress: {progress}/{len(all_stocks)}')
         df = getdata(data_name=data_name)
         df.to_pickle(f'data/{data_name}') 
 if __name__=='__main__':

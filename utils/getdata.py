@@ -76,5 +76,6 @@ def getdata(start='2018-01-01T00', end='2023-08-08T00', data_name=data_name):
     
 if __name__=='__main__':
     df = getdata()
+    print(df)
     #Save data in folder
     df.to_pickle(f'data/{data_name}')

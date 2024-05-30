@@ -25,7 +25,6 @@ def return_data(filename = FILENAME):
     for series_name, series in df.items():
         if series_name not in ['c']: 
             df.pop(series_name)
-    print(df)
     #plot(df, date_time)
     #print(df.describe().transpose())
 

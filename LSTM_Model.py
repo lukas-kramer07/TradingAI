@@ -5,18 +5,17 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import numpy as np
-from zmq import OUT_BATCH_SIZE
 from single_step_models import ResidualWrapper
 from utils import WindowGenerator
 from utils import concat_data, compile_and_fit, plot
-from multi_step_models import HISTORY, OUT_STEPS, PERFORMANCE, RETRAIN, VAL_PERFORMANCE, LastStepBaseline
+from multi_step_models import LastStepBaseline
 import os
 
 RETRAIN = True
 VAL_PERFORMANCE = {}
 PERFORMANCE = {}
-HISTORY={}
-OUT_STEPS=1000
+HISTORY = {}
+OUT_STEPS = 1000
 IN_STEPS=1000
 def main():
     #get data

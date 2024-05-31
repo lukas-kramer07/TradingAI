@@ -42,6 +42,10 @@ def main():
                                     input_width=IN_STEPS,
                                     label_width=OUT_STEPS,
                                     shift=1, label_columns=['c'])
+    
+    # Check your training data (example: multi_window.train)
+    check_for_nan(multi_window.train)
+
     last_baseline = LastStepBaseline(label_index=column_indices['c'])
     train_and_test(last_baseline, multi_window, 'lastBaseline')
 
@@ -75,6 +79,9 @@ def compile_and_fit(model, window, patience, epochs=200):
                       validation_data=window.val,
                       callbacks=[early_stopping])
   return history
-
+# Ensure no NaN values in input data
+def check_for_nan(data):
+    if tf.reduce_any(tf.math.is_nan(data)):
+        raise ValueError("Input data contains NaN values")
 if __name__ == '__main__':
     main()

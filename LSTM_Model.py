@@ -66,14 +66,14 @@ def train_and_test(model, window, model_name, patience=3 ,retrain = RETRAIN):
      model = tf.keras.models.load_model(f'Training/Models/multi/{model_name}')
   test(model,window,model_name)
 
-def compile_and_fit(model, window, patience, epochs=200):
+def compile_and_fit(model, window, patience, epochs=10):
   early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss',
                                                     patience=patience,
                                                     mode='min')
 
   model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001, clipnorm=1.0),
                 loss='mean_squared_error',
-                metrics=[tf.keras.metrics.MeanAbsoluteError()])
+                metrics=[tf.keras.metrics.Accuracy()])
 
   history = model.fit(window.train, epochs=epochs,
                       validation_data=window.val,

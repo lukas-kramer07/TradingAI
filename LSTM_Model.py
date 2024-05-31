@@ -80,8 +80,10 @@ def compile_and_fit(model, window, patience, epochs=200):
                       callbacks=[early_stopping])
   return history
 # Ensure no NaN values in input data
-def check_for_nan(data):
-    if tf.reduce_any(tf.math.is_nan(data)):
-        raise ValueError("Input data contains NaN values")
+def check_for_nan(dataset):
+    for batch in dataset:
+        inputs, targets = batch
+        if tf.reduce_any(tf.math.is_nan(inputs)) or tf.reduce_any(tf.math.is_nan(targets)):
+            raise ValueError("Input data contains NaN values")
 if __name__ == '__main__':
     main()

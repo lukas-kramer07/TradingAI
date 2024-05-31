@@ -17,6 +17,23 @@ PERFORMANCE = {}
 HISTORY = {}
 OUT_STEPS = 1000
 IN_STEPS=1000
+
+# Improved LSTM Model with Regularization
+def build_model():
+    regularizer = tf.keras.regularizers.l2(1e-4)  # L2 regularization factor
+    model = tf.keras.Sequential([
+        tf.keras.layers.LSTM(256, return_sequences=True, input_shape=(1000, 1),
+                             kernel_regularizer=regularizer, bias_regularizer=regularizer),
+        tf.keras.layers.Dropout(0.2),
+        tf.keras.layers.LSTM(128, return_sequences=True,
+                             kernel_regularizer=regularizer, bias_regularizer=regularizer),
+        tf.keras.layers.Dropout(0.2),
+        tf.keras.layers.LSTM(64, kernel_regularizer=regularizer, bias_regularizer=regularizer),
+        tf.keras.layers.Dense(OUT_STEPS * 1, kernel_regularizer=regularizer),
+        tf.keras.layers.Reshape([OUT_STEPS, 1])
+    ])
+    return model
+
 def main():
     #get data
     train_df, val_df, test_df, column_indices, num_features = concat_data('data', standard=False)
@@ -28,15 +45,7 @@ def main():
     last_baseline = LastStepBaseline(label_index=column_indices['c'])
     train_and_test(last_baseline, multi_window, 'lastBaseline')
 
-    LSTM_model = tf.keras.Sequential([
-      tf.keras.layers.LSTM(256, return_sequences=True, input_shape=(1000, 1)),
-      tf.keras.layers.Dropout(0.2),
-      tf.keras.layers.LSTM(128, return_sequences=True),
-      tf.keras.layers.Dropout(0.2),
-      tf.keras.layers.LSTM(64),
-      tf.keras.layers.Dense(OUT_STEPS * 1),
-      tf.keras.layers.Reshape([OUT_STEPS, 1])
-    ])
+    LSTM_model = build_model()
     train_and_test(LSTM_model, multi_window, 'improved_LSTM')
 
     plot(VAL_PERFORMANCE, PERFORMANCE)

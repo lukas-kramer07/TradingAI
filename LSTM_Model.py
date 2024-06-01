@@ -11,7 +11,7 @@ from utils import concat_data, plot
 from multi_step_models import LastStepBaseline
 import os
 
-RETRAIN = True
+RETRAIN = False
 VAL_PERFORMANCE = {}
 PERFORMANCE = {}
 HISTORY = {}
@@ -52,7 +52,7 @@ def main():
     LSTM_model = build_model()
     train_and_test(LSTM_model, multi_window, 'improved_LSTM')
 
-    plot(VAL_PERFORMANCE, PERFORMANCE)
+    plot(VAL_PERFORMANCE, PERFORMANCE, metric_name='accuracy')
 
 def test(model, window, name):
     VAL_PERFORMANCE[name] = model.evaluate(window.val, return_dict=True)
@@ -66,7 +66,7 @@ def train_and_test(model, window, model_name, patience=3 ,retrain = RETRAIN):
      model = tf.keras.models.load_model(f'Training/Models/multi/{model_name}')
   test(model,window,model_name)
 
-def compile_and_fit(model, window, patience, epochs=10):
+def compile_and_fit(model, window, patience=10, epochs=10):
   early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss',
                                                     patience=patience,
                                                     mode='min')

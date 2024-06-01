@@ -1,6 +1,7 @@
 # Advanced LSTM model specialized on prediciting stock prices
 
 #imports
+from cgitb import small
 import pandas as pd
 import matplotlib.pyplot as plt
 import tensorflow as tf
@@ -11,7 +12,7 @@ from utils import concat_data, plot
 from multi_step_models import LastStepBaseline
 import os
 
-RETRAIN = False
+RETRAIN = True
 VAL_PERFORMANCE = {}
 PERFORMANCE = {}
 HISTORY = {}
@@ -37,11 +38,9 @@ def build_model():
 def build_small_model():
     regularizer = tf.keras.regularizers.l2(1e-4)  # L2 regularization factor
     model = tf.keras.Sequential([
-        tf.keras.layers.LSTM(64, return_sequences=True, input_shape=(1000, 1),
+        tf.keras.layers.LSTM(64, return_sequences=False, input_shape=(1000, 1),
                              kernel_regularizer=regularizer, bias_regularizer=regularizer),
         tf.keras.layers.Dropout(0.1),
-        tf.keras.layers.LSTM(32, return_sequences=False,
-                             kernel_regularizer=regularizer, bias_regularizer=regularizer),
         tf.keras.layers.Dense(OUT_STEPS * 1, kernel_regularizer=regularizer),
         tf.keras.layers.Reshape([OUT_STEPS, 1])
     ])
@@ -57,10 +56,16 @@ def main():
     
     # Check your training data (example: multi_window.train)
     check_for_nan(multi_window.train)
-
+    print('BASELINE')
     last_baseline = LastStepBaseline(label_index=column_indices['c'])
     train_and_test(last_baseline, multi_window, 'lastBaseline')
 
+    print('SMALL_LSTM')
+    small_LSTM_model = build_small_model()
+    train_and_test(small_LSTM_model, multi_window, 'small_LSTM')
+
+
+    print('LARGE_LSTM')
     LSTM_model = build_model()
     train_and_test(LSTM_model, multi_window, 'improved_LSTM')
 
@@ -78,14 +83,14 @@ def train_and_test(model, window, model_name, patience=3 ,retrain = RETRAIN):
      model = tf.keras.models.load_model(f'Training/Models/multi/{model_name}')
   test(model,window,model_name)
 
-def compile_and_fit(model, window, patience=10, epochs=10):
+def compile_and_fit(model, window, patience=15, epochs=20):
   early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss',
                                                     patience=patience,
                                                     mode='min')
 
   model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001, clipnorm=1.0),
                 loss='mean_squared_error',
-                metrics=[tf.keras.metrics.Accuracy()])
+                metrics=[tf.keras.metrics.MeanAbsoluteError(), tf.keras.metrics.MeanAbsolutePercentageError(), tf.keras.metrics.Accuracy()])
 
   history = model.fit(window.train, epochs=epochs,
                       validation_data=window.val,

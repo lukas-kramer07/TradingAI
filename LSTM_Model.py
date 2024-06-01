@@ -33,7 +33,19 @@ def build_model():
         tf.keras.layers.Reshape([OUT_STEPS, 1])
     ])
     return model
-
+# Smaller LSTM Model with Regularization
+def build_small_model():
+    regularizer = tf.keras.regularizers.l2(1e-4)  # L2 regularization factor
+    model = tf.keras.Sequential([
+        tf.keras.layers.LSTM(64, return_sequences=True, input_shape=(1000, 1),
+                             kernel_regularizer=regularizer, bias_regularizer=regularizer),
+        tf.keras.layers.Dropout(0.1),
+        tf.keras.layers.LSTM(32, return_sequences=False,
+                             kernel_regularizer=regularizer, bias_regularizer=regularizer),
+        tf.keras.layers.Dense(OUT_STEPS * 1, kernel_regularizer=regularizer),
+        tf.keras.layers.Reshape([OUT_STEPS, 1])
+    ])
+    return model
 def main():
     #get data
     train_df, val_df, test_df, column_indices, num_features = concat_data('data', standard=False)

@@ -16,11 +16,10 @@ def compile_and_fit(model, window, patience, epochs=200):
                       callbacks=[early_stopping])
   return history
 
-def plot(val_performance, performance, plotname = 'NONE'):
+def plot(val_performance, performance, plotname = 'NONE', metric_name = 'mean_absolute_error'):
     # Plot models' performances
     x = np.arange(len(performance))
     width = 0.3
-    metric_name = 'mean_absolute_error'
     val_mae = [v[metric_name] for v in val_performance.values()]
     test_mae = [v[metric_name] for v in performance.values()]
 

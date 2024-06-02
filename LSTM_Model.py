@@ -40,7 +40,7 @@ def build_small_model():
     model = tf.keras.Sequential([
         tf.keras.layers.LSTM(64, return_sequences=False, input_shape=(1000, 1),
                              kernel_regularizer=regularizer, bias_regularizer=regularizer),
-        tf.keras.layers.Dropout(0.1),
+        tf.keras.layers.Dropout(0.2),
         tf.keras.layers.Dense(OUT_STEPS * 1, kernel_regularizer=regularizer),
         tf.keras.layers.Reshape([OUT_STEPS, 1])
     ])
@@ -75,7 +75,7 @@ def test(model, window, name):
     VAL_PERFORMANCE[name] = model.evaluate(window.val, return_dict=True)
     PERFORMANCE[name] = model.evaluate(window.test, verbose=0, return_dict=True)
 
-def train_and_test(model, window, model_name, patience=3 ,retrain = RETRAIN):
+def train_and_test(model, window, model_name, patience=15 ,retrain = RETRAIN):
   if model_name not in os.listdir('Training/Models/multi') or retrain:
     HISTORY[model_name] = compile_and_fit(model, window, patience)
     model.save(f'Training/Models/multi/{model_name}')

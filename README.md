@@ -1,9 +1,5 @@
 # TradingAI
 an AI to predict stocks
 
-Log: currently unable to break baseline. 
-Next steps: -add final models
-            -use new data
-            -refit
-            -build application script to predict next stocks
-            -build web app using Django
+Log: Predictions of stock prices do not work due to mathematical entanglement
+Next steps: - change prediction goal to up or down (-3 to 3 with positive being up and negative being down)

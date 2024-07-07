@@ -6,50 +6,88 @@ from datetime import datetime
 config = ConfigParser()
 config.read('config.cfg')
 api_key = config['API']['api_key']
-# Define the URL of the API endpoint you want to request
-DATA_NAMES = ['AAPL', 'JNJ', 'V', 'KO', 'XOM', 'WMT', 'GOOGL', 'PFE', 'JPM', 'PG', 'AMZN', 'CVX', 'COST', 'T', 'GE','IBM', 'NOK']
-url = f'https://financialmodelingprep.com/api/v3/historical-price-full/'
+secret_api_key = config['API']['secret_api_key']
+url = config['API']['base_url']
 
-NUM_DATA = 4 # number of 5-years data stacked in a df 
+# Technology
+technology_stocks = [
+    "AAPL",  # Apple
+    "MSFT",  # Microsoft
+    "GOOGL", # Alphabet
+    "AMZN",  # Amazon
+    "NVDA"   # NVIDIA
+]
+
+# Healthcare
+healthcare_stocks = [
+    "JNJ",   # Johnson & Johnson
+    "PFE",   # Pfizer
+    "MRNA"   # Moderna
+]
+
+# Finance
+finance_stocks = [
+    "JPM",   # JPMorgan Chase
+    "GS",    # Goldman Sachs
+    "BAC"    # Bank of America
+]
+
+# Consumer Goods
+consumer_goods_stocks = [
+    "PG",    # Procter & Gamble
+    "KO",    # Coca-Cola
+    "WMT"    # Walmart
+]
+
+# Energy
+energy_stocks = [
+    "XOM",   # ExxonMobil
+    "CVX"    # Chevron
+]
+
+# Utilities
+utilities_stocks = [
+    "NEE",   # NextEra Energy
+    "DUK"    # Duke Energy
+]
+
+# Combined list of all stocks
+all_stocks = (
+    technology_stocks +
+    healthcare_stocks +
+    finance_stocks +
+    consumer_goods_stocks +
+    energy_stocks +
+    utilities_stocks
+)
 
 
-def getdata(date_end, data_name):
+def getdata(start='2018-01-01T00', end='2024-05-05T00', data_name='AAPL'):
+    url = f"https://data.alpaca.markets/v2/stocks/bars?symbols={data_name}&timeframe=1H&start={start}%3A00%3A00Z&end={end}%3A00%3A00Z&limit=10000&adjustment=raw&feed=sip&sort=asc"
 
-    date_start = date_end.replace(year=date_end.year-5, day=date_end.day+1) # data range is 5 years-1 day
+    headers = {
+        "accept": "application/json",
+        "APCA-API-KEY-ID": "PKKCGDFQEWT19TPVRLRD",
+        "APCA-API-SECRET-KEY": "CWBpLu9t485amAEWYt8JSFao2KAR0kLBPvNeaM7Q"
+    }
 
-    #format dates
-    date_end = date_end.strftime('%Y-%m-%d')
-    date_start = date_start.strftime('%Y-%m-%d')
-    # Make a GET request to the API endpoint
-    response = requests.get(url+data_name+'?from='+date_start+'&to='+date_end+'&apikey='+api_key)
-    # Check if the request was successful (status code 200)
-    if response.status_code == 200:
-        # Extract the JSON data from the response
-        data = response.json()
-        
-    else:
-        # If the request was not successful, print an error message
-        print(f"Error: {response.status_code}")
-        
-    # Convert JSON data to pandas DataFrame
-    df = pd.json_normalize(data['historical']).iloc[::-1]
+    response = requests.get(url, headers=headers).json()
+    df = pd.DataFrame(response['bars'][data_name])
+    page_token = response["next_page_token"]
+    while page_token:
+        url=f"https://data.alpaca.markets/v2/stocks/bars?symbols={data_name}&timeframe=1H&start={start}%3A00%3A00Z&end={end}%3A00%3A00Z&limit=10000&adjustment=raw&feed=sip&page_token={page_token}&sort=asc"
+        response = requests.get(url, headers=headers).json()
+        df1 = pd.DataFrame(response['bars'][data_name])
+        df = pd.concat([df, df1])
+        page_token = response["next_page_token"]
     return df
 
 def main():
-    for data_name in DATA_NAMES:
-        dataframes = []
-        for n in range(NUM_DATA):
-            curr_year = datetime.now().year
-            df = getdata(datetime.now().replace(year=curr_year-5*n), data_name)
-            # Display the DataFrame
-            dataframes.append(df)
-        
-        #stack dataframes
-        dataframes.reverse()
-        df = pd.concat(dataframes).reset_index(drop=True)
-        # Save data in data folder
-        df.to_pickle(f'data/{data_name}')
-        print(df)
-
-if __name__ == '__main__':
+    progress = 0
+    for data_name in all_stocks:
+        progress+=1
+        print(f'{data_name}; progress: {progress}/{len(all_stocks)}')
+        df = getdata(data_name=data_name)
+        df.to_pickle(f'data/{data_name}') 
+if __name__=='__main__':
     main()

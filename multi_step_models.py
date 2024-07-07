@@ -16,7 +16,7 @@ VAL_PERFORMANCE = {}
 PERFORMANCE = {}
 HISTORY = {}
 INIT = tf.initializers.zeros()
-OUT_STEPS = 200
+OUT_STEPS = 1000
 
 # Models
 class LastStepBaseline(tf.keras.Model):
@@ -24,10 +24,8 @@ class LastStepBaseline(tf.keras.Model):
       super().__init__()
       self.label_index = label_index
    def call(self,inputs):
-      if self.label_index:
-         res = inputs[:, -1:, self.label_index]
-         return tf.tile(res[:, :, tf.newaxis], [1, OUT_STEPS, 1])
-      return tf.tile(inputs[:, -1:, :], [1, OUT_STEPS, 1])
+      res = inputs[:, -1:, self.label_index]
+      return tf.tile(res[:, :, tf.newaxis], [1, OUT_STEPS, 1])
 
 class RepeatBaseline(tf.keras.Model):
    def __init__(self, label_index=None):
@@ -95,32 +93,32 @@ def test(model, window, name):
     PERFORMANCE[name] = model.evaluate(window.test, verbose=0, return_dict=True)
 
 def train_and_test(model, window, model_name, patience=3 ,retrain = RETRAIN):
-  if model_name not in os.listdir('Training/Models') or retrain:
+  if model_name not in os.listdir('Training/Models/multi') or retrain:
     HISTORY[model_name] = compile_and_fit(model, window, patience)
-    model.save(f'Training/Models/{model_name}')
+    model.save(f'Training/Models/multi/{model_name}')
   else:
-     model = tf.keras.models.load_model(f'Training/Models/{model_name}')
+     model = tf.keras.models.load_model(f'Training/Models/multi/{model_name}')
   test(model,window,model_name)
 
 def main():
    #get data
-   train_df, val_df, test_df, column_indices, num_features = concat_data('data', standard=True)
+   train_df, val_df, test_df, column_indices, num_features = concat_data('data', standard=False)
    # define windows
    multi_window = WindowGenerator(train_df=train_df, val_df = val_df, test_df=test_df,
                                  input_width=OUT_STEPS,
                                  label_width=OUT_STEPS,
-                                 shift=OUT_STEPS, label_columns=['close'])
+                                 shift=OUT_STEPS, label_columns=['c'])
 
    # train the models (single output)
    # Baseline 1
    print('baselineLastStep')
-   last_baseline = LastStepBaseline(label_index=column_indices['close'])
-   train_and_test(last_baseline, multi_window, 'multi/lastBaseline')
+   last_baseline = LastStepBaseline(label_index=column_indices['c'])
+   train_and_test(last_baseline, multi_window, 'lastBaseline')
    
    # Baseline 2
    print('baselineRepeat')
-   repeat_baseline = RepeatBaseline(label_index=column_indices['close'])
-   train_and_test(repeat_baseline, multi_window, 'multi/repeatBaseline')
+   repeat_baseline = RepeatBaseline(label_index=column_indices['c'])
+   train_and_test(repeat_baseline, multi_window, 'repeatBaseline')
 
    # Multilinear
    print('multilinear')
@@ -133,18 +131,19 @@ def main():
       # Shape => [batch, out_steps, features]
       tf.keras.layers.Reshape([OUT_STEPS, 1])
    ])
-   train_and_test(multi_linear_model, multi_window, 'multi/multi_linear') 
+   train_and_test(multi_linear_model, multi_window, 'multi_linear') 
 
    # MultiDense
    print('multi dense')
    multi_dense_model = tf.keras.Sequential([
       tf.keras.layers.Lambda(lambda x : x[:, -1:, :]),
+      tf.keras.layers.Dense(2048, activation = 'relu'),
       tf.keras.layers.Dense(1024, activation = 'relu'),
       tf.keras.layers.Dense(OUT_STEPS),#,kernel_initializer=tf.initializers.zeros()),
       tf.keras.layers.Reshape([OUT_STEPS,1])
    ])
    print(multi_dense_model(multi_window.example[0]).shape)
-   train_and_test(multi_dense_model, multi_window, 'multi/multi_dense')
+   train_and_test(multi_dense_model, multi_window, 'multi_dense')
    
 
    # Conv Model
@@ -154,27 +153,32 @@ def main():
       # Shape [batch, time, features] => [batch, CONV_WIDTH, features]
       tf.keras.layers.Lambda(lambda x: x[:, -CONV_WIDTH:, :]),
       # Shape => [batch, 1, conv_units]
-      tf.keras.layers.Conv1D(256, activation='relu', kernel_size=(CONV_WIDTH)),
+      tf.keras.layers.Conv1D(512, activation='relu', kernel_size=(CONV_WIDTH)),
+      tf.keras.layers.Reshape([512, 1]),
+      tf.keras.layers.Conv1D(256, activation='relu', kernel_size=(512)),
       # Shape => [batch, 1,  out_steps*features]
       tf.keras.layers.Dense(OUT_STEPS),#kernel_initializer=tf.initializers.zeros()),
       # Shape => [batch, out_steps, features]
       tf.keras.layers.Reshape([OUT_STEPS, 1])
    ])
-   train_and_test(multi_conv_model, multi_window, 'multi/multi_conv', patience=10)
+   print(multi_conv_model.predict(multi_window.example[0]).shape)
+   train_and_test(multi_conv_model, multi_window, 'multi_conv', patience=10, retrain=True)
 
    # lstm Model
    print('lstm Model')
    multi_lstm_model = tf.keras.Sequential([
       # Shape [batch, time, features] => [batch, lstm_units].
       # Adding more `lstm_units` just overfits more quickly.
-      tf.keras.layers.LSTM(32, return_sequences=False),
+      tf.keras.layers.LSTM(128, return_sequences=True),
+      tf.keras.layers.LSTM(64, return_sequences=False),
       # Shape => [batch, out_steps*features].
       tf.keras.layers.Dense(OUT_STEPS),
       # Shape => [batch, out_steps, features].
       tf.keras.layers.Reshape([OUT_STEPS, 1])
    ])
-   train_and_test(multi_lstm_model, multi_window, 'multi/multi_lstm')
-
+   train_and_test(multi_lstm_model, multi_window, 'multi_lstm')
+   multi_window.plot(multi_conv_model)
+   multi_window.plot(last_baseline)
    # res Net lstm
    print('residual_lstm')
    residual_lstm_multi = ResidualWrapper(
@@ -183,18 +187,18 @@ def main():
         tf.keras.layers.Dense(
             OUT_STEPS,
             kernel_initializer=tf.initializers.zeros())
-    ]), label_index=column_indices['close'])
-   train_and_test(residual_lstm_multi, multi_window, 'multi/residual_lstm_multi')
+    ]), label_index=0)
+   train_and_test(residual_lstm_multi, multi_window, 'residual_lstm_multi', retrain=True)
+   multi_window.plot(residual_lstm_multi)
    
-   
-   # autoregreassive model
+   """# autoregreassive model
    feedback_model = FeedBack(units=32, out_steps=OUT_STEPS)
    train_and_test(feedback_model, multi_window, 'autoregressive', retrain=True)
-   multi_window.plot(feedback_model, max_subplots=15)
+   multi_window.plot(feedback_model, max_subplots=15)"""
 
 
    plt.show()
-   plot(VAL_PERFORMANCE, PERFORMANCE, 'all_standard_multi_step_performances')
+   plot(VAL_PERFORMANCE, PERFORMANCE, 'multi_step_performances')
 
 
 if __name__ == '__main__':

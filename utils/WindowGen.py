@@ -50,7 +50,7 @@ class WindowGenerator():
         self.val_df = val_df
         self.test_df = test_df
         if isinstance(train_df, list): # account for lists of datasets
-            train_df = train_df[1]
+            train_df = train_df[0]
         # Work out the label column indices.
         self.label_columns = label_columns
         if label_columns is not None:
@@ -73,7 +73,7 @@ class WindowGenerator():
         self.labels_slice = slice(self.label_start, None)
         self.label_indices = np.arange(self.total_window_size)[self.labels_slice]      
 
-    def plot(self, model=None, plot_col='close', max_subplots=3):
+    def plot(self, model=None, plot_col='c', max_subplots=3):
         inputs, labels = self.example
         plt.figure(figsize=(12, 8))
         plot_col_index = self.column_indices[plot_col]

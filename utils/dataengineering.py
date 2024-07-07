@@ -9,7 +9,7 @@ STANDARDOVERSINGLEDATA = True
 FILENAME = 'data/GenElectric'
 
 def plot(df, date_time):
-    plot_cols = ['open', 'change', 'volume']
+    plot_cols = ['o', 'c', 'v']
     plot_features = df[plot_cols]
     plot_features.index = date_time
     _ = plot_features.plot(subplots=True)
@@ -20,8 +20,11 @@ def plot(df, date_time):
     plt.show()
 def return_data(filename = FILENAME):
     df = pd.read_pickle(filename)
-    df.pop('label')
-    date_time = pd.to_datetime(df.pop('date'), format='%Y-%m-%d')
+    date_time = pd.to_datetime(df.pop('t'), format='%Y-%m-%dT%H:%M:%SZ')
+    #pop stuff
+    for series_name, series in df.items():
+        if series_name not in ['c']: 
+            df.pop(series_name)
     #plot(df, date_time)
     #print(df.describe().transpose())
 
@@ -43,8 +46,11 @@ def iterate_files(folder_path):
     for filename in os.listdir(folder_path):
         if os.path.isfile(os.path.join(folder_path, filename)):
             yield filename
-def standardize(df, mean, std):
+def standardize(df, mean, std, maximum = None):
+    if maximum is not None:
+        return df/maximum
     return (df-mean)/std
+    #return (df-mean)/std
 def concat_data(folder, standard = STANDARDOVERSINGLEDATA):
     if standard:
         train_df, val_df, test_df= [],[],[]
@@ -66,6 +72,7 @@ def concat_data(folder, standard = STANDARDOVERSINGLEDATA):
             test_df.append(test_df1)
         
         #standardize over whole dataset
+        maximum = standard.max()
         mean = standard.mean()
         std = standard.std()
         train_df = [standardize(df, mean,std) for df in train_df]

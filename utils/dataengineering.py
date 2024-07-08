@@ -21,10 +21,10 @@ def plot(df, date_time):
 def return_data(filename = FILENAME):
     df = pd.read_pickle(filename)
     date_time = pd.to_datetime(df.pop('t'), format='%Y-%m-%dT%H:%M:%SZ')
-    #pop stuff
+    """#pop stuff
     for series_name, series in df.items():
         if series_name not in ['c']: 
-            df.pop(series_name)
+            df.pop(series_name)"""
     #plot(df, date_time)
     #print(df.describe().transpose())
 

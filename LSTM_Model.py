@@ -23,7 +23,7 @@ IN_STEPS=1000
 def build_model():
     regularizer = tf.keras.regularizers.l2(1e-4)  # L2 regularization factor
     model = tf.keras.Sequential([
-        tf.keras.layers.LSTM(256, return_sequences=True, input_shape=(1000, 1),
+        tf.keras.layers.LSTM(256, return_sequences=True, input_shape=(1000, 7),
                              kernel_regularizer=regularizer, bias_regularizer=regularizer),
         tf.keras.layers.Dropout(0.2),
         tf.keras.layers.LSTM(128, return_sequences=True,
@@ -38,7 +38,7 @@ def build_model():
 def build_small_model():
     regularizer = tf.keras.regularizers.l2(1e-4)  # L2 regularization factor
     model = tf.keras.Sequential([
-        tf.keras.layers.LSTM(64, return_sequences=False, input_shape=(1000, 1),
+        tf.keras.layers.LSTM(64, return_sequences=False, input_shape=(1000, 7),
                              kernel_regularizer=regularizer, bias_regularizer=regularizer),
         tf.keras.layers.Dropout(0.2),
         tf.keras.layers.Dense(OUT_STEPS * 1, kernel_regularizer=regularizer),
@@ -67,7 +67,7 @@ def main():
 
     print('LARGE_LSTM')
     LSTM_model = build_model()
-    train_and_test(LSTM_model, multi_window, 'improved_LSTM')
+    train_and_test(LSTM_model, multi_window, 'improved_LSTM', retrain=False)
 
     plot(VAL_PERFORMANCE, PERFORMANCE, metric_name='accuracy')
 
@@ -83,7 +83,7 @@ def train_and_test(model, window, model_name, patience=15 ,retrain = RETRAIN):
      model = tf.keras.models.load_model(f'Training/Models/multi/{model_name}')
   test(model,window,model_name)
 
-def compile_and_fit(model, window, patience=15, epochs=20):
+def compile_and_fit(model, window, patience=15, epochs=50):
   early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss',
                                                     patience=patience,
                                                     mode='min')

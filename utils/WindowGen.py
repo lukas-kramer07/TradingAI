@@ -101,7 +101,7 @@ class WindowGenerator():
         plt.xlabel('Time [d]')""" #TODO
     def create_label(inputs):
         print(inputs)
-        return 0
+        return [0]*len(inputs)
     
     def split_window(self, features):
         inputs = features[:, self.input_slice, :]
@@ -122,13 +122,7 @@ class WindowGenerator():
             return combined_ds
         else:
             data = np.array(data, dtype=np.float32)
-            ds = tf.keras.utils.timeseries_dataset_from_array(
-                data=data,
-                targets=None,
-                sequence_length=self.total_window_size,
-                sequence_stride=1,
-                shuffle=True,
-                batch_size=32,)
+            ds = tf.keras.utils
 
             ds = ds.map(self.split_window)
         

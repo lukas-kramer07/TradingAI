@@ -33,7 +33,7 @@ class WindowGenerator():
 
     def __init__(self, input_width, shift,
                 train_df, val_df, test_df,
-                label_columns=None):
+                label_columns=['c']):
         """initialises the window
 
         Args:
@@ -99,22 +99,20 @@ class WindowGenerator():
                 plt.legend()
 
         plt.xlabel('Time [d]')""" #TODO
-    
+    def create_label(inputs):
+        print(inputs)
+        return 0
     
     def split_window(self, features):
         inputs = features[:, self.input_slice, :]
         labels = self.create_label(inputs)
-        if self.label_columns is not None:
-            labels = tf.stack(
-                [labels[:, :, self.column_indices[name]] for name in self.label_columns],
-                axis=-1) #only output the features that are required by the labels
 
         # Slicing doesn't preserve static shape information, so set the shapes
         # manually. This way the `tf.data.Datasets` are easier to inspect.
         inputs.set_shape([None, self.input_width, None])
-        labels.set_shape([None, self.label_width, None])
 
-        return inputs, labels
+        return inputs, 
+
     def make_dataset(self, data):
         if isinstance(data, list):
             ds_list = [self.make_dataset(d) for d in data]

@@ -31,15 +31,14 @@ class WindowGenerator():
             self._example = result
         return result
 
-    def __init__(self, input_width, label_width, shift,
+    def __init__(self, input_width, shift,
                 train_df, val_df, test_df,
                 label_columns=None):
         """initialises the window
 
         Args:
             input_width (int): width of input window
-            label_width (int): width of label window
-            shift (int): shift between labels and inputs
+            shift (int): shift between label-value and inputs
             train_df (list, pandas dataframe): train dataset or list of train datasets
             val_df (list, pandas dataframe): validation dataset or list of val datasets
             test_df (list, pandas dataframe): test dataset or list of test datasets
@@ -61,7 +60,6 @@ class WindowGenerator():
 
         # Work out the window parameters.
         self.input_width = input_width
-        self.label_width = label_width
         self.shift = shift
 
         self.total_window_size = input_width + shift
@@ -69,11 +67,8 @@ class WindowGenerator():
         self.input_slice = slice(0, input_width)
         self.input_indices = np.arange(self.total_window_size)[self.input_slice]
 
-        self.label_start = self.total_window_size - self.label_width
-        self.labels_slice = slice(self.label_start, None)
-        self.label_indices = np.arange(self.total_window_size)[self.labels_slice]      
 
-    def plot(self, model=None, plot_col='c', max_subplots=3):
+    """def plot(self, model=None, plot_col='c', max_subplots=3):
         inputs, labels = self.example
         plt.figure(figsize=(12, 8))
         plot_col_index = self.column_indices[plot_col]
@@ -103,12 +98,12 @@ class WindowGenerator():
             if n == 0:
                 plt.legend()
 
-        plt.xlabel('Time [d]')
-
+        plt.xlabel('Time [d]')""" #TODO
+    
     
     def split_window(self, features):
         inputs = features[:, self.input_slice, :]
-        labels = features[:, self.labels_slice, :]
+        labels = self.create_label(inputs)
         if self.label_columns is not None:
             labels = tf.stack(
                 [labels[:, :, self.column_indices[name]] for name in self.label_columns],

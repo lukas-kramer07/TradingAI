@@ -101,6 +101,7 @@ class WindowGenerator():
         plt.xlabel('Time [d]')""" #TODO
     def create_label(inputs):
         print(inputs)
+        #TODO get labels from shift
         return [0]*len(inputs)
     
     def split_window(self, features):
@@ -111,7 +112,7 @@ class WindowGenerator():
         # manually. This way the `tf.data.Datasets` are easier to inspect.
         inputs.set_shape([None, self.input_width, None])
 
-        return inputs, 
+        return inputs,labels
 
     def make_dataset(self, data):
         if isinstance(data, list):
@@ -122,7 +123,7 @@ class WindowGenerator():
             return combined_ds
         else:
             data = np.array(data, dtype=np.float32)
-            ds = tf.keras.utils
+            ds = tf.data.Dataset.from_tensor_slices(data)
 
             ds = ds.map(self.split_window)
         

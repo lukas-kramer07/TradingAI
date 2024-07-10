@@ -1,7 +1,6 @@
 # Advanced LSTM model specialized on prediciting stock prices
 
 #imports
-from cgitb import small
 import pandas as pd
 import matplotlib.pyplot as plt
 import tensorflow as tf
@@ -19,57 +18,15 @@ HISTORY = {}
 OUT_STEPS = 1000
 IN_STEPS=1000
 
-# Improved LSTM Model with Regularization
-def build_model():
-    regularizer = tf.keras.regularizers.l2(1e-4)  # L2 regularization factor
-    model = tf.keras.Sequential([
-        tf.keras.layers.LSTM(256, return_sequences=True, input_shape=(1000, 7),
-                             kernel_regularizer=regularizer, bias_regularizer=regularizer),
-        tf.keras.layers.Dropout(0.2),
-        tf.keras.layers.LSTM(128, return_sequences=True,
-                             kernel_regularizer=regularizer, bias_regularizer=regularizer),
-        tf.keras.layers.Dropout(0.2),
-        tf.keras.layers.LSTM(64, kernel_regularizer=regularizer, bias_regularizer=regularizer),
-        tf.keras.layers.Dense(OUT_STEPS * 1, kernel_regularizer=regularizer),
-        tf.keras.layers.Reshape([OUT_STEPS, 1])
-    ])
-    return model
-# Smaller LSTM Model with Regularization
-def build_small_model():
-    regularizer = tf.keras.regularizers.l2(1e-4)  # L2 regularization factor
-    model = tf.keras.Sequential([
-        tf.keras.layers.LSTM(64, return_sequences=False, input_shape=(1000, 7),
-                             kernel_regularizer=regularizer, bias_regularizer=regularizer),
-        tf.keras.layers.Dropout(0.2),
-        tf.keras.layers.Dense(OUT_STEPS * 1, kernel_regularizer=regularizer),
-        tf.keras.layers.Reshape([OUT_STEPS, 1])
-    ])
-    return model
+
 def main():
     #get data
     train_df, val_df, test_df, column_indices, num_features = concat_data('data', standard=False)
     # define windows
     multi_window = WindowGenerator(train_df=train_df, val_df = val_df, test_df=test_df,
                                     input_width=IN_STEPS,
-                                    label_width=OUT_STEPS,
                                     shift=1, label_columns=['c'])
-    
-    # Check your training data (example: multi_window.train)
-    check_for_nan(multi_window.train)
-    print('BASELINE')
-    last_baseline = LastStepBaseline(label_index=column_indices['c'])
-    train_and_test(last_baseline, multi_window, 'lastBaseline')
-
-    print('SMALL_LSTM')
-    small_LSTM_model = build_small_model()
-    train_and_test(small_LSTM_model, multi_window, 'small_LSTM')
-
-
-    print('LARGE_LSTM')
-    LSTM_model = build_model()
-    train_and_test(LSTM_model, multi_window, 'improved_LSTM', retrain=False)
-
-    plot(VAL_PERFORMANCE, PERFORMANCE, metric_name='accuracy')
+    print(multi_window.example)
 
 def test(model, window, name):
     VAL_PERFORMANCE[name] = model.evaluate(window.val, return_dict=True)

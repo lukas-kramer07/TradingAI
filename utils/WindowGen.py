@@ -105,9 +105,11 @@ class WindowGenerator():
         return [0]*len(inputs)
     
     def split_window(self, features):
+        print(features.shape)
         inputs = features[:, self.input_slice, :]
+        print(inputs.shape)
         labels = self.create_label(inputs)
-
+        print(labels)
         # Slicing doesn't preserve static shape information, so set the shapes
         # manually. This way the `tf.data.Datasets` are easier to inspect.
         inputs.set_shape([None, self.input_width, None])
@@ -123,8 +125,16 @@ class WindowGenerator():
             return combined_ds
         else:
             data = np.array(data, dtype=np.float32)
-            ds = tf.data.Dataset.from_tensor_slices(data)
+            #ds = tf.data.Dataset.from_tensor_slices(data)
 
+            # use total window_size with shift to not train on unavailable info
+            ds = tf.keras.utils.timeseries_dataset_from_array(
+                data=data,
+                targets=None,
+                sequence_length=self.total_window_size,
+                sequence_stride=1,
+                shuffle=True,
+                batch_size=32,)
             ds = ds.map(self.split_window)
         
         return ds

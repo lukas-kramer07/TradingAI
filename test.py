@@ -22,21 +22,22 @@ class Baseline(tf.keras.Model):
     super().__init__()
 
   def call(self, inputs):
-    return 0
+    return tf.convert_to_tensor([0])
 
 
 def main():
     #get data
     train_df, val_df, test_df, column_indices, num_features = concat_data('data', standard=False)
     # define windows
-    multi_window = WindowGenerator(train_df=train_df, val_df = val_df, test_df=test_df,
+    window = WindowGenerator(train_df=train_df, val_df = val_df, test_df=test_df,
                                     input_width=IN_STEPS,
                                     shift=1, label_columns=['c'])
-    print(multi_window.example)
+    print(window.example)
 
     # Training
     print('Baseline')
-    model = Baseline()
+    baseline_model = Baseline()
+    train_and_test(baseline_model, window, 'Baseline')
 
 def test(model, window, name):
     VAL_PERFORMANCE[name] = model.evaluate(window.val, return_dict=True)
@@ -63,3 +64,6 @@ def compile_and_fit(model, window, patience=15, epochs=50):
                       validation_data=window.val,
                       callbacks=[early_stopping])
   return history
+
+if __name__ == '__main__':
+   main()

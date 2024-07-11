@@ -11,11 +11,10 @@ from utils import concat_data, plot
 from multi_step_models import LastStepBaseline
 import os
 
-RETRAIN = True
+RETRAIN = True 
 VAL_PERFORMANCE = {}
 PERFORMANCE = {}
 HISTORY = {}
-OUT_STEPS = 1000
 IN_STEPS=1000
 
 

@@ -39,6 +39,10 @@ def main():
     baseline_model = Baseline()
     train_and_test(baseline_model, window, 'Baseline')
 
+    linear_model = tf.keras.Sequential([
+        tf.keras.layers.Dense(units=64, activation='relu'),
+        tf.keras.layers.Dense(units=1)
+      ])
 def test(model, window, name):
     VAL_PERFORMANCE[name] = model.evaluate(window.val, return_dict=True)
     PERFORMANCE[name] = model.evaluate(window.test, verbose=0, return_dict=True)

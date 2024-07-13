@@ -102,7 +102,8 @@ class WindowGenerator():
     def create_label(self, inputs, end_row):
         c_values_end = end_row[:, 0]
         c_values_in = inputs[:,-1,0]
-        tf.divide(c_values_end, c_values_in)
+        res = tf.divide(c_values_end, c_values_in)
+        tf.print(res)
         return [0]*len(inputs)
     
     def split_window(self, features):

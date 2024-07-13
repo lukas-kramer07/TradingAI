@@ -31,7 +31,7 @@ def main():
     # define windows
     window = WindowGenerator(train_df=train_df, val_df = val_df, test_df=test_df,
                                     input_width=IN_STEPS,
-                                    shift=1, label_columns=['c'])
+                                    shift=100, label_columns=['c'])
     print(window.example)
 
     # Training

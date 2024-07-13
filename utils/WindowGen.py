@@ -99,16 +99,15 @@ class WindowGenerator():
                 plt.legend()
 
         plt.xlabel('Time [d]')""" #TODO
-    def create_label(self, inputs):
+    def create_label(self, inputs, end_row):
         #TODO get labels from shift
         return [0]*len(inputs)
     
     def split_window(self, features):
         inputs = features[:, self.input_slice, :]
-        print(features.shape, type(features))
-        end_val = features[:,-1,0] # get last 'c' value of 
-        print(end_val)
-        labels = self.create_label(inputs)
+        end_row = features[:,-1,:] # get last 'c' value of 
+        tf.print(features, features.shape ,end_row, end_row.shape)
+        labels = self.create_label(inputs, end_row)
         # Slicing doesn't preserve static shape information, so set the shapes
         # manually. This way the `tf.data.Datasets` are easier to inspect.
         inputs.set_shape([None, self.input_width, None])

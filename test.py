@@ -42,7 +42,8 @@ def main():
     linear_model = tf.keras.Sequential([
         tf.keras.layers.Flatten(),
         tf.keras.layers.Dense(units=64, activation='relu'),
-        tf.keras.layers.Dense(units=1)
+        tf.keras.layers.Dense(units=1, kernel_initializer= tf.keras.initializers.RandomNormal(mean=0.0, stddev=0.05, seed=None)
+)
       ])
     train_and_test(linear_model, window, 'Linear')
 def test(model, window, name):
@@ -57,7 +58,7 @@ def train_and_test(model, window, model_name, patience=15 ,retrain = RETRAIN):
      model = tf.keras.models.load_model(f'Training/Models/multi/{model_name}')
   test(model,window,model_name)
 
-def compile_and_fit(model, window, patience=15, epochs=50):
+def compile_and_fit(model, window, patience=5, epochs=50):
   early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss',
                                                     patience=patience,
                                                     mode='min')

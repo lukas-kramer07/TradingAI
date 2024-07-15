@@ -103,22 +103,20 @@ class WindowGenerator():
         c_values_end = end_row[:, 0]
         c_values_in = inputs[:,-1,0]
         res = tf.divide(c_values_end, c_values_in)
-        tf.print(res)
 
         # use tf.where to mask on label values
 
         # conditions
         strong_buy = res>1.05
-        buy = 1.05>=res>=1.02
-        hold = 1.02>res>0.98
-        sell = 0.98>=res>=0.95
+        buy = tf.logical_and(res >= 1.02, res <= 1.05)
+        hold = tf.logical_and(res > 0.98, res < 1.02)
+        sell = tf.logical_and(res >= 0.95, res <= 0.98)
         strong_sell = 0.95>res
-
+        tf.print(res)
         res = tf.where(strong_buy, float(2), res) 
         res = tf.where(buy, float(1), res)
         res = tf.where(hold, float(0), res)
         res = tf.where(sell, float(-1), res)
-        res = tf.where(strong_sell, float(-2), res)
         tf.print(res)
         return res
     

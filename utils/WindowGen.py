@@ -104,6 +104,15 @@ class WindowGenerator():
         c_values_in = inputs[:,-1,0]
         res = tf.divide(c_values_end, c_values_in)
         tf.print(res)
+
+        # use tf.where to mask on label values
+
+        # conditions
+        strong_buy = res>1.05
+        buy = 1.05>=res>=1.02
+        hold = 1.02>res>0.98
+        sell = 0.98>=res>=0.95
+        strong_sell = 0.95>res 
         return [0]*len(inputs)
     
     def split_window(self, features):

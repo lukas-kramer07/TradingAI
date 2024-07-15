@@ -112,8 +112,14 @@ class WindowGenerator():
         buy = 1.05>=res>=1.02
         hold = 1.02>res>0.98
         sell = 0.98>=res>=0.95
-        strong_sell = 0.95>res 
-        return [0]*len(inputs)
+        strong_sell = 0.95>res
+
+        res = tf.where(strong_buy, 2, res) 
+        res = tf.where(hold, 1, res)
+        res = tf.where(hold, 0, res)
+        res = tf.where(sell, -1, res)
+        res = tf.where(strong_sell, -2, res)
+        return res
     
     def split_window(self, features):
         inputs = features[:, self.input_slice, :]

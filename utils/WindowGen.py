@@ -117,6 +117,9 @@ class WindowGenerator():
         res = tf.where(hold, float(0), res)
         res = tf.where(sell, float(-1), res)
         res = tf.where(strong_sell, float(-2), res)
+        
+        res = tf.one_hot(res, depth = 5)
+        tf.print(res)
         return res
     
     def split_window(self, features):

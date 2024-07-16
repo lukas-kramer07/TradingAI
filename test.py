@@ -22,7 +22,7 @@ class Baseline(tf.keras.Model):
     super().__init__()
 
   def call(self, inputs):
-    return tf.convert_to_tensor([0])
+    return tf.convert_to_tensor([[0,0,1,0,0]])
 
 
 def main():
@@ -42,10 +42,10 @@ def main():
     linear_model = tf.keras.Sequential([
         tf.keras.layers.Flatten(),
         tf.keras.layers.Dense(units=64, activation='relu'),
-        tf.keras.layers.Dense(units=1, kernel_initializer= tf.keras.initializers.RandomNormal(mean=0.0, stddev=0.05, seed=None)
-)
+        tf.keras.layers.Dense(units=5, activation='softmax')
       ])
     train_and_test(linear_model, window, 'Linear')
+    print(linear_model(window.example))
 def test(model, window, name):
     VAL_PERFORMANCE[name] = model.evaluate(window.val, return_dict=True)
     PERFORMANCE[name] = model.evaluate(window.test, verbose=0, return_dict=True)
@@ -64,8 +64,8 @@ def compile_and_fit(model, window, patience=5, epochs=50):
                                                     mode='min')
 
   model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001, clipnorm=1.0),
-                loss='mean_squared_error',
-                metrics=[tf.keras.metrics.MeanAbsoluteError(), tf.keras.metrics.MeanAbsolutePercentageError(), tf.keras.metrics.Accuracy()])
+                loss='sparse_categorical_crossentropy',
+                metrics=[tf.keras.metrics.Accuracy()])
 
   history = model.fit(window.train, epochs=epochs,
                       validation_data=window.val,

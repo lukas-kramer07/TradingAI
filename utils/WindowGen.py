@@ -120,7 +120,7 @@ class WindowGenerator():
 
         # one_hot encode
         res=tf.cast(res, dtype=tf.int32)
-        res = tf.one_hot(res, depth = 5)
+        res = tf.one_hot(res, depth = 5, dtype=tf.int32)
 
 
         return res

@@ -40,6 +40,22 @@ def main():
     baseline_hold_model = Baseline([0,0,1,0,0])
     train_and_test(baseline_hold_model, window, 'Baseline')
 
+    print('Baseline_buy')
+    baseline_buy_model = Baseline([0,1,0,0,0])
+    train_and_test(baseline_buy_model, window, 'Baseline')
+
+    print('Baseline_sell')
+    baseline_sell_model = Baseline([0,0,0,1,0])
+
+    train_and_test(baseline_sell_model, window, 'Baseline')
+    print('Baseline_strong_buy')
+    baseline_strong_buy_model = Baseline([1,0,0,0,0])
+    train_and_test(baseline_strong_buy_model, window, 'Baseline')
+
+    print('Baseline_strong_sell')
+    baseline_strong_sell_model = Baseline([0,0,0,0,1])
+    train_and_test(baseline_strong_sell_model, window, 'Baseline')
+
     linear_model = keras.Sequential([
         keras.layers.Flatten(),
         keras.layers.Dense(units=64, activation='relu'),

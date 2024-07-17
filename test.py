@@ -23,7 +23,8 @@ class Baseline(keras.Model):
     super().__init__()
     self.output_arr = output_arr
   def call(self, inputs):
-    return tf.convert_to_tensor([self.output_arr], dtype=tf.float32)
+    batch_size = tf.shape(inputs)[0]
+    return tf.tile(tf.convert_to_tensor([self.output_arr], dtype=tf.float32), [batch_size,1])
 
 
 def main():
@@ -48,7 +49,14 @@ def main():
     for name, output_arr in baselines.items():
         print(name)
         baseline_model = Baseline(output_arr)
-        train_and_test(baseline_model, window, name)
+        train_and_test(baseline_model, window, name, epochs=1)
+        input, l = window.example
+        y_pred = baseline_model(input)
+        y_true = l
+        print(baseline_model(input), l)
+        m = keras.metrics.CategoricalAccuracy()
+        m.update_state(y_true=y_true, y_pred=y_pred)
+        print(m.result().numpy())
 
     print('linear model')
     linear_model = keras.Sequential([
@@ -59,21 +67,21 @@ def main():
       ])
     train_and_test(linear_model, window, 'Linear')
     print(linear_model(window.example))
-    m = keras.metrics.Accuracy()
+
     print(baseline_model(window.example), window.example[1])
 def test(model, window, name):
     VAL_PERFORMANCE[name] = model.evaluate(window.val, return_dict=True)
     PERFORMANCE[name] = model.evaluate(window.test, verbose=0, return_dict=True)
 
-def train_and_test(model, window, model_name, patience=3 ,retrain = RETRAIN):
+def train_and_test(model, window, model_name, patience=3 ,retrain = RETRAIN, epochs=30):
   if True:#model_name not in os.listdir('Training/Models/multi') or retrain:
-    HISTORY[model_name] = compile_and_fit(model, window, patience)
+    HISTORY[model_name] = compile_and_fit(model, window, patience, epochs=epochs)
     model.save(f'Training/Models/multi/{model_name}')
   else:
      model = keras.models.load_model(f'Training/Models/multi/{model_name}')
   test(model,window,model_name)
 
-def compile_and_fit(model, window, patience, epochs=30):
+def compile_and_fit(model, window, patience, epochs):
   early_stopping = keras.callbacks.EarlyStopping(monitor='val_loss',
                                                   patience=patience,
                                                   mode='min',
@@ -82,7 +90,7 @@ def compile_and_fit(model, window, patience, epochs=30):
 
   model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.001, clipnorm=1.0),
                 loss='categorical_crossentropy',
-                metrics=[keras.metrics.Accuracy()])
+                metrics=[keras.metrics.CategoricalAccuracy()])
 
   history = model.fit(window.train, epochs=epochs,
                       validation_data=window.val,

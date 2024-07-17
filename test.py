@@ -19,11 +19,11 @@ HISTORY = {}
 IN_STEPS=1000
 
 class Baseline(keras.Model):
-  def __init__(self):
+  def __init__(self, output_arr):
     super().__init__()
-
+    self.output_arr = output_arr
   def call(self, inputs):
-    return tf.convert_to_tensor([[0,0,1,0,0]], dtype=tf.float32)
+    return tf.convert_to_tensor([self.output_arr], dtype=tf.float32)
 
 
 def main():
@@ -36,9 +36,9 @@ def main():
     print(window.example)
 
     # Training
-    print('Baseline')
-    baseline_model = Baseline()
-    train_and_test(baseline_model, window, 'Baseline')
+    print('Baseline_hold')
+    baseline_hold_model = Baseline([0,0,1,0,0])
+    train_and_test(baseline_hold_model, window, 'Baseline')
 
     linear_model = keras.Sequential([
         keras.layers.Flatten(),

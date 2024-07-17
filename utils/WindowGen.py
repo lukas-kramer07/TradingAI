@@ -112,12 +112,11 @@ class WindowGenerator():
         hold = tf.logical_and(res > 0.98, res < 1.02)
         sell = tf.logical_and(res >= 0.95, res <= 0.98)
         strong_sell = 0.95>res
-        res = tf.where(strong_buy, float(2), res) 
-        res = tf.where(buy, float(1), res)
-        res = tf.where(hold, float(0), res)
-        res = tf.where(sell, float(-1), res)
-        res = tf.where(strong_sell, float(-2), res)
-
+        res = tf.where(strong_buy, float(4), res) 
+        res = tf.where(buy, float(3), res)
+        res = tf.where(hold, float(2), res)
+        res = tf.where(sell, float(1), res)
+        res = tf.where(strong_sell, float(0), res)
         # one_hot encode
         res=tf.cast(res, dtype=tf.int32)
         res = tf.one_hot(res, depth = 5, dtype=tf.int32)

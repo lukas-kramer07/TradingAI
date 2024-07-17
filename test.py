@@ -36,26 +36,21 @@ def main():
     print(window.example)
 
     # Training
-    print('Baseline_hold')
-    baseline_hold_model = Baseline([0,0,1,0,0])
-    train_and_test(baseline_hold_model, window, 'Baseline')
+    # Baseline Models
+    baselines = {
+        'Baseline_hold': [0, 0, 1, 0, 0],
+        'Baseline_buy': [0, 1, 0, 0, 0],
+        'Baseline_sell': [0, 0, 0, 1, 0],
+        'Baseline_strong_buy': [1, 0, 0, 0, 0],
+        'Baseline_strong_sell': [0, 0, 0, 0, 1]
+    }
+    
+    for name, output_arr in baselines.items():
+        print(name)
+        baseline_model = Baseline(output_arr)
+        train_and_test(baseline_model, window, name)
 
-    print('Baseline_buy')
-    baseline_buy_model = Baseline([0,1,0,0,0])
-    train_and_test(baseline_buy_model, window, 'Baseline')
-
-    print('Baseline_sell')
-    baseline_sell_model = Baseline([0,0,0,1,0])
-
-    train_and_test(baseline_sell_model, window, 'Baseline')
-    print('Baseline_strong_buy')
-    baseline_strong_buy_model = Baseline([1,0,0,0,0])
-    train_and_test(baseline_strong_buy_model, window, 'Baseline')
-
-    print('Baseline_strong_sell')
-    baseline_strong_sell_model = Baseline([0,0,0,0,1])
-    train_and_test(baseline_strong_sell_model, window, 'Baseline')
-
+    print('linear model')
     linear_model = keras.Sequential([
         keras.layers.Flatten(),
         keras.layers.Dense(units=64, activation='relu'),
@@ -64,12 +59,13 @@ def main():
       ])
     train_and_test(linear_model, window, 'Linear')
     print(linear_model(window.example))
-    print(linear_model(window.example), window.example[1])
+    m = keras.metrics.Accuracy()
+    print(baseline_model(window.example), window.example[1])
 def test(model, window, name):
     VAL_PERFORMANCE[name] = model.evaluate(window.val, return_dict=True)
     PERFORMANCE[name] = model.evaluate(window.test, verbose=0, return_dict=True)
 
-def train_and_test(model, window, model_name, patience=5 ,retrain = RETRAIN):
+def train_and_test(model, window, model_name, patience=3 ,retrain = RETRAIN):
   if True:#model_name not in os.listdir('Training/Models/multi') or retrain:
     HISTORY[model_name] = compile_and_fit(model, window, patience)
     model.save(f'Training/Models/multi/{model_name}')

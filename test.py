@@ -62,11 +62,11 @@ def main():
     print('linear model')
     linear_model = keras.Sequential([
         keras.layers.Flatten(),
-        keras.layers.Dense(units=64, activation='relu'),
-        keras.layers.Dropout(0.2),
         keras.layers.Dense(units=5, activation='softmax')
       ])
     train_and_test(linear_model, window, 'Linear')
+
+    
     print(tf.argmax(linear_model(window.example), axis=-1), window.example[1])
 
 def test(model, window, name):

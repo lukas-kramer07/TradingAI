@@ -108,9 +108,9 @@ class WindowGenerator():
 
         # conditions
         strong_buy = res>1.05
-        buy = tf.logical_and(res >= 1.02, res <= 1.05)
-        hold = tf.logical_and(res > 0.98, res < 1.02)
-        sell = tf.logical_and(res >= 0.95, res <= 0.98)
+        buy = tf.logical_and(res >= 1.015, res <= 1.05)
+        hold = tf.logical_and(res > 0.985, res < 1.015)
+        sell = tf.logical_and(res >= 0.95, res <= 0.985)
         strong_sell = 0.95>res
         res = tf.where(strong_buy, float(4), res) 
         res = tf.where(buy, float(3), res)

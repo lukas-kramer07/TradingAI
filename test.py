@@ -33,7 +33,7 @@ def main():
     # define windows
     window = WindowGenerator(train_df=train_df, val_df = val_df, test_df=test_df,
                                     input_width=IN_STEPS,
-                                    shift=100, label_columns=['c'])
+                                    shift=300, label_columns=['c'])
     print(window.example)
 
     # Training
@@ -43,7 +43,8 @@ def main():
         'Baseline_buy': [0, 1, 0, 0, 0],
         'Baseline_sell': [0, 0, 0, 1, 0],
         'Baseline_strong_buy': [1, 0, 0, 0, 0],
-        'Baseline_strong_sell': [0, 0, 0, 0, 1]
+        'Baseline_strong_sell': [0, 0, 0, 0, 1],
+        'Baseline_equal': [0.2,0.2,0.2,0.2,0.2]
     }
     
     for name, output_arr in baselines.items():
@@ -66,14 +67,13 @@ def main():
         keras.layers.Dense(units=5, activation='softmax')
       ])
     train_and_test(linear_model, window, 'Linear')
-    print(linear_model(window.example))
+    print(tf.argmax(linear_model(window.example), axis=-1), window.example[1])
 
-    print(baseline_model(window.example), window.example[1])
 def test(model, window, name):
     VAL_PERFORMANCE[name] = model.evaluate(window.val, return_dict=True)
     PERFORMANCE[name] = model.evaluate(window.test, verbose=0, return_dict=True)
 
-def train_and_test(model, window, model_name, patience=3 ,retrain = RETRAIN, epochs=30):
+def train_and_test(model, window, model_name, patience=10 ,retrain = RETRAIN, epochs=30):
   if True:#model_name not in os.listdir('Training/Models/multi') or retrain:
     HISTORY[model_name] = compile_and_fit(model, window, patience, epochs=epochs)
     model.save(f'Training/Models/multi/{model_name}')

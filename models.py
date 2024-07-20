@@ -97,11 +97,11 @@ def test(model, window, name):
     PERFORMANCE[name] = model.evaluate(window.test, verbose=0, return_dict=True)
 
 def train_and_test(model, window, model_name, patience=10 ,retrain = RETRAIN, epochs=30):
-  if True:#model_name not in os.listdir('Training/Models/multi') or retrain:
+  if model_name not in os.listdir('Training/Models') or retrain:
     HISTORY[model_name] = compile_and_fit(model, window, patience, epochs=epochs)
-    model.save(f'Training/Models/multi/{model_name}')
+    model.save(f'Training/Models/{model_name}')
   else:
-     model = keras.models.load_model(f'Training/Models/multi/{model_name}')
+     model = keras.models.load_model(f'Training/Models/{model_name}')
   test(model,window,model_name)
 
 def compile_and_fit(model, window, patience, epochs):

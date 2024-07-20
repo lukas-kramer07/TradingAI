@@ -12,7 +12,7 @@ from multi_step_models import LastStepBaseline
 import os
 import keras
 
-RETRAIN = True 
+RETRAIN = False
 VAL_PERFORMANCE = {}
 PERFORMANCE = {}
 HISTORY = {}
@@ -74,8 +74,20 @@ def main():
        keras.layers.Dense(64, activation='relu'),
        keras.layers.Dense(5, activation='softmax')
     ])
-    train_and_test(deep_model, window, 'Deep', patience=15)
-    print(tf.argmax(linear_model(window.example), axis=-1), window.example[1])
+    train_and_test(deep_model, window, 'Deep')
+
+    print('conv_model')
+    conv_model = keras.Sequential([
+       keras.layers.Conv1D(16, 3, activation='relu', padding='same'),
+       keras.layers.MaxPool1D(2),
+       keras.layers.Conv1D(16, 3, activation='relu', padding='same'),
+       keras.layers.Flatten(),
+       keras.layers.Dense(64, activation='relu'),
+       keras.layers.Dense(16, activation='relu'),
+       keras.layers.Dense(5, activation='softmax')
+    ])
+    train_and_test(conv_model, window, 'Conv', retrain='True')
+    print(conv_model.summary())
 
 def test(model, window, name):
     VAL_PERFORMANCE[name] = model.evaluate(window.val, return_dict=True)

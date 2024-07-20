@@ -79,8 +79,11 @@ def main():
     print('conv_model')
     conv_model = keras.Sequential([
        keras.layers.Conv1D(16, 3, activation='relu', padding='same'),
+       keras.layers.BatchNormalization(),
        keras.layers.MaxPool1D(2),
        keras.layers.Conv1D(16, 3, activation='relu', padding='same'),
+       keras.layers.BatchNormalization(),
+       keras.layers.MaxPool1D(2),
        keras.layers.Flatten(),
        keras.layers.Dense(64, activation='relu'),
        keras.layers.Dense(16, activation='relu'),

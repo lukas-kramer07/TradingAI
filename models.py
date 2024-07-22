@@ -12,7 +12,7 @@ from multi_step_models import LastStepBaseline
 import os
 import keras
 
-RETRAIN = False
+RETRAIN = True
 VAL_PERFORMANCE = {}
 PERFORMANCE = {}
 HISTORY = {}
@@ -33,7 +33,7 @@ def main():
     # define windows
     window = WindowGenerator(train_df=train_df, val_df = val_df, test_df=test_df,
                                     input_width=IN_STEPS,
-                                    shift=300, label_columns=['c'])
+                                    shift=150, label_columns=['c'])
     print(window.example)
 
     # Training
@@ -78,7 +78,7 @@ def main():
 
     print('conv_model')
     conv_model = keras.Sequential([
-       keras.layers.Conv1D(16, 3, activation='relu', padding='same', kernel_regularizer=keras.regularizers.L2()),
+       keras.layers.Conv1D(8, 3, activation='relu', padding='same', kernel_regularizer=keras.regularizers.L2()),
        keras.layers.BatchNormalization(),
        keras.layers.MaxPool1D(2),
        keras.layers.Dropout(0.3),

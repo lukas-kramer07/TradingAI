@@ -81,11 +81,11 @@ def main():
        keras.layers.Conv1D(16, 3, activation='relu', padding='same'),
        keras.layers.BatchNormalization(),
        keras.layers.MaxPool1D(2),
-       keras.layers.Dropout(0.25),
+       keras.layers.Dropout(0.4),
        keras.layers.Conv1D(16, 3, activation='relu', padding='same'),
        keras.layers.BatchNormalization(),
        keras.layers.MaxPool1D(2),
-       keras.layers.Dropout(0.25),
+       keras.layers.Dropout(0.4),
        keras.layers.Flatten(),
        keras.layers.Dense(64, activation='relu'),
        keras.layers.Dense(16, activation='relu'),
@@ -99,7 +99,7 @@ def test(model, window, name):
     VAL_PERFORMANCE[name] = model.evaluate(window.val, return_dict=True)
     PERFORMANCE[name] = model.evaluate(window.test, verbose=0, return_dict=True)
 
-def train_and_test(model, window, model_name, patience=4 ,retrain = RETRAIN, epochs=30):
+def train_and_test(model, window, model_name, patience=5 ,retrain = RETRAIN, epochs=30):
   if model_name not in os.listdir('Training/Models') or retrain:
     HISTORY[model_name] = compile_and_fit(model, window, patience, epochs=epochs)
     model.save(f'Training/Models/{model_name}')

@@ -78,14 +78,14 @@ def main():
 
     print('conv_model')
     conv_model = keras.Sequential([
-       keras.layers.Conv1D(16, 3, activation='relu', padding='same'),
+       keras.layers.Conv1D(16, 3, activation='relu', padding='same', kernel_regularizer=keras.regularizers.L2()),
        keras.layers.BatchNormalization(),
        keras.layers.MaxPool1D(2),
-       keras.layers.Dropout(0.4),
-       keras.layers.Conv1D(16, 3, activation='relu', padding='same'),
+       keras.layers.Dropout(0.3),
+       keras.layers.Conv1D(16, 3, activation='relu', padding='same', kernel_regularizer=keras.regularizers.L2()),
        keras.layers.BatchNormalization(),
        keras.layers.MaxPool1D(2),
-       keras.layers.Dropout(0.4),
+       keras.layers.Dropout(0.3),
        keras.layers.Flatten(),
        keras.layers.Dense(64, activation='relu'),
        keras.layers.Dense(16, activation='relu'),

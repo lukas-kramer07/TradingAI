@@ -78,6 +78,7 @@ def main():
 
     print('conv_model')
     conv_model = keras.Sequential([
+       keras.layers.GaussianNoise(),
        keras.layers.Conv1D(8, 3, activation='relu', padding='same', kernel_regularizer=keras.regularizers.L2(0.01)),
        keras.layers.BatchNormalization(),
        keras.layers.MaxPool1D(2),

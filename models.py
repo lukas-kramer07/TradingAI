@@ -12,7 +12,7 @@ from multi_step_models import LastStepBaseline
 import os
 import keras
 
-RETRAIN = True
+RETRAIN = False
 VAL_PERFORMANCE = {}
 PERFORMANCE = {}
 HISTORY = {}
@@ -78,17 +78,16 @@ def main():
 
     print('conv_model')
     conv_model = keras.Sequential([
-       keras.layers.Conv1D(8, 3, activation='relu', padding='same', kernel_regularizer=keras.regularizers.L2()),
+       keras.layers.Conv1D(8, 3, activation='relu', padding='same', kernel_regularizer=keras.regularizers.L2(0.01)),
        keras.layers.BatchNormalization(),
        keras.layers.MaxPool1D(2),
-       keras.layers.Dropout(0.3),
-       keras.layers.Conv1D(16, 3, activation='relu', padding='same', kernel_regularizer=keras.regularizers.L2()),
+       keras.layers.Dropout(0.2),
+       keras.layers.Conv1D(16, 3, activation='relu', padding='same', kernel_regularizer=keras.regularizers.L2(0.01)),
        keras.layers.BatchNormalization(),
        keras.layers.MaxPool1D(2),
-       keras.layers.Dropout(0.3),
+       keras.layers.Dropout(0.2),
        keras.layers.Flatten(),
-       keras.layers.Dense(64, activation='relu'),
-       keras.layers.Dense(16, activation='relu'),
+       keras.layers.Dense(32, activation='relu'),
        keras.layers.Dense(5, activation='softmax')
     ])
     train_and_test(conv_model, window, 'Conv', retrain='True')

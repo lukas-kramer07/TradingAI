@@ -51,13 +51,6 @@ def main():
         print(name)
         baseline_model = Baseline(output_arr)
         train_and_test(baseline_model, window, name, epochs=1)
-        input, l = window.example
-        y_pred = baseline_model(input)
-        y_true = l
-        print(baseline_model(input), l)
-        m = keras.metrics.CategoricalAccuracy()
-        m.update_state(y_true=y_true, y_pred=y_pred)
-        print(m.result().numpy())
 
     print('linear model')
     linear_model = keras.Sequential([
@@ -78,15 +71,11 @@ def main():
 
     print('conv_model')
     conv_model = keras.Sequential([
-       #keras.layers.GaussianNoise(stddev=0.3),
-       keras.layers.Conv1D(8, 3, activation='relu', padding='same', kernel_regularizer=keras.regularizers.L2(0.01)),
-       #keras.layers.BatchNormalization(),
-       keras.layers.MaxPool1D(2),
-       #keras.layers.Dropout(0.2),
+       keras.layers.GaussianNoise(stddev=0.3),
        keras.layers.Conv1D(16, 3, activation='relu', padding='same', kernel_regularizer=keras.regularizers.L2(0.01)),
        keras.layers.BatchNormalization(),
        keras.layers.MaxPool1D(2),
-       #keras.layers.Dropout(0.2),
+       keras.layers.Dropout(0.2),
        keras.layers.Flatten(),
        keras.layers.Dense(64, activation='relu'),
        keras.layers.Dense(5, activation='softmax')

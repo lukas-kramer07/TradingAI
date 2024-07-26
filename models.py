@@ -12,7 +12,7 @@ from multi_step_models import LastStepBaseline
 import os
 import keras
 
-RETRAIN = True
+RETRAIN = False
 VAL_PERFORMANCE = {}
 PERFORMANCE = {}
 HISTORY = {}

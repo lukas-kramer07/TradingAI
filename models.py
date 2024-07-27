@@ -11,7 +11,7 @@ from utils import concat_data, plot
 from multi_step_models import LastStepBaseline
 import os
 import keras
-
+import pprint
 RETRAIN = False
 VAL_PERFORMANCE = {}
 PERFORMANCE = {}
@@ -78,9 +78,16 @@ def main():
        keras.layers.Dense(64, activation='relu'),
        keras.layers.Dense(5, activation='softmax')
     ])
-    train_and_test(conv_model, window, 'Conv', retrain='True')
+    train_and_test(conv_model, window, 'Conv')
     print(conv_model.summary())
-    print(PERFORMANCE, VAL_PERFORMANCE)
+
+    print('LSTM')
+    lstm = keras.Sequential([
+       keras.layers.LSTM(64,return_sequences=False),
+       keras.layers.Dense(5, activation='softmax')
+    ])
+    train_and_test(lstm, window, 'LSTM', retrain=True)
+    pprint.pprint(PERFORMANCE, VAL_PERFORMANCE)
 
 def test(model, window, name):
     VAL_PERFORMANCE[name] = model.evaluate(window.val, return_dict=True)

@@ -1,7 +1,6 @@
 # Advanced LSTM model specialized on prediciting stock prices
 
 #imports
-from numpy import histogram
 import tensorflow as tf
 from utils import WindowGenerator
 from utils import concat_data
@@ -9,7 +8,7 @@ import os
 import keras
 from keras.callbacks import EarlyStopping, TensorBoard
 import datetime
-RETRAIN = False
+RETRAIN = True
 VAL_PERFORMANCE = {}
 PERFORMANCE = {}
 HISTORY = {}
@@ -85,7 +84,7 @@ def main():
     ])
     train_and_test(lstm, window, 'LSTM', retrain=True)
     
-    for model, performance in VAL_PERFORMANCE:
+    for model, *performance in VAL_PERFORMANCE:
       print(f'{model}: {performance}\n')
 
 

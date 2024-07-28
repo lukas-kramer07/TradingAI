@@ -82,6 +82,7 @@ def main():
     print('LSTM')
     lstm = keras.Sequential([
        keras.layers.LSTM(64,return_sequences=False),
+       keras.layers.Dense(64, activation='relu'),
        keras.layers.Dense(5, activation='softmax')
     ])
     train_and_test(lstm, window, 'LSTM', retrain=True)

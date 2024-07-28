@@ -11,6 +11,7 @@ from utils import concat_data, plot
 from multi_step_models import LastStepBaseline
 import os
 import keras
+from keras.callbacks import EarlyStopping, TensorBoard
 import pprint
 RETRAIN = False
 VAL_PERFORMANCE = {}
@@ -43,7 +44,8 @@ def main():
         'Baseline_sell': [0, 0, 0, 1, 0],
         'Baseline_strong_buy': [1, 0, 0, 0, 0],
         'Baseline_strong_sell': [0, 0, 0, 0, 1],
-        'Baseline_equal': [0.2,0.2,0.2,0.2,0.2]
+        'Baseline_equal': [0.2,0.2,0.2,0.2,0.2],
+        'Baseline_normal': [0.1,0.2,0.4,0.2,0.1]
     }
     
     for name, output_arr in baselines.items():
@@ -101,12 +103,13 @@ def train_and_test(model, window, model_name, patience=5 ,retrain = RETRAIN, epo
   test(model,window,model_name)
 
 def compile_and_fit(model, window, patience, epochs):
-  early_stopping = keras.callbacks.EarlyStopping(monitor='val_loss',
+  early_stopping = EarlyStopping(monitor='val_loss',
                                                   patience=patience,
                                                   mode='min',
                                                   min_delta=0.001,
-                                                  verbose=1)
-
+                                                  verbose=1,
+                                                  restore_best_weights=True)
+  log_dir = 'Training/logs/'
   model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.001, clipnorm=1.0),
                 loss='categorical_crossentropy',
                 metrics=[keras.metrics.CategoricalAccuracy()])

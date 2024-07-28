@@ -1,18 +1,14 @@
 # Advanced LSTM model specialized on prediciting stock prices
 
 #imports
-import pandas as pd
-import matplotlib.pyplot as plt
+from numpy import histogram
 import tensorflow as tf
-import numpy as np
-from single_step_models import ResidualWrapper
 from utils import WindowGenerator
-from utils import concat_data, plot
-from multi_step_models import LastStepBaseline
+from utils import concat_data
 import os
 import keras
 from keras.callbacks import EarlyStopping, TensorBoard
-import pprint
+import datetime
 RETRAIN = False
 VAL_PERFORMANCE = {}
 PERFORMANCE = {}
@@ -88,7 +84,10 @@ def main():
        keras.layers.Dense(5, activation='softmax')
     ])
     train_and_test(lstm, window, 'LSTM', retrain=True)
-    pprint.pprint(PERFORMANCE, VAL_PERFORMANCE)
+    
+    for model, performance in VAL_PERFORMANCE:
+      print(f'{model}: {performance}\n')
+
 
 def test(model, window, name):
     VAL_PERFORMANCE[name] = model.evaluate(window.val, return_dict=True)
@@ -96,27 +95,35 @@ def test(model, window, name):
 
 def train_and_test(model, window, model_name, patience=5 ,retrain = RETRAIN, epochs=30):
   if model_name not in os.listdir('Training/Models') or retrain:
-    HISTORY[model_name] = compile_and_fit(model, window, patience, epochs=epochs)
+    HISTORY[model_name] = compile_and_fit(model, window, patience, epochs=epochs,model_name=model_name)
     model.save(f'Training/Models/{model_name}')
   else:
      model = keras.models.load_model(f'Training/Models/{model_name}')
   test(model,window,model_name)
 
-def compile_and_fit(model, window, patience, epochs):
+def compile_and_fit(model, window, patience, epochs, model_name):
+
+  #CALLBACKS
   early_stopping = EarlyStopping(monitor='val_loss',
                                                   patience=patience,
                                                   mode='min',
                                                   min_delta=0.001,
                                                   verbose=1,
                                                   restore_best_weights=True)
-  log_dir = 'Training/logs/'
+  
+  log_dir = f'Training/logs/{model_name}/' +datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+  tensorboard = TensorBoard(log_dir=log_dir, histogram_freq=1, #write_images=True, write_graph=True, )
+                            profile_batch=5)
+  
+  #COMPILE
   model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.001, clipnorm=1.0),
                 loss='categorical_crossentropy',
                 metrics=[keras.metrics.CategoricalAccuracy()])
 
+  #FIT
   history = model.fit(window.train, epochs=epochs,
                       validation_data=window.val,
-                      callbacks=[early_stopping])
+                      callbacks=[early_stopping, tensorboard])
   return history
 
 if __name__ == '__main__':

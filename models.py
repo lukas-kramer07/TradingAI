@@ -8,7 +8,8 @@ import os
 import keras
 from keras.callbacks import EarlyStopping, TensorBoard
 import datetime
-RETRAIN = False
+
+RETRAIN = True
 VAL_PERFORMANCE = {}
 PERFORMANCE = {}
 HISTORY = {}
@@ -84,7 +85,7 @@ def main():
     ])
     train_and_test(lstm, window, 'LSTM')
     
-    for model, *performance in VAL_PERFORMANCE:
+    for model, *performance in VAL_PERFORMANCE.items():
       print(f'{model}: {performance}\n')
 
 
@@ -125,5 +126,16 @@ def compile_and_fit(model, window, patience, epochs, model_name):
                       callbacks=[early_stopping, tensorboard])
   return history
 
+def sort_plugin_files(dir = "Training/logs"):
+  '''
+  redirect plugin subdir to train subdir; fixes a tensorboard bug
+  '''
+  for models in os.listdir(dir):
+    f = os.path.join(dir, models)
+    for logs in os.listdir(f):
+      log = os.path.join(f, logs)
+      os.rename(log+'/plugins', log+'/train/plugins')
+
 if __name__ == '__main__':
-   main()
+  main()
+  sort_plugin_files()

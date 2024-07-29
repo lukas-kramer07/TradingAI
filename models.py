@@ -134,7 +134,8 @@ def sort_plugin_files(dir = "Training/logs"):
     f = os.path.join(dir, models)
     for logs in os.listdir(f):
       log = os.path.join(f, logs)
-      os.rename(log+'/plugins', log+'/train/plugins')
+      if 'plugins' in os.listdir(log):
+        os.rename(log+'/plugins', log+'/train/plugins')
 
 if __name__ == '__main__':
   main()

@@ -9,7 +9,7 @@ import keras
 from keras.callbacks import EarlyStopping, TensorBoard
 import datetime
 
-RETRAIN = True
+RETRAIN = False
 VAL_PERFORMANCE = {}
 PERFORMANCE = {}
 HISTORY = {}
@@ -113,7 +113,7 @@ def compile_and_fit(model, window, patience, epochs, model_name):
   
   log_dir = f'Training/logs/{model_name}/' +datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
   tensorboard = TensorBoard(log_dir=log_dir, histogram_freq=1, #write_images=True, write_graph=True, )
-                            profile_batch='500,2000')
+                            profile_batch='500,800')
   
   #COMPILE
   model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.001, clipnorm=1.0),

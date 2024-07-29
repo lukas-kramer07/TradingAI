@@ -8,7 +8,7 @@ import os
 import keras
 from keras.callbacks import EarlyStopping, TensorBoard
 import datetime
-RETRAIN = True
+RETRAIN = False
 VAL_PERFORMANCE = {}
 PERFORMANCE = {}
 HISTORY = {}
@@ -74,7 +74,7 @@ def main():
        keras.layers.Dense(64, activation='relu'),
        keras.layers.Dense(5, activation='softmax')
     ])
-    train_and_test(conv_model, window, 'Conv')
+    train_and_test(conv_model, window, 'Conv', retrain=True)
 
     print('LSTM')
     lstm = keras.Sequential([
@@ -82,7 +82,7 @@ def main():
        keras.layers.Dense(64, activation='relu'),
        keras.layers.Dense(5, activation='softmax')
     ])
-    train_and_test(lstm, window, 'LSTM', retrain=True)
+    train_and_test(lstm, window, 'LSTM')
     
     for model, *performance in VAL_PERFORMANCE:
       print(f'{model}: {performance}\n')
@@ -112,7 +112,7 @@ def compile_and_fit(model, window, patience, epochs, model_name):
   
   log_dir = f'Training/logs/{model_name}/' +datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
   tensorboard = TensorBoard(log_dir=log_dir, histogram_freq=1, #write_images=True, write_graph=True, )
-                            profile_batch=5)
+                            profile_batch='500,2000')
   
   #COMPILE
   model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.001, clipnorm=1.0),

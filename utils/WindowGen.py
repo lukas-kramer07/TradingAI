@@ -5,6 +5,7 @@ import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 
+AUTOTUNE = tf.data.AUTOTUNE
 
 class WindowGenerator():
 
@@ -154,6 +155,6 @@ class WindowGenerator():
                 sequence_stride=1,
                 shuffle=True,
                 batch_size=32,)
-            ds = ds.map(self.split_window, num_parallel_calls=tf.data.experimental.AUTOTUNE)
+            ds = ds.map(self.split_window, num_parallel_calls=AUTOTUNE)
         
         return ds

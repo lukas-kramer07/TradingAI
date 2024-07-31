@@ -141,7 +141,7 @@ class WindowGenerator():
             combined_ds= ds_list[0]
             for ds in ds_list[1:]: 
                 combined_ds = combined_ds.concatenate(ds)
-            combined_ds.prefetch()
+            combined_ds.prefetch(buffer_size=AUTOTUNE)
             return combined_ds
         else:
             data = np.array(data, dtype=np.float32)

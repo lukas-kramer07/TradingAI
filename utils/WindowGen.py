@@ -154,6 +154,6 @@ class WindowGenerator():
                 sequence_stride=1,
                 shuffle=True,
                 batch_size=32,)
-            ds = ds.map(self.split_window)
+            ds = ds.map(self.split_window, num_parallel_calls=tf.data.experimental.AUTOTUNE)
         
         return ds

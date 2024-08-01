@@ -31,7 +31,6 @@ def main():
     window = WindowGenerator(train_df=train_df, val_df = val_df, test_df=test_df,
                                     input_width=IN_STEPS,
                                     shift=150, label_columns=['c'])
-
     # Training
     # Baseline Models
     baselines = {
@@ -75,7 +74,7 @@ def main():
       keras.layers.Dense(64, activation='relu'),
       keras.layers.Dense(5, activation='softmax')
     ])
-    train_and_test(conv_model, window, 'Conv', retrain=True)
+    train_and_test(conv_model, window, 'Conv')
 
     print('LSTM')
     lstm = keras.Sequential([

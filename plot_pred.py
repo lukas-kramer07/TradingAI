@@ -6,8 +6,8 @@ from utils import standardize
 import tensorflow as tf
 import matplotlib.pyplot as plt
 import numpy as np
-
-def main(len = 1000):
+LEN = 1000
+def main(len = LEN):
 
     #get data specified by user
     end = datetime.now()
@@ -40,16 +40,17 @@ def plot(data, prediction):
 
     # Forecast triangles
     forecast_length = 150
-    x_forecast_start = 1000
+    x_forecast_start = LEN//3
     x_forecast_end = x_forecast_start + forecast_length
     y_forecast_center = data[-1]
 
     # Define forecast windows with different percentage deviations and opacities
     windows = [
-        {'deviation': 0.02, 'alpha': prediction[0]}, #strong buy
-        {'deviation': 0.015, 'alpha': prediction[1]}, # buy
-        {'deviation': 0.01, 'alpha': prediction[2]}, # hold
-        {'deviation': 0.005, 'alpha': prediction[3]}
+{'lower': 0.05, 'upper': 0.1, 'alpha': prediction[0], 'label': 'strong buy', 'color': '#006400', 'dotted': True},  # darkgreen
+    {'lower': 0.015, 'upper': 0.05, 'alpha': prediction[1], 'label': 'buy', 'color': '#90EE90'},  # lightgreen
+    {'lower': -0.015, 'upper': 0.015, 'alpha': prediction[2], 'label': 'hold', 'color': '#BDB76B'},  # darkyellow
+    {'lower': -0.05, 'upper': -0.015, 'alpha': prediction[3], 'label': 'sell', 'color': '#FFA07A'},  # lightred
+    {'lower': -0.1, 'upper': -0.05, 'alpha': prediction[4], 'label': 'strong sell', 'color': '#8B0000', 'dotted': True}  # darkred
     ]
 
     # Plotting
@@ -57,13 +58,12 @@ def plot(data, prediction):
     plt.plot(data, label='Existing Data')
 
     for window in windows:
-        deviation = window['deviation']
-        y_forecast_top = y_forecast_center * (1 + deviation)
-        y_forecast_bottom = y_forecast_center * (1 - deviation)
+        linestyle = ':' if 'dotted' in window else '-'
+        y_forecast_top = y_forecast_center * (1 + window['upper'])
+        y_forecast_bottom = y_forecast_center * (1 + window['lower'])
         plt.fill([x_forecast_start, x_forecast_end, x_forecast_end], 
                 [y_forecast_center, y_forecast_top, y_forecast_bottom], 
-                color='gray', alpha=window['alpha'], linestyle=':', label=f'Forecast ±{deviation*100}%')
-        #break
+                color=window['color'], alpha=window['alpha'], linestyle=linestyle, linewidth=2.5, label=window['label'])
 
     plt.xlabel('X-axis')
     plt.ylabel('Y-axis')

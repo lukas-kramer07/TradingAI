@@ -32,7 +32,7 @@ def main(len = 1000):
     prediction = model.predict(tensor)
     print(prediction.shape, prediction)
 
-    data = np.array(data.pop('c'))
+    data = np.array(data.tail(len//3).pop('c'))
     plot(data, prediction[0])
 
 
@@ -46,9 +46,9 @@ def plot(data, prediction):
 
     # Define forecast windows with different percentage deviations and opacities
     windows = [
-        {'deviation': 0.02, 'alpha': prediction[0]},
-        {'deviation': 0.015, 'alpha': prediction[1]},
-        {'deviation': 0.01, 'alpha': prediction[2]},
+        {'deviation': 0.02, 'alpha': prediction[0]}, #strong buy
+        {'deviation': 0.015, 'alpha': prediction[1]}, # buy
+        {'deviation': 0.01, 'alpha': prediction[2]}, # hold
         {'deviation': 0.005, 'alpha': prediction[3]}
     ]
 
@@ -62,7 +62,8 @@ def plot(data, prediction):
         y_forecast_bottom = y_forecast_center * (1 - deviation)
         plt.fill([x_forecast_start, x_forecast_end, x_forecast_end], 
                 [y_forecast_center, y_forecast_top, y_forecast_bottom], 
-                color='gray', alpha=window['alpha'], label=f'Forecast ±{deviation*100}%')
+                color='gray', alpha=window['alpha'], linestyle=':', label=f'Forecast ±{deviation*100}%')
+        #break
 
     plt.xlabel('X-axis')
     plt.ylabel('Y-axis')

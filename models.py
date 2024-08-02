@@ -76,6 +76,22 @@ def main():
     ])
     train_and_test(conv_model, window, 'Conv', retrain=True)
 
+    print('improved_conv_model')
+    improved_conv_model = keras.Sequential([
+        keras.layers.GaussianNoise(stddev=0.2),
+        keras.layers.Conv1D(64, 5, activation='relu', padding='same', kernel_regularizer=keras.regularizers.L2(0.01)),
+        keras.layers.Dropout(0.3),
+        keras.layers.Conv1D(64, 3, activation='relu', padding='same', kernel_regularizer=keras.regularizers.L2(0.01)),
+        keras.layers.Dropout(0.3),
+        keras.layers.Flatten(),
+        keras.layers.Dense(128, activation='relu'),
+        keras.layers.Dropout(0.3),
+        keras.layers.Dense(5, activation='softmax')
+    ])
+
+    # Function call assuming it exists
+    train_and_test(improved_conv_model, window, 'Improved_Conv', retrain=True)
+
     print('LSTM')
     lstm = keras.Sequential([
       keras.layers.GaussianNoise(stddev=0.2),

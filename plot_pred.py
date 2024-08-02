@@ -11,7 +11,7 @@ def main(len = LEN):
 
     #get data specified by user
     end = datetime.now()
-    start = end - timedelta(hours=len*3.5)
+    start = end - timedelta(hours=len*5)
     end = end.strftime('%Y-%m-%dT00')
     start = start.strftime('%Y-%m-%dT00')
     symbol = input('Symbol to predict: ')
@@ -33,10 +33,10 @@ def main(len = LEN):
     print(prediction.shape, prediction)
 
     data = np.array(data.tail(len//3).pop('c'))
-    plot(data, prediction[0])
+    plot(data, prediction[0], symbol)
 
 
-def plot(data, prediction):
+def plot(data, prediction, symbol):
 
     # Forecast triangles
     forecast_length = 150
@@ -65,9 +65,9 @@ def plot(data, prediction):
                 [y_forecast_center, y_forecast_top, y_forecast_bottom], 
                 color=window['color'], alpha=window['alpha'], linestyle=linestyle, linewidth=2.5, label=window['label'])
 
-    plt.xlabel('X-axis')
-    plt.ylabel('Y-axis')
-    plt.title('Data with Percentage Deviation Forecast Triangles')
+    plt.xlabel('Trading hour Data points')
+    plt.ylabel('Close value $')
+    plt.title('Prediction - '+ symbol)
     plt.legend()
     plt.show()
     

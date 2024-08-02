@@ -30,7 +30,7 @@ def main():
     # define windows
     window = WindowGenerator(train_df=train_df, val_df = val_df, test_df=test_df,
                                     input_width=IN_STEPS,
-                                    shift=150, label_columns=['c'])
+                                    shift=150, label_columns=['c']) # shift in hours (32.5 Trading hours in a week, so 150h~5weeks)
     # Training
     # Baseline Models
     baselines = {
@@ -74,7 +74,7 @@ def main():
       keras.layers.Dense(64, activation='relu'),
       keras.layers.Dense(5, activation='softmax')
     ])
-    train_and_test(conv_model, window, 'Conv')
+    train_and_test(conv_model, window, 'Conv', retrain=True)
 
     print('LSTM')
     lstm = keras.Sequential([
@@ -84,7 +84,7 @@ def main():
       keras.layers.Dense(64, activation='relu'),
       keras.layers.Dense(5, activation='softmax')
     ])
-    train_and_test(lstm, window, 'LSTM', retrain=True)
+    train_and_test(lstm, window, 'LSTM')
     
     for model, *performance in VAL_PERFORMANCE.items():
       print(f'{model}: {performance}\n')

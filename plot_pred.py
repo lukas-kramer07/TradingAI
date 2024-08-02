@@ -11,7 +11,7 @@ def main(len = LEN):
 
     #get data specified by user
     end = datetime.now()
-    start = end - timedelta(hours=len*5)
+    start = end - timedelta(hours=len*3.5)
     end = end.strftime('%Y-%m-%dT00')
     start = start.strftime('%Y-%m-%dT00')
     symbol = input('Symbol to predict: ')
@@ -19,8 +19,8 @@ def main(len = LEN):
         data = getdata(start, end, data_name=symbol).tail(len)
     except:
         raise Exception('Wrong Data Name or too little Data available')
-
-
+    print(data)
+    
     date_time = pd.to_datetime(data.pop('t'), format='%Y-%m-%dT%H:%M:%SZ')
     mean = data.mean()
     std = data.std()
@@ -46,11 +46,11 @@ def plot(data, prediction):
 
     # Define forecast windows with different percentage deviations and opacities
     windows = [
-{'lower': 0.05, 'upper': 0.1, 'alpha': prediction[0], 'label': 'strong buy', 'color': '#006400', 'dotted': True},  # darkgreen
-    {'lower': 0.015, 'upper': 0.05, 'alpha': prediction[1], 'label': 'buy', 'color': '#90EE90'},  # lightgreen
-    {'lower': -0.015, 'upper': 0.015, 'alpha': prediction[2], 'label': 'hold', 'color': '#BDB76B'},  # darkyellow
-    {'lower': -0.05, 'upper': -0.015, 'alpha': prediction[3], 'label': 'sell', 'color': '#FFA07A'},  # lightred
-    {'lower': -0.1, 'upper': -0.05, 'alpha': prediction[4], 'label': 'strong sell', 'color': '#8B0000', 'dotted': True}  # darkred
+{'lower': 0.05, 'upper': 0.1, 'alpha': prediction[0], 'label': f'strong buy -{prediction[0]*100:.1f}%', 'color': '#006400', 'dotted': True},  # darkgreen
+    {'lower': 0.015, 'upper': 0.05, 'alpha': prediction[1], 'label': f'buy -{prediction[1]*100:.1f}%', 'color': '#90EE90'},  # lightgreen
+    {'lower': -0.015, 'upper': 0.015, 'alpha': prediction[2], 'label': f'hold -{prediction[2]*100:.1f}%', 'color': '#BDB76B'},  # darkyellow
+    {'lower': -0.05, 'upper': -0.015, 'alpha': prediction[3], 'label': f'sell -{prediction[3]*100:.1f}%', 'color': '#FFA07A'},  # lightred
+    {'lower': -0.1, 'upper': -0.05, 'alpha': prediction[4], 'label': f'strong sell -{prediction[4]*100:.1f}%', 'color': '#8B0000', 'dotted': True}  # darkred
     ]
 
     # Plotting

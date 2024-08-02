@@ -84,7 +84,7 @@ def main():
         keras.layers.Conv1D(64, 3, activation='relu', padding='same'),# kernel_regularizer=keras.regularizers.L2(0.01)),
         keras.layers.Dropout(0.3),
         keras.layers.Flatten(),
-        keras.layers.Dense(128, activation='relu'),
+        keras.layers.Dense(256, activation='relu'),
         keras.layers.Dropout(0.3),
         keras.layers.Dense(5, activation='softmax')
     ])

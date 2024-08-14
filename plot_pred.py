@@ -6,6 +6,7 @@ from utils import standardize
 import tensorflow as tf
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 LEN = 1000
 def main(len = LEN):
 
@@ -27,20 +28,21 @@ def main(len = LEN):
     standard_data = standardize(data,mean,std)
 
     tensor = tf.expand_dims(tf.convert_to_tensor(data.values), 0)
-    
-    model = tf.keras.models.load_model('Training/Models/LSTM')
-    prediction = model.predict(tensor)
-    print(prediction.shape, prediction)
+    for model in os.listdir('Training/Models'):
+        dir = os.path.join('Training/Models', model)
+        model = tf.keras.models.load_model(dir)
+        prediction = model.predict(tensor)
+        print(prediction.shape, prediction)
 
-    data = np.array(data.tail(len//3).pop('c'))
-    plot(data, prediction[0], symbol)
+        data = np.array(data.pop('c'))
+        plot(data, prediction[0], symbol)
 
 
 def plot(data, prediction, symbol):
 
     # Forecast triangles
     forecast_length = 150
-    x_forecast_start = LEN//3
+    x_forecast_start = LEN
     x_forecast_end = x_forecast_start + forecast_length
     y_forecast_center = data[-1]
 

@@ -28,13 +28,17 @@ def main(len = LEN):
     standard_data = standardize(data,mean,std)
 
     tensor = tf.expand_dims(tf.convert_to_tensor(data.values), 0)
-    for model in os.listdir('Training/Models'):
-        dir = os.path.join('Training/Models', model)
+    data = np.array(data.pop('c'))
+    
+
+    for modelname in os.listdir('Training/Models'):
+        dir = os.path.join('Training/Models', modelname)
         model = tf.keras.models.load_model(dir)
         prediction = model.predict(tensor)
+        print(modelname)
         print(prediction.shape, prediction)
 
-        data = np.array(data.pop('c'))
+        
         plot(data, prediction[0], symbol)
 
 

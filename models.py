@@ -69,12 +69,14 @@ def main():
     conv_model = keras.Sequential([
       keras.layers.GaussianNoise(stddev=0.2),
       keras.layers.Conv1D(32, 3, activation='relu', padding='same', kernel_regularizer=keras.regularizers.L2(0.01)),
-      keras.layers.Dropout(0.2),
-      keras.layers.Flatten(),
+      #keras.layers.BatchNormalization(),
+      keras.layers.Dropout(0.3),
+      #keras.layers.Flatten(),
+      keras.layers.GlobalAveragePooling1D(),
       keras.layers.Dense(64, activation='relu'),
       keras.layers.Dense(5, activation='softmax')
     ])
-    train_and_test(conv_model, window, 'Conv', retrain=False)
+    train_and_test(conv_model, window, 'Conv', retrain=True, epochs=1)
 
     print('improved_conv_model')
     improved_conv_model = keras.Sequential([
@@ -87,12 +89,12 @@ def main():
         keras.layers.Dropout(0.3),
         keras.layers.Flatten(),
         keras.layers.Dense(128, activation='relu'),
-        keras.layers.Dropout(0.3),
+        #keras.layers.Dropout(0.3),
         keras.layers.Dense(5, activation='softmax')
     ])
 
     # Function call assuming it exists
-    train_and_test(improved_conv_model, window, 'Improved_Conv', retrain=True)
+    train_and_test(improved_conv_model, window, 'Improved_Conv', retrain=False)
 
     print('LSTM')
     lstm = keras.Sequential([
@@ -137,7 +139,7 @@ def compile_and_fit(model, window, patience, epochs, model_name):
   #COMPILE
   model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.001, clipnorm=1.0),
                 loss='categorical_crossentropy',
-                metrics=[keras.metrics.CategoricalAccuracy()])
+                metrics=[keras.metrics.CategoricalAccuracy(), keras.metrics.CategoricalCrossentropy(), keras.metrics.Precision(), keras.metrics.Recall()])
 
   #FIT
   history = model.fit(window.train, epochs=epochs,

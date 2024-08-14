@@ -74,17 +74,19 @@ def main():
       keras.layers.Dense(64, activation='relu'),
       keras.layers.Dense(5, activation='softmax')
     ])
-    train_and_test(conv_model, window, 'Conv', retrain=True)
+    train_and_test(conv_model, window, 'Conv', retrain=False)
 
     print('improved_conv_model')
     improved_conv_model = keras.Sequential([
         keras.layers.GaussianNoise(stddev=0.2),
-        keras.layers.Conv1D(64, 5, activation='relu', padding='same'),# kernel_regularizer=keras.regularizers.L2(0.01)),
+        keras.layers.Conv1D(32, 5, activation='relu', padding='same'),# kernel_regularizer=keras.regularizers.L2(0.01)),
         keras.layers.Dropout(0.3),
-        keras.layers.Conv1D(64, 3, activation='relu', padding='same'),# kernel_regularizer=keras.regularizers.L2(0.01)),
+        keras.layers.Conv1D(64, 3, activation='relu', padding='same'),# kernel_regularizer=keras.regularizers.L2(0.01))
+        keras.layers.Dropout(0.3),
+        keras.layers.Conv1D(128, 3, activation='relu', padding='same'),# kernel_regularizer=keras.regularizers.L2(0.01))
         keras.layers.Dropout(0.3),
         keras.layers.Flatten(),
-        keras.layers.Dense(256, activation='relu'),
+        keras.layers.Dense(128, activation='relu'),
         keras.layers.Dropout(0.3),
         keras.layers.Dense(5, activation='softmax')
     ])

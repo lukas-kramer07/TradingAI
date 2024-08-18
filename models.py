@@ -72,11 +72,11 @@ def main():
       #keras.layers.BatchNormalization(),
       keras.layers.Dropout(0.3),
       #keras.layers.Flatten(),
-      keras.layers.GlobalAveragePooling1D(),
+      keras.layers.Flatten(),
       keras.layers.Dense(64, activation='relu'),
       keras.layers.Dense(5, activation='softmax')
     ])
-    train_and_test(conv_model, window, 'Conv', retrain=True, epochs=1)
+    train_and_test(conv_model, window, 'Conv', retrain=False)
 
     print('improved_conv_model')
     improved_conv_model = keras.Sequential([
@@ -104,8 +104,18 @@ def main():
       keras.layers.Dense(64, activation='relu'),
       keras.layers.Dense(5, activation='softmax')
     ])
-    train_and_test(lstm, window, 'LSTM')
+    train_and_test(lstm, window, 'LSTM', retrain=False, epochs=1)
     
+    print('improved LSTM')
+    improved_lstm = keras.Sequential([
+      keras.layers.GaussianNoise(stddev=0.2),
+    
+      keras.layers.LSTM(64, return_sequences=True),
+      keras.layers.LSTM(32, return_sequences=False),
+      keras.layers.Dense(64, activation='relu'),
+      keras.layers.Dense(5, activation='softmax')
+    ])
+    train_and_test(improved_lstm, window, 'Improved_LSTM', retrain=True, epochs=1)
     for model, *performance in VAL_PERFORMANCE.items():
       print(f'{model}: {performance}\n')
 

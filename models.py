@@ -6,7 +6,7 @@ from utils import WindowGenerator
 from utils import concat_data
 import os
 import keras
-from keras.callbacks import EarlyStopping, TensorBoard
+from keras.callbacks import EarlyStopping, TensorBoard, ReduceLROnPlateau
 import datetime
 
 RETRAIN = False
@@ -117,7 +117,7 @@ def main():
       keras.layers.Dense(64, activation='relu'),
       keras.layers.Dense(5, activation='softmax')
     ])
-    train_and_test(improved_lstm, window, 'Improved_LSTM', retrain=True, epochs=1)
+    train_and_test(improved_lstm, window, 'Improved_LSTM', retrain=True)
     for model, *performance in VAL_PERFORMANCE.items():
       print(f'{model}: {performance}\n')
 
@@ -137,6 +137,7 @@ def train_and_test(model, window, model_name, patience=5 ,retrain = RETRAIN, epo
 def compile_and_fit(model, window, patience, epochs, model_name):
 
   #CALLBACKS
+  lr_callback= ReduceLROnPlateau(patience=patience//2)
   early_stopping = EarlyStopping(monitor='val_loss',
                                                   patience=patience,
                                                   mode='min',

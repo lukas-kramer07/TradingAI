@@ -114,6 +114,7 @@ def main():
       #keras.layers.Dropout(),
       #keras.layers.LSTM(32, return_sequences=False),
       keras.layers.Dense(128, activation='relu'),
+      keras.layers.Dense(64, activation='relu'),
       keras.layers.Dense(5, activation='softmax')
     ])
     train_and_test(improved_lstm, window, 'Improved_LSTM', retrain=True, epochs=1)

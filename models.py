@@ -110,9 +110,10 @@ def main():
     improved_lstm = keras.Sequential([
       keras.layers.GaussianNoise(stddev=0.2),
     
-      keras.layers.LSTM(64, return_sequences=True),
-      keras.layers.LSTM(32, return_sequences=False),
-      keras.layers.Dense(64, activation='relu'),
+      keras.layers.LSTM(64, return_sequences=False),
+      #keras.layers.Dropout(),
+      #keras.layers.LSTM(32, return_sequences=False),
+      keras.layers.Dense(128, activation='relu'),
       keras.layers.Dense(5, activation='softmax')
     ])
     train_and_test(improved_lstm, window, 'Improved_LSTM', retrain=True, epochs=1)

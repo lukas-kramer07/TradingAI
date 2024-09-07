@@ -61,21 +61,25 @@ def plot(data, prediction, symbol, name='Prediction- '):
     ]
 
     # Plotting
-    plt.figure(figsize=(10, 5))
-    plt.plot(x_labels, data, label='Existing Data')
+    fig = plt.figure(figsize=(20, 15))
+    ax1 = fig.add_subplot(211)
+    ax2 = fig.add_subplot(223)
+    ax1.plot(x_labels, data, label='Existing Data')
 
     for window in windows:
         linestyle = ':' if 'dotted' in window else '-'
         y_forecast_top = y_forecast_center * (1 + window['upper'])
         y_forecast_bottom = y_forecast_center * (1 + window['lower'])
-        plt.fill([x_forecast_start, x_forecast_end, x_forecast_end], 
+        ax1.fill([x_forecast_start, x_forecast_end, x_forecast_end], 
                 [y_forecast_center, y_forecast_top, y_forecast_bottom], 
                 color=window['color'], alpha=window['alpha'], linestyle=linestyle, linewidth=2.5, label=window['label'])
 
-    plt.xlabel('Trading hour Data points')
-    plt.ylabel('Close value $')
-    plt.title(name+ symbol)
-    plt.legend()
+    ax1.set_xlabel('Trading hour Data points')
+    ax1.set_ylabel('Close value $')
+    fig.set_title(name+ symbol)
+    ax1.legend()
+
+    ax2.pie(prediction, labels=[window['label'] for winodw in windows], colors=[window['color'] for window in windows])
     plt.show()
     
 if __name__ == '__main__':

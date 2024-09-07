@@ -32,6 +32,9 @@ def main(len = LEN):
     
 
     for modelname in os.listdir('Training/Models'):
+        if 'B' in list(modelname):
+            print('baseline')
+            continue
         dir = os.path.join('Training/Models', modelname)
         model = tf.keras.models.load_model(dir)
         prediction = model.predict(tensor)
@@ -44,7 +47,7 @@ def main(len = LEN):
 
 def plot(data, prediction, symbol, name='Prediction- '):
 
-    # Forecast triangles
+    ## Forecast triangles
     forecast_length = 150
     x_forecast_start = 0
     x_forecast_end = x_forecast_start + forecast_length
@@ -62,8 +65,10 @@ def plot(data, prediction, symbol, name='Prediction- '):
 
     # Plotting
     fig = plt.figure(figsize=(20, 15))
+    fig.suptitle(name+ symbol)
     ax1 = fig.add_subplot(211)
     ax2 = fig.add_subplot(223)
+    ax3 = fig.add_subplot(224)
     ax1.plot(x_labels, data, label='Existing Data')
 
     for window in windows:
@@ -76,11 +81,23 @@ def plot(data, prediction, symbol, name='Prediction- '):
 
     ax1.set_xlabel('Trading hour Data points')
     ax1.set_ylabel('Close value $')
-    fig.set_title(name+ symbol)
     ax1.legend()
 
-    ax2.pie(prediction, labels=[window['label'] for window in windows], colors=[window['color'] for window in windows])
-    print(overall_pred)
+
+    ## PIE CHART
+    ax2.pie(prediction, labels=[window['label'] if window['alpha']!=0 else '' for window in windows ], colors=[window['color'] for window in windows], wedgeprops={'edgecolor':'black'})
+    
+    
+    ## OVERALL
+    overall = overall_pred(prediction)
+    print(overall)
+
+    ax3.bar(x=0, height= overall[0], color='green' if overall[0]>0 else 'red',edgecolor='black')
+    ax3.set_ylim([-2,2])
+    ax3.set_xlim([-1.5,1.5])
+    ax3.set_title('overall_pred: ' + overall[1])
+    ax3.get_xaxis().set_visible(False)
+    ax3.axhline(y=0, linestyle='-', linewidth=1, color='black', alpha=1)
     plt.show()
 
 

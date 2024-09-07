@@ -79,8 +79,26 @@ def plot(data, prediction, symbol, name='Prediction- '):
     fig.set_title(name+ symbol)
     ax1.legend()
 
-    ax2.pie(prediction, labels=[window['label'] for winodw in windows], colors=[window['color'] for window in windows])
+    ax2.pie(prediction, labels=[window['label'] for window in windows], colors=[window['color'] for window in windows])
+    print(overall_pred)
     plt.show()
-    
+
+
+def overall_pred(prediction):
+    weights = [2,1,0,-1,-2]
+    res = 0
+    for i in range(len(prediction)):
+        res += prediction[i] * weights[i]
+    print(res)
+    if res > 1.2:
+        return (res,'strong_buy')
+    elif res >0.4:
+        return (res, 'buy')
+    elif res >-0.4:
+        return (res, 'hold')
+    elif res >-1.2:
+        return (res, 'sell')
+    else:
+        return (res, 'strong sell')
 if __name__ == '__main__':
     main()

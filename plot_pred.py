@@ -1,4 +1,4 @@
- # Script to predict a possilbe movement using the single_step/multi_step models 150 days into the future
+ # Script to predict a possilbe movement using the single_step/multi_step models 150 trading hours into the future
 from utils import getdata
 from datetime import datetime, timedelta
 import pandas as pd
@@ -9,7 +9,7 @@ import numpy as np
 import os
 LEN = 1000
 def main(len = LEN):
-
+    
     #get data specified by user
     end = datetime.now()
     start = end - timedelta(hours=len*5)
@@ -39,17 +39,18 @@ def main(len = LEN):
         print(prediction.shape, prediction)
 
         
-        plot(data, prediction[0], symbol)
+        plot(data, prediction[0], symbol, name=modelname+' predicts: ')
 
 
-def plot(data, prediction, symbol):
+def plot(data, prediction, symbol, name='Prediction- '):
 
     # Forecast triangles
     forecast_length = 150
-    x_forecast_start = LEN
+    x_forecast_start = 0
     x_forecast_end = x_forecast_start + forecast_length
     y_forecast_center = data[-1]
-
+    x_labels = np.arange(len(data)) - len(data)+1
+    print(x_labels)
     # Define forecast windows with different percentage deviations and opacities
     windows = [
 {'lower': 0.05, 'upper': 0.1, 'alpha': prediction[0], 'label': f'strong buy -{prediction[0]*100:.1f}%', 'color': '#006400', 'dotted': True},  # darkgreen
@@ -61,7 +62,7 @@ def plot(data, prediction, symbol):
 
     # Plotting
     plt.figure(figsize=(10, 5))
-    plt.plot(data, label='Existing Data')
+    plt.plot(x_labels, data, label='Existing Data')
 
     for window in windows:
         linestyle = ':' if 'dotted' in window else '-'
@@ -73,7 +74,7 @@ def plot(data, prediction, symbol):
 
     plt.xlabel('Trading hour Data points')
     plt.ylabel('Close value $')
-    plt.title('Prediction - '+ symbol)
+    plt.title(name+ symbol)
     plt.legend()
     plt.show()
     

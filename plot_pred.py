@@ -32,7 +32,7 @@ def main(len = LEN):
     
 
     for modelname in os.listdir('Training/Models'):
-        if 'B' in list(modelname):
+        if 'B' in list(modelname) or 'C' in list(modelname):
             print('baseline')
             continue
         dir = os.path.join('Training/Models', modelname)

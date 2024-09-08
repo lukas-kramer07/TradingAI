@@ -39,9 +39,6 @@ class RepeatBaseline(tf.keras.Model):
          return inputs[:,:,self.label_index][:,:,tf.newaxis]
       return inputs
 
-"""class DeltaBaseline(tf.keras.Model):
-   def call(inputs):
-      delta = inputs[:, 0:, :] - inputs[:, -1:, :]""" # TODO: create Baseline
 
 class FeedBack(tf.keras.Model):
    def __init__(self, units, out_steps):

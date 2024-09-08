@@ -23,6 +23,7 @@ class Baseline(keras.Model):
     batch_size = tf.shape(inputs)[0]
     return tf.tile(tf.convert_to_tensor([self.output_arr], dtype=tf.float32), [batch_size,1])
 
+#TODO: create dynamic Baseline
 
 def main():
     #get data

@@ -5,6 +5,7 @@ import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 
+AUTOTUNE = tf.data.AUTOTUNE
 
 class WindowGenerator():
 
@@ -99,16 +100,35 @@ class WindowGenerator():
                 plt.legend()
 
         plt.xlabel('Time [d]')""" #TODO
-    def create_label(self, inputs):
-        #TODO get labels from shift
-        return [0]*len(inputs)
+    def create_label(self, inputs, end_row):
+        c_values_end = end_row[:, 0]
+        c_values_in = inputs[:,-1,0]
+        res = tf.divide(c_values_end, c_values_in)
+
+        # use tf.where to mask on label values
+
+        # conditions
+        strong_buy = res>1.05
+        buy = tf.logical_and(res >= 1.015, res <= 1.05)
+        hold = tf.logical_and(res > 0.985, res < 1.015)
+        sell = tf.logical_and(res >= 0.95, res <= 0.985)
+        strong_sell = 0.95>res
+        res = tf.where(strong_buy, float(0), res) 
+        res = tf.where(buy, float(1), res)
+        res = tf.where(hold, float(2), res)
+        res = tf.where(sell, float(3), res)
+        res = tf.where(strong_sell, float(4), res)
+        # one_hot encode
+        res=tf.cast(res, dtype=tf.int32)
+        res = tf.one_hot(res, depth = 5, dtype=tf.int32)
+
+
+        return res
     
     def split_window(self, features):
         inputs = features[:, self.input_slice, :]
-        print(features.shape, type(features))
-        end_val = features[:,-1,0] # get last 'c' value of 
-        print(end_val)
-        labels = self.create_label(inputs)
+        end_row = features[:,-1,:] # get last 'c' value of 
+        labels = self.create_label(inputs, end_row)
         # Slicing doesn't preserve static shape information, so set the shapes
         # manually. This way the `tf.data.Datasets` are easier to inspect.
         inputs.set_shape([None, self.input_width, None])
@@ -121,6 +141,7 @@ class WindowGenerator():
             combined_ds= ds_list[0]
             for ds in ds_list[1:]: 
                 combined_ds = combined_ds.concatenate(ds)
+            combined_ds.prefetch(buffer_size=AUTOTUNE)
             return combined_ds
         else:
             data = np.array(data, dtype=np.float32)
@@ -134,6 +155,6 @@ class WindowGenerator():
                 sequence_stride=1,
                 shuffle=True,
                 batch_size=32,)
-            ds = ds.map(self.split_window)
+            ds = ds.map(self.split_window, num_parallel_calls=AUTOTUNE)
         
         return ds

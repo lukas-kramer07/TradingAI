@@ -63,6 +63,7 @@ def main():
                                     shift=150, label_columns=['c']) # shift in hours (32.5 Trading hours in a week, so 150h~5weeks)
     # Training
     # Baseline Models
+    print(window.example)
 
     print('dynamic baseline')
     dynamic_baseline = DynamicBaseline()

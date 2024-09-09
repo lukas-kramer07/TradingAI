@@ -59,9 +59,10 @@ def concat_data(folder, standard = STANDARDOVERSINGLEDATA):
             train_df1, val_df1, test_df1, column_indices, num_features = return_data(filename=f'{folder}/{filename}')
             mean = train_df1.mean()
             std = train_df1.std()
-            train_df.append(standardize(train_df1, mean, std))
-            val_df.append(standardize(val_df1, mean, std))
-            test_df.append(standardize(test_df1, mean, std))
+            max = train_df1.max()
+            train_df.append(standardize(train_df1, mean, std, maximum=max))
+            val_df.append(standardize(val_df1, mean, std, maximum=max))
+            test_df.append(standardize(test_df1, mean, std, maximum=max))
     else:
         # concat all data
         standard, train_df, val_df, test_df= None,[],[],[]
@@ -76,9 +77,9 @@ def concat_data(folder, standard = STANDARDOVERSINGLEDATA):
         maximum = standard.max()
         mean = standard.mean()
         std = standard.std()
-        train_df = [standardize(df, mean,std) for df in train_df]
-        val_df = [standardize(df, mean,std) for df in val_df]
-        test_df = [standardize(df, mean,std) for df in test_df]
+        train_df = [standardize(df, mean,std,maximum=maximum) for df in train_df]
+        val_df = [standardize(df, mean,std,maximum=maximum) for df in val_df]
+        test_df = [standardize(df, mean,std,maximum=maximum) for df in test_df]
         """# plot 
         df_std = (val_df - train_mean) / train_std
         df_std = df_std.melt(var_name='Column', value_name='Normalized')

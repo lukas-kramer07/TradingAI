@@ -9,7 +9,7 @@ import keras
 from keras.callbacks import EarlyStopping, TensorBoard, ReduceLROnPlateau
 import datetime
 
-RETRAIN = False
+RETRAIN = True
 VAL_PERFORMANCE = {}
 PERFORMANCE = {}
 HISTORY = {}
@@ -24,6 +24,30 @@ class Baseline(keras.Model):
     return tf.tile(tf.convert_to_tensor([self.output_arr], dtype=tf.float32), [batch_size,1])
 
 #TODO: create dynamic Baseline
+class DynamicBaseline(keras.Model):
+  def __init__(self):
+    super().__init__()
+  def call(self,inputs):
+    c_values_end = inputs[: ,0, 0]
+    c_values_in = inputs[:,-1, 0]
+    res = tf.divide(c_values_end, c_values_in)
+    # use tf.where to mask on label values
+
+    # conditions
+    strong_buy = res>1.05
+    buy = tf.logical_and(res >= 1.015, res <= 1.05)
+    hold = tf.logical_and(res > 0.985, res < 1.015)
+    sell = tf.logical_and(res >= 0.95, res <= 0.985)
+    strong_sell = 0.95>res
+    res = tf.where(strong_buy, float(0), res) 
+    res = tf.where(buy, float(1), res)
+    res = tf.where(hold, float(2), res)
+    res = tf.where(sell, float(3), res)
+    res = tf.where(strong_sell, float(4), res)
+    # one_hot encode
+    res=tf.cast(res, dtype=tf.int32)
+    res = tf.one_hot(res, depth = 5, dtype=tf.float32)
+    return res
 
 def main():
     #get data
@@ -34,6 +58,8 @@ def main():
                                     shift=150, label_columns=['c']) # shift in hours (32.5 Trading hours in a week, so 150h~5weeks)
     # Training
     # Baseline Models
+
+
     baselines = {
         'Baseline_hold': [0, 0, 1, 0, 0],
         'Baseline_buy': [0, 1, 0, 0, 0],
@@ -47,8 +73,10 @@ def main():
     for name, output_arr in baselines.items():
         print(name)
         baseline_model = Baseline(output_arr)
+        return 0 
         train_and_test(baseline_model, window, name, epochs=1)
 
+    
     print('linear model')
     linear_model = keras.Sequential([
         keras.layers.Flatten(),

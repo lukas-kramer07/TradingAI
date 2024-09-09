@@ -30,13 +30,13 @@ class DynamicBaseline(keras.Model):
   def call(self,inputs):
     c_values_end = inputs[: ,-1, 0]
     c_values_in = inputs[:,1000-150, 0]
-    tf.print('in')
-    tf.print(c_values_in)
-    tf.print('end')
-    tf.print(c_values_end)
+    #tf.print('in')
+    #tf.print(c_values_in)
+    #tf.print('end')
+    #tf.print(c_values_end)
     res = tf.divide(c_values_end, c_values_in)
     # use tf.where to mask on label values
-    tf.print(res)
+    #tf.print(res)
     # conditions
     strong_buy = res>1.05
     buy = tf.logical_and(res >= 1.015, res <= 1.05)
@@ -114,7 +114,7 @@ def main():
       keras.layers.Dense(64, activation='relu'),
       keras.layers.Dense(5, activation='softmax')
     ])
-    train_and_test(conv_model, window, 'Conv', retrain=False)
+    train_and_test(conv_model, window, 'Conv',)
 
     print('improved_conv_model')
     improved_conv_model = keras.Sequential([
@@ -142,7 +142,7 @@ def main():
       keras.layers.Dense(64, activation='relu'),
       keras.layers.Dense(5, activation='softmax')
     ])
-    train_and_test(lstm, window, 'LSTM', retrain=False, epochs=1)
+    train_and_test(lstm, window, 'LSTM', epochs=1)
     
     print('improved LSTM')
     improved_lstm = keras.Sequential([

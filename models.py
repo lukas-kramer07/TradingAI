@@ -59,7 +59,10 @@ def main():
     # Training
     # Baseline Models
 
-
+    print('dynamic baseline')
+    dynamic_baseline = DynamicBaseline()
+    print(dynamic_baseline.predict(window.example[0]))
+    train_and_test(dynamic_baseline, window, 'dynamic_baseline', epochs=1)
     baselines = {
         'Baseline_hold': [0, 0, 1, 0, 0],
         'Baseline_buy': [0, 1, 0, 0, 0],

@@ -15,10 +15,4 @@ if gpus:
     except RuntimeError as e:
         # Virtual devices must be set before GPUs have been initialized
         print(e)
-gpus
-
-
-tensor = tf.convert_to_tensor([4])
-print(tf.one_hot(tensor, depth = 5, dtype=tf.int32))
-
-print(keras.metrics.CategoricalAccuracy()([0,0,1], [0.3,0.3,0.4]))
+print(gpus)

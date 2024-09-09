@@ -32,7 +32,7 @@ def main(len = LEN):
     
 
     for modelname in os.listdir('Training/Models'):
-        if 'd' not in list(modelname):
+        if 'd' not in list(modelname) or 'y' not in list(modelname):
             print('baseline')
             continue
         dir = os.path.join('Training/Models', modelname)

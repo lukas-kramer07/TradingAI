@@ -30,10 +30,13 @@ class DynamicBaseline(keras.Model):
   def call(self,inputs):
     c_values_end = inputs[: ,-1, 0]
     c_values_in = inputs[:,1000-150, 0]
-    tf.print(c_values_end, c_values_in)
+    tf.print('in')
+    tf.print(c_values_in)
+    tf.print('end')
+    tf.print(c_values_end)
     res = tf.divide(c_values_end, c_values_in)
     # use tf.where to mask on label values
-
+    tf.print(res)
     # conditions
     strong_buy = res>1.05
     buy = tf.logical_and(res >= 1.015, res <= 1.05)
@@ -45,6 +48,7 @@ class DynamicBaseline(keras.Model):
     res = tf.where(hold, float(2), res)
     res = tf.where(sell, float(3), res)
     res = tf.where(strong_sell, float(4), res)
+    
     # one_hot encode
     res=tf.cast(res, dtype=tf.int32)
     res = tf.one_hot(res, depth = 5, dtype=tf.float32)
@@ -52,7 +56,7 @@ class DynamicBaseline(keras.Model):
 
 def main():
     #get data
-    train_df, val_df, test_df, column_indices, num_features = concat_data('data', standard=False)
+    train_df, val_df, test_df, column_indices, num_features = concat_data('data', standard=True)
     # define windows
     window = WindowGenerator(train_df=train_df, val_df = val_df, test_df=test_df,
                                     input_width=IN_STEPS,

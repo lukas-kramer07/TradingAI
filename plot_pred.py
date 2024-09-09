@@ -23,18 +23,19 @@ def main(len = LEN):
     print(data)
     
     date_time = pd.to_datetime(data.pop('t'), format='%Y-%m-%dT%H:%M:%SZ')
+    max = data.max()
     mean = data.mean()
     std = data.std()
-    standard_data = standardize(data,mean,std)
+    standard_data = standardize(data,mean,std, maximum=max)
 
     tensor = tf.expand_dims(tf.convert_to_tensor(standard_data.values), 0)
     data = np.array(data.pop('c'))
     
 
     for modelname in os.listdir('Training/Models'):
-        if 'd' not in list(modelname) or 'y' not in list(modelname):
-            print('baseline')
-            continue
+        #if 'd' not in list(modelname) or 'y' not in list(modelname):
+         #   print('baseline')
+          #  continue
         dir = os.path.join('Training/Models', modelname)
         model = tf.keras.models.load_model(dir)
         prediction = model.predict(tensor)

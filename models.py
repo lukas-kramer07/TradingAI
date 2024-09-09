@@ -28,8 +28,9 @@ class DynamicBaseline(keras.Model):
   def __init__(self):
     super().__init__()
   def call(self,inputs):
-    c_values_end = inputs[: ,0, 0]
-    c_values_in = inputs[:,-1, 0]
+    c_values_end = inputs[: ,-1, 0]
+    c_values_in = inputs[:,1000-150, 0]
+    tf.print(c_values_end, c_values_in)
     res = tf.divide(c_values_end, c_values_in)
     # use tf.where to mask on label values
 
@@ -63,6 +64,7 @@ def main():
     dynamic_baseline = DynamicBaseline()
     print(dynamic_baseline.predict(window.example[0]))
     train_and_test(dynamic_baseline, window, 'dynamic_baseline', epochs=1)
+
     baselines = {
         'Baseline_hold': [0, 0, 1, 0, 0],
         'Baseline_buy': [0, 1, 0, 0, 0],
@@ -76,7 +78,6 @@ def main():
     for name, output_arr in baselines.items():
         print(name)
         baseline_model = Baseline(output_arr)
-        return 0 
         train_and_test(baseline_model, window, name, epochs=1)
 
     

@@ -27,12 +27,12 @@ def main(len = LEN):
     std = data.std()
     standard_data = standardize(data,mean,std)
 
-    tensor = tf.expand_dims(tf.convert_to_tensor(data.values), 0)
+    tensor = tf.expand_dims(tf.convert_to_tensor(standard_data.values), 0)
     data = np.array(data.pop('c'))
     
 
     for modelname in os.listdir('Training/Models'):
-        if 'B' in list(modelname) or 'C' in list(modelname):
+        if 'C' in list(modelname) or 'D' in list(modelname):
             print('baseline')
             continue
         dir = os.path.join('Training/Models', modelname)

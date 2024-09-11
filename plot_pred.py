@@ -54,7 +54,6 @@ def plot(data, prediction, symbol, name='Prediction- '):
     x_forecast_end = x_forecast_start + forecast_length
     y_forecast_center = data[-1]
     x_labels = np.arange(len(data)) - len(data)+1
-    print(x_labels)
     # Define forecast windows with different percentage deviations and opacities
     windows = [
 {'lower': 0.05, 'upper': 0.1, 'alpha': prediction[0], 'label': f'strong buy -{prediction[0]*100:.1f}%', 'color': '#006400', 'dotted': True},  # darkgreen

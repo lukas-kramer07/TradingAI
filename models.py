@@ -131,8 +131,7 @@ def main():
         keras.layers.Dense(5, activation='softmax')
     ])
 
-    # Function call assuming it exists
-    train_and_test(improved_conv_model, window, 'Improved_Conv', retrain=False)
+    train_and_test(improved_conv_model, window, 'Improved_Conv')
 
     print('LSTM')
     lstm = keras.Sequential([

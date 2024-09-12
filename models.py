@@ -115,6 +115,7 @@ def main():
 
     print('deep model')
     deep_model = keras.Sequential([
+      keras.layers.BatchNormalization(),
       keras.layers.Flatten(),
       keras.layers.Dense(128, activation='relu'),
       keras.layers.Dropout(0.3),

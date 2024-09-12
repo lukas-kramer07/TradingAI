@@ -54,9 +54,29 @@ class DynamicBaseline(keras.Model):
     res = tf.one_hot(res, depth = 5, dtype=tf.float32)
     return res
 
+
+from tensorflow.keras import backend as K
+
+def custom_accuracy(y_true, y_pred):
+    # Convert predictions to one-hot format (argmax)
+    pred_class = K.argmax(y_pred, axis=-1)
+    true_class = K.argmax(y_true, axis=-1)
+    
+    # Exact match (full accuracy)
+    exact_match = K.cast(K.equal(pred_class, true_class), dtype=tf.float32)
+    
+    # 1-off match (half accuracy)
+    one_off_match = K.cast(K.equal(K.abs(pred_class - true_class), 1), dtype=tf.float32) * 0.5
+    
+    # Combine exact and 1-off matches
+    accuracy = exact_match + one_off_match
+    
+    # Return mean accuracy over all samples
+    return K.mean(accuracy)
+
 def main():
     #get data
-    train_df, val_df, test_df, column_indices, num_features = concat_data('data', standard=True)
+    train_df, val_df, test_df, column_indices, num_features = concat_data('data', standard=False)
     # define windows
     window = WindowGenerator(train_df=train_df, val_df = val_df, test_df=test_df,
                                     input_width=IN_STEPS,
@@ -105,6 +125,7 @@ def main():
 
     print('conv_model')
     conv_model = keras.Sequential([
+      keras.layers.BatchNormalization(),
       keras.layers.GaussianNoise(stddev=0.2),
       keras.layers.Conv1D(32, 3, activation='relu', padding='same', kernel_regularizer=keras.regularizers.L2(0.01)),
       #keras.layers.BatchNormalization(),
@@ -114,7 +135,7 @@ def main():
       keras.layers.Dense(64, activation='relu'),
       keras.layers.Dense(5, activation='softmax')
     ])
-    train_and_test(conv_model, window, 'Conv',)
+    train_and_test(conv_model, window, 'Conv', retrain=True)
 
     print('improved_conv_model')
     improved_conv_model = keras.Sequential([
@@ -145,6 +166,7 @@ def main():
     
     print('improved LSTM')
     improved_lstm = keras.Sequential([
+      keras.layers.BatchNormalization(),
       keras.layers.GaussianNoise(stddev=0.2),
     
       keras.layers.LSTM(64, return_sequences=False, kernel_regularizer=keras.regularizers.l2(0.01)),
@@ -166,7 +188,7 @@ def test(model, window, name):
 def train_and_test(model, window, model_name, patience=5 ,retrain = RETRAIN, epochs=30):
   if model_name not in os.listdir('Training/Models') or retrain:
     HISTORY[model_name] = compile_and_fit(model, window, patience, epochs=epochs,model_name=model_name)
-    model.save(f'Training/Models/{model_name}')
+    model.save(f'Training/Models/{model_name}.keras')
   else:
      model = keras.models.load_model(f'Training/Models/{model_name}')
   test(model,window,model_name)
@@ -189,7 +211,7 @@ def compile_and_fit(model, window, patience, epochs, model_name):
   #COMPILE
   model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.001, clipnorm=1.0),
                 loss='categorical_crossentropy',
-                metrics=[keras.metrics.CategoricalAccuracy(), keras.metrics.CategoricalCrossentropy(), keras.metrics.Precision(), keras.metrics.Recall()])
+                metrics=[keras.metrics.CategoricalAccuracy(), custom_accuracy, keras.metrics.Precision(), keras.metrics.Recall()])
 
   #FIT
   history = model.fit(window.train, epochs=epochs,

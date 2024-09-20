@@ -1,0 +1,29 @@
+//00//20.09.24
+
+dynamic_baseline: [{'categorical_accuracy': 0.24139507114887238, 'custom_accuracy': 0.4213736653327942, 'loss': 12.22728157043457, 'precision': 0.24139507114887238, 'recall': 0.24139507114887238}]
+
+Baseline_hold: [{'categorical_accuracy': 0.27961185574531555, 'custom_accuracy': 0.491642564535141, 'loss': 11.611279487609863, 'precision_1': 0.27961185574531555, 'recall_1': 0.27961185574531555}]
+
+Baseline_buy: [{'categorical_accuracy': 0.25159090757369995, 'custom_accuracy': 0.48439738154411316, 'loss': 12.062929153442383, 'precision_2': 0.25159090757369995, 'recall_2': 0.25159090757369995}]
+
+Baseline_sell: [{'categorical_accuracy': 0.17420805990695953, 'custom_accuracy': 0.3675245940685272, 'loss': 13.310197830200195, 'precision_3': 0.17420805990695953, 'recall_3': 0.17420805990695953}]
+
+Baseline_strong_buy: [{'categorical_accuracy': 0.18658369779586792, 'custom_accuracy': 0.3121415376663208, 'loss': 13.110727310180664, 'precision_4': 0.18658369779586792, 'recall_4': 0.18658369779586792}]
+
+Baseline_strong_sell: [{'categorical_accuracy': 0.10800548642873764, 'custom_accuracy': 0.19577911496162415, 'loss': 14.377246856689453, 'precision_5': 0.10800548642873764, 'recall_5': 0.10800548642873764}]
+
+Baseline_equal: [{'categorical_accuracy': 0.18658369779586792, 'custom_accuracy': 0.3125621974468231, 'loss': 1.6094532012939453, 'precision_6': 0.0, 'recall_6': 0.0}]
+
+Baseline_normal: [{'categorical_accuracy': 0.27961185574531555, 'custom_accuracy': 0.49287721514701843, 'loss': 1.6198203563690186, 'precision_7': 0.0, 'recall_7': 0.0}]
+
+Linear: [{'categorical_accuracy': 0.18060682713985443, 'custom_accuracy': 0.34835284948349, 'loss': 568215.1875, 'precision_8': 0.18060682713985443, 'recall_8': 0.18060682713985443}]
+
+Deep: [{'categorical_accuracy': 0.14653868973255157, 'custom_accuracy': 0.2966212332248688, 'loss': 8.194527626037598, 'precision_9': 0.14077195525169373, 'recall_9': 0.09629786014556885}]
+
+Conv: [{'categorical_accuracy': 0.25159090757369995, 'custom_accuracy': 0.4851045608520508, 'loss': 1.567399501800537, 'precision_10': 0.0, 'recall_10': 0.0}]
+
+Improved_Conv: [{'categorical_accuracy': 0.25159090757369995, 'custom_accuracy': 0.48487424850463867, 'loss': 1.5787158012390137, 'precision_11': 0.0, 'recall_11': 0.0}]
+
+LSTM: [{'categorical_accuracy': 0.16661393642425537, 'custom_accuracy': 0.3126618564128876, 'loss': 2.1917519569396973, 'precision_12': 0.18332597613334656, 'recall_12': 0.07305839657783508}]
+
+Improved_LSTM: [{'categorical_accuracy': 0.15413282811641693, 'custom_accuracy': 0.3382575213909149, 'loss': 1.898539662361145, 'precision_13': 0.125, 'recall_13': 3.51580347341951e-05}]

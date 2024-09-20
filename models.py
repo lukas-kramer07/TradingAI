@@ -118,7 +118,7 @@ def main():
       keras.layers.BatchNormalization(),
       keras.layers.Flatten(),
       keras.layers.Dense(128, activation='relu'),
-      keras.layers.Dropout(0.3),
+      #keras.layers.Dropout(0.3),
       keras.layers.Dense(64, activation='relu'),
       keras.layers.Dense(5, activation='softmax')
     ])
@@ -157,13 +157,14 @@ def main():
 
     print('LSTM')
     lstm = keras.Sequential([
-      keras.layers.GaussianNoise(stddev=0.2),
+      keras.layers.BatchNormalization(),
+      #keras.layers.GaussianNoise(stddev=0.2),
     
       keras.layers.LSTM(64,return_sequences=False),
       keras.layers.Dense(64, activation='relu'),
-      keras.layers.Dense(5, activation='softmax')
+      keras.layers.Dense(5, activation='softmax', kernel_initializer="zeros")
     ])
-    train_and_test(lstm, window, 'LSTM', epochs=1)
+    train_and_test(lstm, window, 'LSTM')
     
     print('improved LSTM')
     improved_lstm = keras.Sequential([
@@ -177,7 +178,7 @@ def main():
       keras.layers.Dense(64, activation='relu'),
       keras.layers.Dense(5, activation='softmax')
     ])
-    train_and_test(improved_lstm, window, 'Improved_LSTM', retrain=True)
+    train_and_test(improved_lstm, window, 'Improved_LSTM', retrain=True, epochs=1)
     for model, *performance in VAL_PERFORMANCE.items():
       print(f'{model}: {performance}\n')
 
@@ -187,11 +188,11 @@ def test(model, window, name):
     PERFORMANCE[name] = model.evaluate(window.test, verbose=0, return_dict=True)
 
 def train_and_test(model, window, model_name, patience=5 ,retrain = RETRAIN, epochs=30):
-  if model_name not in os.listdir('Training/Models') or retrain:
+  if f'{model_name}.keras' not in os.listdir('Training/Models') or retrain:
     HISTORY[model_name] = compile_and_fit(model, window, patience, epochs=epochs,model_name=model_name)
     model.save(f'Training/Models/{model_name}.keras')
   else:
-     model = keras.models.load_model(f'Training/Models/{model_name}')
+     model = keras.models.load_model(f'Training/Models/{model_name}.keras')
   test(model,window,model_name)
 
 def compile_and_fit(model, window, patience, epochs, model_name):

@@ -4,7 +4,7 @@
 import tensorflow as tf
 from utils import WindowGenerator
 from utils import concat_data
-import os
+import os 
 import keras
 from keras.callbacks import EarlyStopping, TensorBoard, ReduceLROnPlateau
 import datetime
@@ -153,7 +153,7 @@ def main():
         keras.layers.Dense(5, activation='softmax')
     ])
 
-    train_and_test(improved_conv_model, window, 'Improved_Conv')
+    train_and_test(improved_conv_model, window, 'Improved_Conv', retrain=True)
 
     print('LSTM')
     lstm = keras.Sequential([

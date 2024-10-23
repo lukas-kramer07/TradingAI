@@ -166,7 +166,7 @@ def main():
     ])
     train_and_test(lstm, window, 'LSTM')
     
-    print('improved LSTM')
+    print('improved LSTM')  S
     improved_lstm = keras.Sequential([
       keras.layers.BatchNormalization(),
       keras.layers.GaussianNoise(stddev=0.2),

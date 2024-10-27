@@ -166,19 +166,21 @@ def main():
     ])
     train_and_test(lstm, window, 'LSTM')
     
-    print('improved LSTM')  
-    improved_lstm = keras.Sequential([
-      keras.layers.BatchNormalization(),
-      keras.layers.GaussianNoise(stddev=0.2),
-    
-      keras.layers.LSTM(64, return_sequences=False, kernel_regularizer=keras.regularizers.l2(0.01)),
+    print('Improved LSTM with Bidirectional and Dropout')  
+    improved_lstm_1 = keras.Sequential([
+        keras.layers.BatchNormalization(),
+        keras.layers.GaussianNoise(stddev=0.2),
 
-      #keras.layers.LSTM(32, return_sequences=False),
-      keras.layers.Dense(128, activation='relu', kernel_regularizer=keras.regularizers.l2(0.01)),
-      keras.layers.Dense(64, activation='relu'),
-      keras.layers.Dense(5, activation='softmax')
+        keras.layers.Bidirectional(keras.layers.LSTM(64, return_sequences=True, kernel_regularizer=keras.regularizers.l2(0.01))),
+        keras.layers.Dropout(0.3),
+        keras.layers.Bidirectional(keras.layers.LSTM(32, return_sequences=False)),
+        
+        keras.layers.Dense(128, activation='relu', kernel_regularizer=keras.regularizers.l2(0.01)),
+        keras.layers.Dropout(0.3),
+        keras.layers.Dense(64, activation='relu'),
+        keras.layers.Dense(5, activation='softmax')
     ])
-    train_and_test(improved_lstm, window, 'Improved_LSTM', retrain=True, epochs=1)
+    train_and_test(improved_lstm_1, window, 'Improved_LSTM_1', retrain=True, epochs=1)
     for model, *performance in VAL_PERFORMANCE.items():
       print(f'{model}: {performance}\n')
 

@@ -9,7 +9,7 @@ import keras
 from keras.callbacks import EarlyStopping, TensorBoard, ReduceLROnPlateau
 import datetime
 
-RETRAIN = True
+RETRAIN = False
 VAL_PERFORMANCE = {}
 PERFORMANCE = {}
 HISTORY = {}
@@ -54,9 +54,10 @@ class DynamicBaseline(keras.Model):
     res = tf.one_hot(res, depth = 5, dtype=tf.float32)
     return res
 
-
+from tensorflow.keras.saving import register_keras_serializable
 from tensorflow.keras import backend as K
 
+@register_keras_serializable()
 def custom_accuracy(y_true, y_pred):
     # Convert predictions to one-hot format (argmax)
     pred_class = K.argmax(y_pred, axis=-1)
@@ -85,7 +86,7 @@ def main():
     # Baseline Models
     print(window.example)
 
-    print('dynamic baseline')
+    '''print('dynamic baseline')
     dynamic_baseline = DynamicBaseline()
     print(dynamic_baseline.predict(window.example[0]))
     train_and_test(dynamic_baseline, window, 'dynamic_baseline', epochs=1)
@@ -103,7 +104,7 @@ def main():
     for name, output_arr in baselines.items():
         print(name)
         baseline_model = Baseline(output_arr)
-        train_and_test(baseline_model, window, name, epochs=1)
+        train_and_test(baseline_model, window, name, epochs=1)'''
 
     
     print('linear model')

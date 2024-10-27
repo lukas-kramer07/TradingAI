@@ -58,3 +58,8 @@ Improved_Conv: [{'categorical_accuracy': 0.25159090757369995, 'custom_accuracy':
 LSTM: [{'categorical_accuracy': 0.1595120131969452, 'custom_accuracy': 0.3469875454902649, 'loss': 1.909644365310669, 'precision_12': 0.13072647154331207, 'recall_12': 0.02397778071463108}]
 
 Improved_LSTM: [{'categorical_accuracy': 0.12628766894340515, 'custom_accuracy': 0.2648111581802368, 'loss': 1.8553619384765625, 'precision_13': 0.0416666679084301, 'recall_13': 0.0002109482156811282}]
+
+
+// 27.10.24
+
+Improved_Conv: [{'categorical_accuracy': 0.25159090757369995, 'custom_accuracy': 0.48503175377845764, 'loss': 1.5673490762710571, 'precision_1': 0.0, 'recall_1': 0.0}]

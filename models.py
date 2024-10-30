@@ -30,7 +30,7 @@ class AttentionLayer(keras.layers.Layer):
         a = keras.backend.exp(u) / keras.backend.sum(keras.backend.exp(u), axis=1, keepdims=True)
         return keras.backend.sum(a * x, axis=1)
     
-    
+
 class Baseline(keras.Model):
   def __init__(self, output_arr):
     super().__init__()
@@ -215,7 +215,19 @@ def main():
     ])
     train_and_test(improved_lstm_2, window, 'Improved_LSTM_2', retrain=True, epochs=3)
 
+    print("improved LSTM with attention layer")
+    improved_lstm_3 = keras.Sequential([
+        keras.layers.BatchNormalization(),
+        keras.layers.GaussianNoise(stddev=0.2),
 
+        keras.layers.LSTM(64, return_sequences=True, kernel_regularizer=keras.regularizers.l2(0.01)),
+        AttentionLayer(),
+
+        keras.layers.Dense(128, activation='relu', kernel_regularizer=keras.regularizers.l2(0.01)),
+        keras.layers.Dense(64, activation='relu'),
+        keras.layers.Dense(5, activation='softmax')
+    ])
+    train_and_test(improved_lstm_3, window, 'Improved_LSTM_3', retrain=True, epochs=3)
     for model, *performance in VAL_PERFORMANCE.items():
       print(f'{model}: {performance}\n')
 

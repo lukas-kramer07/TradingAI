@@ -181,7 +181,23 @@ def main():
         keras.layers.Dense(64, activation='relu'),
         keras.layers.Dense(5, activation='softmax')
     ])
-    train_and_test(improved_lstm_1, window, 'Improved_LSTM_1', retrain=True, epochs=1)
+    train_and_test(improved_lstm_1, window, 'Improved_LSTM_1', retrain=True, epochs=3)
+
+    print('Improved LSTM with More Units and Layer Normalization')  
+    improved_lstm_2 = keras.Sequential([
+        keras.layers.BatchNormalization(),
+        keras.layers.GaussianNoise(stddev=0.2),
+
+        keras.layers.LSTM(128, return_sequences=True, kernel_regularizer=keras.regularizers.l2(0.01)),
+        keras.layers.LayerNormalization(),
+        keras.layers.LSTM(64, return_sequences=False),
+        
+        keras.layers.Dense(256, activation='relu', kernel_regularizer=keras.regularizers.l2(0.01)),
+        keras.layers.Dense(128, activation='relu'),
+        keras.layers.Dense(64, activation='relu'),
+        keras.layers.Dense(5, activation='softmax')
+    ])
+    train_and_test(improved_lstm_2, window, 'Improved_LSTM_2', retrain=True, epochs=3)
     for model, *performance in VAL_PERFORMANCE.items():
       print(f'{model}: {performance}\n')
 

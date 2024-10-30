@@ -15,6 +15,22 @@ PERFORMANCE = {}
 HISTORY = {}
 IN_STEPS=1000
 
+class AttentionLayer(keras.layers.Layer):
+    def __init__(self, **kwargs):
+        super(AttentionLayer, self).__init__(**kwargs)
+
+    def build(self, input_shape):
+        self.W = self.add_weight(shape=(input_shape[-1], input_shape[-1]),
+                                 initializer="glorot_uniform", trainable=True)
+        self.b = self.add_weight(shape=(input_shape[-1],), initializer="zeros", trainable=True)
+        super(AttentionLayer, self).build(input_shape)
+
+    def call(self, x):
+        u = keras.backend.tanh(keras.backend.dot(x, self.W) + self.b)
+        a = keras.backend.exp(u) / keras.backend.sum(keras.backend.exp(u), axis=1, keepdims=True)
+        return keras.backend.sum(a * x, axis=1)
+    
+    
 class Baseline(keras.Model):
   def __init__(self, output_arr):
     super().__init__()
@@ -198,6 +214,8 @@ def main():
         keras.layers.Dense(5, activation='softmax')
     ])
     train_and_test(improved_lstm_2, window, 'Improved_LSTM_2', retrain=True, epochs=3)
+
+
     for model, *performance in VAL_PERFORMANCE.items():
       print(f'{model}: {performance}\n')
 
